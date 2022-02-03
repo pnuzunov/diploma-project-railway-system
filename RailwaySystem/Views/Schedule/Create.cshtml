@@ -1,0 +1,70 @@
+﻿@model RailwaySystem.ViewModels.Schedule.CreateVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+<fieldset>
+    <form action="/Schedule/Create" method="post">
+        <div class="grid">
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.TrainId)
+                </div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.TrainId,
+                        new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--")
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.TrainId)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.TrackId)
+                </div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.TrackId,
+                        new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--")
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.TrackId)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Departure)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Departure, new { id = "departure", @type = "datetime-local", @class = "form-control date-picker" } )
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Departure)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Arrival)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Arrival, new { id = "arrival", @type = "datetime-local", @class = "form-control date-picker" })
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Arrival)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    @Html.ValidationMessage("AuthError")
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <input class="right" type="submit" value="Create" />
+                </div>
+            </div>
+        </div>
+    </form>
+</fieldset>
+

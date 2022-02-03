@@ -1,0 +1,47 @@
+﻿@model RailwaySystem.ViewModels.Track.CreateVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+<fieldset>
+    <form action="/Track/Create" method="post">
+        <div class="grid">
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.StartStationId)
+                </div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.StartStationId,
+                        new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--")
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.StartStationId)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.EndStationId)
+                </div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.EndStationId,
+                        new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--")
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.EndStationId)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    @Html.ValidationMessage("AuthError")
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <input class="right" type="submit" value="Create" />
+                </div>
+            </div>
+        </div>
+    </form>
+</fieldset>

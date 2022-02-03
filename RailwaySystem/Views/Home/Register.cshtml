@@ -1,0 +1,42 @@
+﻿@model RailwaySystem.ViewModels.Home.RegisterVM
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+    <fieldset class="col-md-2">
+        <form action="/Home/Register" method="post">
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.Username) </div>
+                <div>@Html.TextBoxFor(m => m.Username) @Html.ValidationMessageFor(m => m.Username)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.Password) </div>
+                <div>@Html.PasswordFor(m => m.Password) @Html.ValidationMessageFor(m => m.Password)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.RepeatPassword) </div>
+                <div>@Html.PasswordFor(m => m.RepeatPassword) @Html.ValidationMessageFor(m => m.RepeatPassword)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.FirstName) </div>
+                <div>@Html.TextBoxFor(m => m.FirstName) @Html.ValidationMessageFor(m => m.FirstName)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.LastName) </div>
+                <div>@Html.TextBoxFor(m => m.LastName) @Html.ValidationMessageFor(m => m.LastName)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.Email) </div>
+                <div>@Html.TextBoxFor(m => m.Email) @Html.ValidationMessageFor(m => m.Email)</div>
+            </div>
+            <div class="">
+                <div>@Html.DisplayNameFor(m => m.Phone) </div>
+                <div>@Html.TextBoxFor(m => m.Phone) @Html.ValidationMessageFor(m => m.Phone)</div>
+            </div>
+            <br />
+            @Html.ValidationMessage("AuthError")
+            <input class="pull-right" type="submit" value="Register" />
+        </form>
+    </fieldset>

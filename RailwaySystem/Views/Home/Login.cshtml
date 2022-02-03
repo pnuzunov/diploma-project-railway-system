@@ -1,0 +1,33 @@
+﻿@model RailwaySystem.ViewModels.Home.LoginVM
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+<fieldset class="pt-lg-5">
+    <div class="col-lg-5 col-md-7 m-auto">
+        <div class="card bg-light shadow border-3 col-6 p-3 m-auto">
+            <div class="card-title mb-3">
+                Please log in to continue
+            </div>
+            <form action="/Home/Login" method="post">
+                <div class="">
+                    <div>@Html.DisplayNameFor(m => m.Username) </div>
+                    <div>@Html.TextBoxFor(m => m.Username) @Html.ValidationMessageFor(m => m.Username)</div>
+                </div>
+                <div class="">
+                    <div>@Html.DisplayNameFor(m => m.Password) </div>
+                    <div>@Html.PasswordFor(m => m.Password) @Html.ValidationMessageFor(m => m.Password)</div>
+                </div>
+                <br />
+                @Html.ValidationMessage("AuthError")
+                <input class="btn btn-info" type="submit" value="Login" />
+            </form>
+            <a href="/Home/Register">Don't have an account?</a>
+        </div>
+    </div>
+</fieldset>
+
+
+

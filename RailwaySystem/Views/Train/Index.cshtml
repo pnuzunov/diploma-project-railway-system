@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Shared.cshtml";
+    string TrainType = "";
+    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
+}
+
+    <fieldset>
+        <div class="grid bold">
+            <div class="row">
+                <div class="col-3">
+                    Name
+                </div>
+                <div class="col-3">
+                    Type
+                </div>
+            </div>
+        </div>
+        <hr />
+        @foreach (var item in (List<Train>)ViewData["items"])
+        {
+            <div class="grid">
+                <div class="row">
+                    <div class="col-3">
+                        @(item.Name)
+                    </div>
+                    <div class="col-3">
+                        @{
+                            switch (item.Type)
+                            {
+                                case 0: TrainType = TypeNames[0]; break;
+                                case 1: TrainType = TypeNames[1]; break;
+                                case 2: TrainType = TypeNames[2]; break;
+                            }
+                        }
+                        @(TrainType)
+                    </div>
+                    <div class="col-1">
+                        <a href="/Train/Edit?id=@(item.Id)">Edit...</a>
+                    </div>
+                    <div class="col-1">
+                        <a href="/Train/Delete?id=@(item.Id)">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div>
+            <a href="/Train/Create">Create New...</a>
+        </div>
+    </fieldset>
+

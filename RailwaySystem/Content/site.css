@@ -1,0 +1,79 @@
+﻿body {
+    margin: 0;
+    background-color: lightblue;
+}
+
+fieldset {
+    margin: 10px;
+    border-radius: 10px;
+    background-color: lightgray;
+}
+
+.header h1 {
+    margin-left: 50%;
+    padding-top: 2em;
+}
+
+.header {
+    background-image: url(/Content/gleise-1555348_960_720.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 20em;
+}
+
+.grid input[type=password] {
+    width: 100%;
+}
+
+.grid .row .col-1 {
+    display:inline-block;
+    width: 100px;
+}
+
+.grid .row .col-2 {
+    display:inline-block;
+    width: 200px;
+}
+
+.grid .row .col-3 {
+    display:inline-block;
+    width: 300px;
+}
+
+.body {
+    clear: both;
+    display: block;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: lightgray;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.menu ul {
+    clear: both;
+    display:block;
+}
+
+.menu ul li {
+    float:left;
+    margin: 0px 10px;
+    list-style: none;
+}
+
+.menu ul li a {
+    text-decoration:none;
+    color: blue;
+    font-size:18px;
+}
+
+.left {
+    float:left;
+}
+
+.right {
+    float: right;
+}

@@ -1,0 +1,55 @@
+﻿@model RailwaySystem.ViewModels.Train.CreateVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/Shared.cshtml";
+    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
+}
+    <fieldset>
+        <form action="/Train/Create" method="post">
+            <div class="grid">
+                <div class="row">
+                    <div class="col-1">
+                        @Html.LabelFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.TextBoxFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.ValidationMessageFor(m => m.Name)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-1">
+                        @Html.LabelFor(m => m.Type)
+                    </div>
+                    <div class="col-2">
+                        @Html.ValidationMessageFor(m => m.Type)
+                    </div>
+                </div>
+                <div class="row">
+                   @for(int i = 0; i < TypeNames.Length; i++)
+                    {
+                    <div class="col-2">
+                        @Html.RadioButtonFor(m => m.Type, i)
+                    </div>
+
+                    }
+                </div>
+                <div class="row">
+                   @foreach(var str in TypeNames)
+                    {
+                    <div class="col-2">
+                        @(str)
+                    </div>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input class="right" type="submit" value="Create" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+

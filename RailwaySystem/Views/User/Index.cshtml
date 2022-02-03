@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Shared.cshtml";
+    User loggedUser = (User)Session["loggedUser"];
+    bool loggedAsAdmin = loggedUser?.Id == 1;
+}
+
+    <fieldset>
+        <div class="grid bold">
+            <div class="row">
+                <div class="col-3">
+                    Username
+                </div>
+                <div class="col-3">
+                    First Name
+                </div>
+                <div class="col-3">
+                    Last Name
+                </div>
+                <div class="col-3">
+                    Email Address
+                </div>
+                <div class="col-3">
+                    Phone Number
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="grid">
+            @foreach (var item in (List<User>)ViewData["items"])
+            {
+
+                if (item.Id != 1)
+                {
+                    <div class="row">
+                        <div class="col-3">
+                            @(item.Username)
+                        </div>
+                        <div class="col-3">
+                            @(item.FirstName)
+                        </div>
+                        <div class="col-3">
+                            @(item.LastName)
+                        </div>
+                        <div class="col-3">
+                            @(item.Email)
+                        </div>
+                        <div class="col-3">
+                            @(item.Phone)
+                        </div>
+                        @if (loggedAsAdmin)
+                        {
+                            <div class="col-1">
+                                <a href="/Station/Delete?id=@(item.Id)">Delete</a>
+                            </div>
+                        }
+                    </div>
+                }
+
+            }
+        </div>
+    </fieldset>
+

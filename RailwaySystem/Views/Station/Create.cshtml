@@ -1,0 +1,30 @@
+﻿@model RailwaySystem.ViewModels.Station.CreateVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+    <fieldset>
+        <form action="/Station/Create" method="post">
+            <div class="grid">
+                <div class="row">
+                    <div class="col-1">
+                        @Html.LabelFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.TextBoxFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.ValidationMessageFor(m => m.Name)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input class="right" type="submit" value="Create" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </fieldset>
+

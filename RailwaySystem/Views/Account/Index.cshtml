@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Shared.cshtml";
+}
+
+@model RailwaySystem.ViewModels.User.DetailsVM
+
+<div>
+    @Html.LabelFor(m => m.Username)
+    <p>@Model.Username</p>
+</div>
+
+<div>
+    @Html.LabelFor(m => m.FirstName)
+    <p>@Model.FirstName</p>
+</div>
+
+<div>
+    @Html.LabelFor(m => m.LastName)
+    <p>@Model.LastName</p>
+</div>
+

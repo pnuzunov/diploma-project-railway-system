@@ -1,0 +1,122 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Shared.cshtml";
+    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
+
+}
+@model RailwaySystem.ViewModels.Schedule.ListVM
+
+<fieldset class="m-3">
+    <div class="grid">
+        <div class="row border border-3 p-2">
+            <div class="col-2">
+                Station to depart
+            </div>
+            <div class="col-2">
+                Station to arrive
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                @Html.ValidationMessageFor(m => m.StartStationId)
+            </div>
+            <div class="col-2">
+                @Html.ValidationMessageFor(m => m.EndStationId)
+            </div>
+        </div>
+        <form action="/Schedule/Index" method="post">
+            <div class="row bg-dark">
+                <div class="col-2 p-3">
+                    @Html.DropDownListFor(m => m.StartStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                </div>
+                <div class="col-2 p-3">
+                    @Html.DropDownListFor(m => m.EndStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                </div>
+                <div class="col-2 p-3">
+                    @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
+                </div>
+                <div class="col-1 p-2 d-flex">
+                    <input class="btn btn-light p-2 mr-2" type="submit" value="Search" />
+                    <a href="/Schedule/Index" class="btn btn-light p-2">Clear</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="card bg-light shadow m-3 p-3">
+        <div class="grid bold">
+            <div class="row">
+                <div class="col-2">
+                    Train
+                </div>
+                <div class="col-2">
+                    Departure
+                </div>
+                <div class="col-2">
+                    Arrival
+                </div>
+                <div class="col-2">
+                    Travel Time
+                </div>
+                <div class="col-2">
+                    Route
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="grid">
+
+            @foreach (var item in (List<Schedule>)ViewData["items"])
+            {
+                <div class="row m-3">
+                    @foreach (var train in (List<Train>)ViewData["trains"])
+                    {
+
+                        if (train.Id == item.TrainId)
+                        {
+                            <div class="col-2">
+                                @(train.Name) (@(TypeNames[train.Type]))
+                            </div>
+                            break;
+                        }
+                    }
+
+                    <div class="col-2">
+                        @(item.Departure)
+                    </div>
+                    <div class="col-2">
+                        @(item.Arrival)
+                    </div>
+                    <div class="col-2">
+                        @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
+                    </div>
+
+                    @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
+                    {
+                        if (route.Key == item.TrackId)
+                        {
+
+                            <div class="col-2">
+                                @(route.Value)
+                            </div>
+                            break;
+                        }
+                    }
+                    <div class="col-1">
+                        <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
+                    </div>
+                    <div class="col-1">
+                        <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div>
+            <a href="/Schedule/Create">Create New...</a>
+        </div>
+
+    </div>
+
+</fieldset>
+
