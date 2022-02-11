@@ -8,5 +8,6 @@ namespace RailwaySystem.Entities
     public class SeatType : BaseEntity
     {
         public string Name { get; set; }
+
     }
 }

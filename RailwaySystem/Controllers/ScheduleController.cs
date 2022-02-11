@@ -107,6 +107,7 @@ namespace RailwaySystem.Controllers
      
             ViewData["routes"] = routes;
             ViewData["trains"] = trains.GetAll();
+            ViewData["trainTypes"] = trains.GetTrainTypes();
             ViewData["tracks"] = tracks.GetAll();
             ViewData["stations"] = stations.GetAll().OrderBy(i => i.Name).ToList();
             ViewData["items"] = schedules.GetAll();

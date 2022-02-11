@@ -3,7 +3,8 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
     User loggedUser = (User)Session["loggedUser"];
-    bool loggedAsAdmin = loggedUser?.Id == 1;
+    bool canAccess = new RailwaySystem.Repositories.UsersRepository()
+        .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UserRolesRepository.Levels.FULL_ACCESS);
 }
 
     <fieldset>
@@ -49,7 +50,7 @@
                         <div class="col-3">
                             @(item.Phone)
                         </div>
-                        @if (loggedAsAdmin)
+                        @if (canAccess)
                         {
                             <div class="col-1">
                                 <a href="/Station/Delete?id=@(item.Id)">Delete</a>

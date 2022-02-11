@@ -15,6 +15,6 @@ namespace RailwaySystem.ViewModels.Train
 
         [DisplayName("Type: ")]
         [Required(ErrorMessage = "This field is Required!")]
-        public int Type { get; set; }
+        public int TypeId { get; set; }
     }
 }

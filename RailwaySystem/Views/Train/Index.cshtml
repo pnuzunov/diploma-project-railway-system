@@ -1,8 +1,6 @@
 ﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
-    string TrainType = "";
-    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
 }
 
     <fieldset>
@@ -25,16 +23,16 @@
                         @(item.Name)
                     </div>
                     <div class="col-3">
-                        @{
-                            switch (item.Type)
+                        @foreach (var trainType in (List<TrainType>)ViewData["trainTypes"]) { 
+                            if(item.TypeId == trainType.Id)
                             {
-                                case 0: TrainType = TypeNames[0]; break;
-                                case 1: TrainType = TypeNames[1]; break;
-                                case 2: TrainType = TypeNames[2]; break;
+                                <div class="col-3">
+                                    @(trainType.Name)
+                                </div>
+                                break;
                             }
                         }
-                        @(TrainType)
-                    </div>
+                        </div>
                     <div class="col-1">
                         <a href="/Train/Edit?id=@(item.Id)">Edit...</a>
                     </div>

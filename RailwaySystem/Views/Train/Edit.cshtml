@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/Shared.cshtml";
-    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
 }
 
 <fieldset>
@@ -23,28 +22,15 @@
             </div>
             <div class="row">
                 <div class="col-1">
-                    @Html.LabelFor(m => m.Type)
+                    @Html.LabelFor(m => m.TypeId)
                 </div>
                 <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Type)
+                    @Html.DropDownListFor(m => m.TypeId,
+                 new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --")
                 </div>
-            </div>
-            <div class="row">
-                @for (int i = 0; i < TypeNames.Length; i++)
-                {
-                    <div class="col-2">
-                        @Html.RadioButtonFor(m => m.Type, i)
-                    </div>
-
-                }
-            </div>
-            <div class="row">
-                @foreach (var str in TypeNames)
-                {
-                    <div class="col-2">
-                        @(str)
-                    </div>
-                }
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.TypeId)
+                </div>
             </div>
             <div class="row">
                 <div class="col-3">

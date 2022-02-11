@@ -10,10 +10,10 @@ namespace RailwaySystem.Controllers
 {
     public class UserController : Controller
     {
-        UsersRepository repo = new UsersRepository();
         public ActionResult Index()
         {
-            if (Session["loggedUser"] == null || ((User)Session["loggedUser"])?.Id != 1)
+            UsersRepository repo = new UsersRepository();
+            if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -24,7 +24,8 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Delete(int id)
         {
-            if (Session["loggedUser"] == null || ((User)Session["loggedUser"])?.Id != 1)
+            UsersRepository repo = new UsersRepository();
+            if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Index", "Home");
             }

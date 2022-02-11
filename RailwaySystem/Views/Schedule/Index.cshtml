@@ -1,7 +1,6 @@
 ﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
-    string[] TypeNames = RailwaySystem.ViewModels.Train.IndexVM.TypeNames;
 
 }
 @model RailwaySystem.ViewModels.Schedule.ListVM
@@ -69,47 +68,57 @@
 
             @foreach (var item in (List<Schedule>)ViewData["items"])
             {
-                <div class="row m-3">
-                    @foreach (var train in (List<Train>)ViewData["trains"])
+            <div class="row m-3">
+                @foreach (var train in (List<Train>)ViewData["trains"])
+                {
+
+                    if (train.Id == item.TrainId)
                     {
-
-                        if (train.Id == item.TrainId)
+                        foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
                         {
-                            <div class="col-2">
-                                @(train.Name) (@(TypeNames[train.Type]))
-                            </div>
-                            break;
+                            if (trainType.Id == train.TypeId)
+                            {
+                                <div class="col-2">
+                                    @(train.Name) (@(trainType.Name))
+                                </div>
+                                break;
+                            }
                         }
+
                     }
+                }
 
-                    <div class="col-2">
-                        @(item.Departure)
-                    </div>
-                    <div class="col-2">
-                        @(item.Arrival)
-                    </div>
-                    <div class="col-2">
-                        @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
-                    </div>
-
-                    @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
-                    {
-                        if (route.Key == item.TrackId)
-                        {
-
-                            <div class="col-2">
-                                @(route.Value)
-                            </div>
-                            break;
-                        }
-                    }
-                    <div class="col-1">
-                        <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
-                    </div>
-                    <div class="col-1">
-                        <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
-                    </div>
+                <div class="col-2">
+                    @(item.Departure)
                 </div>
+                <div class="col-2">
+                    @(item.Arrival)
+                </div>
+                <div class="col-2">
+                    @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
+                </div>
+
+                @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
+                {
+                    if (route.Key == item.TrackId)
+                    {
+
+                        <div class="col-2">
+                            @(route.Value)
+                        </div>
+                        break;
+                    }
+                }
+                <div class="col-1">
+                    <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
+                </div>
+                <div class="col-1">
+                    <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
+                </div>
+                <div class="col-1">
+                    <a href="/Ticket/Buy?id=@(item.Id)">Ticket</a>
+                </div>
+            </div>
             }
         </div>
         <div>

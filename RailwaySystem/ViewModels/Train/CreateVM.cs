@@ -16,6 +16,14 @@ namespace RailwaySystem.ViewModels.Train
 
         [DisplayName("Train Type")]
         [Required(ErrorMessage = "This field is required!")]
-        public short Type { get; set; }
+        public int TypeId { get; set; }
+
+        [DisplayName("Number of seats 1st class")]
+        [Required(ErrorMessage = "This field is required!")]
+        public int SeatsFirstClass { get; set; }
+
+        [DisplayName("Number of seats 2nd class")]
+        [Required(ErrorMessage = "This field is required!")]
+        public int SeatsSecondClass { get; set; }
     }
 }

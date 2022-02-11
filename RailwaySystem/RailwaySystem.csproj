@@ -228,6 +228,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\StationController.cs" />
+    <Compile Include="Controllers\TicketController.cs" />
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="Controllers\TrainController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -284,6 +285,7 @@
     <Compile Include="Repositories\RailwaySystemDBContext.cs" />
     <Compile Include="Repositories\ReadOnlyRepository.cs" />
     <Compile Include="Repositories\SchedulesRepository.cs" />
+    <Compile Include="Repositories\SeatsRepository.cs" />
     <Compile Include="Repositories\StationsRepository.cs" />
     <Compile Include="Repositories\TicketsRepository.cs" />
     <Compile Include="Repositories\TracksRepository.cs" />
@@ -300,12 +302,12 @@
     <Compile Include="ViewModels\Station\EditVM.cs" />
     <Compile Include="ViewModels\Shared\BaseIndexVM.cs" />
     <Compile Include="ViewModels\Shared\BaseFilterVM.cs" />
+    <Compile Include="ViewModels\Ticket\BuyVM.cs" />
     <Compile Include="ViewModels\Track\CreateVM.cs" />
     <Compile Include="ViewModels\Track\EditVM.cs" />
     <Compile Include="ViewModels\Track\IndexVM.cs" />
     <Compile Include="ViewModels\Train\CreateVM.cs" />
     <Compile Include="ViewModels\Train\EditVM.cs" />
-    <Compile Include="ViewModels\Train\IndexVM.cs" />
     <Compile Include="ViewModels\User\DetailsVM.cs" />
     <Compile Include="ViewModels\User\EditVM.cs" />
   </ItemGroup>
@@ -341,6 +343,8 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Ticket\Buy.cshtml" />
+    <Content Include="Views\Ticket\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

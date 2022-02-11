@@ -18,13 +18,13 @@ namespace RailwaySystem.Controllers
         protected abstract void GenerateEntity(E entity, TEditVM model);
         protected abstract void GenerateModel(TEditVM model, E entity);
         protected virtual void LoadExtraViewData() { }
-
         public virtual ActionResult Index()
         {
             if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Login", "Home");
             }
+
             R repo = new R();
 
             ViewData["items"] = repo.GetAll();
