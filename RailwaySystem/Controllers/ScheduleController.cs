@@ -120,13 +120,14 @@ namespace RailwaySystem.Controllers
                     return;
                 }
                 //ViewData["items"] = schedules.GetAll(i => i.TrackId == track.Id);
-                List<Schedule> schedulesByTrack = schedules.GetAll(i => i.TrackId == track.Id);
-                ViewData["items"] = new List<Schedule>();
-                if (schedulesByTrack.Count > 0)
-                {
-                    schedulesByTrack = schedulesByTrack.Where(s => DateTime.Compare(s.Departure, model.DepartureDate) >= 0).ToList();
-                    ViewData["items"] = schedulesByTrack;
-                }
+                //List<Schedule> schedulesByTrack = schedules.GetAll(i => i.TrackId == track.Id);
+                ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.TimeOfDay);
+
+                //if (schedulesByTrack.Count > 0)
+                //{
+                //    schedulesByTrack = schedulesByTrack.Where(s => DateTime.Compare(s.Departure, model.DepartureDate) >= 0).ToList();
+                //    ViewData["items"] = schedulesByTrack;
+                //}
             }
         }
 

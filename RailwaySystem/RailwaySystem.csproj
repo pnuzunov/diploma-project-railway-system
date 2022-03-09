@@ -235,8 +235,10 @@
     <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\CreditRecord.cs" />
     <Compile Include="Entities\Schedule.cs" />
+    <Compile Include="Entities\ScheduleCancellation.cs" />
+    <Compile Include="Entities\ScheduleType.cs" />
     <Compile Include="Entities\Seat.cs" />
-    <Compile Include="Entities\SeatType.cs" />
+    <Compile Include="Entities\SeatReservation.cs" />
     <Compile Include="Entities\Station.cs" />
     <Compile Include="Entities\Ticket.cs" />
     <Compile Include="Entities\Track.cs" />
@@ -279,13 +281,23 @@
     <Compile Include="Migrations\202202031310499_Db_Update_03_02_2022.designer.cs">
       <DependentUpon>202202031310499_Db_Update_03_02_2022.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202202131433484_Ticket-Update.cs" />
+    <Compile Include="Migrations\202202131433484_Ticket-Update.designer.cs">
+      <DependentUpon>202202131433484_Ticket-Update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203051257259_Update-05-03-2022.cs" />
+    <Compile Include="Migrations\202203051257259_Update-05-03-2022.designer.cs">
+      <DependentUpon>202203051257259_Update-05-03-2022.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203091201238_Update-09-03-2022.cs" />
+    <Compile Include="Migrations\202203091201238_Update-09-03-2022.designer.cs">
+      <DependentUpon>202203091201238_Update-09-03-2022.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\RailwaySystemDBContext.cs" />
-    <Compile Include="Repositories\ReadOnlyRepository.cs" />
     <Compile Include="Repositories\SchedulesRepository.cs" />
-    <Compile Include="Repositories\SeatsRepository.cs" />
     <Compile Include="Repositories\StationsRepository.cs" />
     <Compile Include="Repositories\TicketsRepository.cs" />
     <Compile Include="Repositories\TracksRepository.cs" />
@@ -381,6 +393,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202202031310499_Db_Update_03_02_2022.resx">
       <DependentUpon>202202031310499_Db_Update_03_02_2022.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202202131433484_Ticket-Update.resx">
+      <DependentUpon>202202131433484_Ticket-Update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203051257259_Update-05-03-2022.resx">
+      <DependentUpon>202203051257259_Update-05-03-2022.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203091201238_Update-09-03-2022.resx">
+      <DependentUpon>202203091201238_Update-09-03-2022.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -10,7 +10,7 @@ namespace RailwaySystem.Entities
     {
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public User user { get; set; }
+        public User User { get; set; }
         public string BeginStation { get; set; }
         public string EndStation { get; set; }
         [Column(TypeName = "datetime2")]
@@ -18,9 +18,11 @@ namespace RailwaySystem.Entities
         [Column(TypeName = "datetime2")]
         public DateTime BuyDate { get; set; }
         public decimal Price { get; set; }
+        public int Quantity { get; set; }
         public string TrainName { get; set; }
         public string TrainType { get; set; }
-        public int SeatNumber { get; set; }
+        public string SeatNumbers { get; set; }
+        public string SeatType { get; set; }
         public string QRCode { get; set; }
     }
 }

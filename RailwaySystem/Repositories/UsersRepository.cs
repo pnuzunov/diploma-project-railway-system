@@ -39,7 +39,7 @@ namespace RailwaySystem.Repositories
             UsersRepository users = new UsersRepository();
             User user = users.GetAll().Where(i => i.Id == userId).FirstOrDefault();
             if (user == null) return false;
-            UserRole userRole = GetUserRole(u => u.Id == user.Id);
+            UserRole userRole = GetUserRole(u => u.Id == user.RoleId);
             if (userRole == null) return false;
             return userRole.LevelOfAccess <= ((int)level);
         }

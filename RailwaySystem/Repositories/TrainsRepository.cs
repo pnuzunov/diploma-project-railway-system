@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -11,7 +12,45 @@ namespace RailwaySystem.Repositories
     public class TrainsRepository : BaseRepository<Train>
     {
         public static string FIRST_CLASS = "First Class";
-        public static string SECOND_CLASS = "Second Class";
+        public static string REGULAR_CLASS = "Regular Class";
+        //----------------------------------------------------------------------------------
+        #region Seat Methods
+
+        public List<Seat> GetSeats(Expression<Func<Seat, bool>> filter = null)
+        {
+            DbSet<Seat> seats = Context.Set<Seat>();
+            if (filter == null) return seats.ToList();
+            IQueryable<Seat> query = seats;
+            return query.Where(filter).ToList();
+        }
+
+        public List<Seat> GetNonReservedSeats(int quantity, int scheduleId)
+        {
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            TrainsRepository trainsRepository = new TrainsRepository();
+            List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId);
+            List<Seat> seats = trainsRepository.GetSeats();
+
+            foreach (var res in reservations)
+            {
+                seats.Remove(seats.Where(s => s.Id == res.SeatId).FirstOrDefault());
+            }
+
+            return seats;
+        }
+
+        public Seat GetSeat(Expression<Func<Seat, bool>> filter)
+        {
+            DbSet<Seat> seats = Context.Set<Seat>();
+            IQueryable<Seat> query = seats;
+            return query
+                   .Where(filter)
+                   .FirstOrDefault();
+        }
+
+        #endregion
+        //----------------------------------------------------------------------------------
+        #region Train Type Methods
 
         public List<TrainType> GetTrainTypes(Expression<Func<TrainType, bool>> filter = null)
         {
@@ -31,39 +70,9 @@ namespace RailwaySystem.Repositories
             return query.FirstOrDefault(tt => tt.Id == train.TypeId);
         }
 
-        public List<Seat> GetSeats(Expression<Func<Seat, bool>> filter = null)
-        {
-            DbSet<Seat> seats = Context.Set<Seat>();
-            if (filter == null) return seats.ToList();
-            IQueryable<Seat> query = seats;
-            return query.Where(filter).ToList();
-        }
-
-        public Seat GetSeat(Expression<Func<Seat, bool>> filter)
-        {
-            DbSet<Seat> seats = Context.Set<Seat>();
-            IQueryable<Seat> query = seats;
-            return query
-                   .Where(filter)
-                   .FirstOrDefault();
-        }
-
-        public List<SeatType> GetSeatTypes(Expression<Func<SeatType, bool>> filter = null)
-        {
-            DbSet<SeatType> seatTypes = Context.Set<SeatType>();
-            if (filter == null) return seatTypes.ToList();
-            IQueryable<SeatType> query = seatTypes;
-            return query.Where(filter).ToList();
-        }
-
-        public SeatType GetSeatType(Expression<Func<SeatType, bool>> filter)
-        {
-            DbSet<SeatType> seatTypes = Context.Set<SeatType>();
-            IQueryable<SeatType> query = seatTypes;
-            return query
-                   .Where(filter)
-                   .FirstOrDefault();
-        }
+        #endregion
+        //----------------------------------------------------------------------------------
+        #region Train Methods
 
         public void Add(Train train, List<Seat> seats)
         {
@@ -94,5 +103,8 @@ namespace RailwaySystem.Repositories
             Items.Remove(train);
             Context.SaveChanges();
         }
+
+        #endregion
+        //----------------------------------------------------------------------------------
     }
 }

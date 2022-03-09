@@ -7,6 +7,14 @@
 <fieldset>
     <div>
         <h1>Buying ticket for @Model.StartStationName - @Model.EndStationName</h1>
+        <h2>Departing at @Model.DepartureDate</h2>
     </div>
+    <form action="/Ticket/TicketOverview" method="post">
+        <div class="grid">
+            <div class="col-3">
+                <input class="form-control" type="submit" value="To Overview... "/>
+            </div>
+        </div>
+    </form>
 </fieldset>
 

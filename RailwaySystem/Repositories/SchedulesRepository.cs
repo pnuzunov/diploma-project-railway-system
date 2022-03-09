@@ -1,6 +1,7 @@
 ﻿using RailwaySystem.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -42,6 +43,24 @@ namespace RailwaySystem.Repositories
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Id == schedule.TrainId);
             return train;
+        }
+
+        public List<SeatReservation> GetSeatReservations(int scheduleId)
+        {
+            Schedule schedule = this.GetById(scheduleId);
+            if (schedule == null) return null;
+            DbSet<SeatReservation> reservations = Context.Set<SeatReservation>();
+            IQueryable<SeatReservation> query = reservations;
+            return query.Where(r => r.ScheduleId == scheduleId).ToList();
+        }
+
+        public List<Schedule> GetFilteredSchedules(int trackId, TimeSpan time)
+        {
+            List<Schedule> schedules = this.GetAll()
+                                            .Where(s => s.TrackId == trackId
+                                                        && TimeSpan.Compare(s.Departure.TimeOfDay, time) >= 0)
+                                            .ToList();
+            return schedules;
         }
     }
 }

@@ -21,5 +21,8 @@ namespace RailwaySystem.Entities
         [ForeignKey("TrackId")]
         public Track WhichTrack { get; set; }
         public decimal PricePerTicket { get; set; }
+        public int? ScheduleTypeId { get; set; }
+        [ForeignKey("ScheduleTypeId")]
+        public ScheduleType ScheduleType { get; set; }
     }
 }

@@ -31,8 +31,8 @@
                 <div class="col-2 p-3">
                     @Html.DropDownListFor(m => m.EndStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
                 </div>
-                <div class="col-2 p-3">
-                    @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
+                <div class="col-3 p-3">
+                    @Html.TextBoxFor(m => m.DepartureDate, new { @type = "datetime-local", @class = "form-control date-time-picker" })
                 </div>
                 <div class="col-1 p-2 d-flex">
                     <input class="btn btn-light p-2 mr-2" type="submit" value="Search" />
@@ -89,10 +89,10 @@
                 }
 
                 <div class="col-2">
-                    @(item.Departure)
+                    @(item.Departure.TimeOfDay.ToString())
                 </div>
                 <div class="col-2">
-                    @(item.Arrival)
+                    @(item.Arrival.TimeOfDay.ToString())
                 </div>
                 <div class="col-2">
                     @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
@@ -116,7 +116,7 @@
                     <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
                 </div>
                 <div class="col-1">
-                    <a href="/Ticket/Buy?id=@(item.Id)">Ticket</a>
+                    <a href="/Ticket/Buy?id=@(item.Id)&date=@(Model?.DepartureDate.Date.ToString())&time=@(item.Departure.TimeOfDay.ToString())">Ticket</a>
                 </div>
             </div>
             }

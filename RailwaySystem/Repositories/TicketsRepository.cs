@@ -8,5 +8,6 @@ namespace RailwaySystem.Repositories
 {
     public class TicketsRepository : BaseRepository<Ticket>
     {
+
     }
 }

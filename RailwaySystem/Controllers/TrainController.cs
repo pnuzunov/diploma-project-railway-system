@@ -18,7 +18,7 @@ namespace RailwaySystem.Controllers
             {
                 ModelState.AddModelError("AuthError", "Train already exists!");
             }
-            if(model.SeatsFirstClass < 0 || model.SeatsSecondClass <= 0)
+            if(model.SeatsFirstClass < 0 || model.RegularSeats <= 0)
             {
                 ModelState.AddModelError("AuthError", "Insufficient seat count.");
             }
@@ -37,7 +37,6 @@ namespace RailwaySystem.Controllers
         protected void GenerateEntities(Train train, List<Seat> seats, CreateVM model)
         {
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<SeatType> seatTypes = trainsRepository.GetSeatTypes();
             train.Name = model.Name;
             train.TypeId = model.TypeId;
 
@@ -46,19 +45,17 @@ namespace RailwaySystem.Controllers
             {
                 seats.Add(new Seat()
                 {
-                    Reserved = false,
                     SeatNumber = (i + 1),
-                    SeatTypeId = seatTypes.Where(st => st.Name == TrainsRepository.FIRST_CLASS).FirstOrDefault().Id,
+                    IsFirstClass = true
                 });
                 seatNum++;
             }
-            for (int i = (seatNum-1); i < model.SeatsSecondClass + seatNum; i++)
+            for (int i = (seatNum-1); i < model.RegularSeats + seatNum; i++)
             {
                 seats.Add(new Seat()
                 {
-                    Reserved = false,
                     SeatNumber = (i + 1),
-                    SeatTypeId = seatTypes.Where(st => st.Name == TrainsRepository.SECOND_CLASS).FirstOrDefault().Id,
+                    IsFirstClass = false
                 });
             }
         }

@@ -14,9 +14,11 @@ namespace RailwaySystem.Repositories
         public DbSet<Track> Tracks { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScheduleType> ScheduleTypes { get; set; }
+        public DbSet<ScheduleCancellation> ScheduleCancellations { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Seat> Seats { get; set; }
-        public DbSet<SeatType> SeatTypes { get; set; }
+        public DbSet<SeatReservation> SeatReservations { get; set; }
         public DbSet<TrainType> TrainTypes { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<CreditRecord> CreditRecords { get; set; }
@@ -29,9 +31,11 @@ namespace RailwaySystem.Repositories
             Tracks = this.Set<Track>();
             Stations = this.Set<Station>();
             Schedules = this.Set<Schedule>();
+            ScheduleTypes = this.Set<ScheduleType>();
+            ScheduleCancellations = this.Set<ScheduleCancellation>();
             Tickets = this.Set<Ticket>();
             Seats = this.Set<Seat>();
-            SeatTypes = this.Set<SeatType>();
+            SeatReservations = this.Set<SeatReservation>();
             TrainTypes = this.Set<TrainType>();
             UserRoles = this.Set<UserRole>();
             CreditRecords = this.Set<CreditRecord>();
