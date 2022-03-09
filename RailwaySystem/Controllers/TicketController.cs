@@ -33,7 +33,7 @@ namespace RailwaySystem.Controllers
                 return false;
             }
 
-            model.ScheduleId = scheduleId;
+            model.Schedule = schedule;
             model.UserId = ((User)Session["loggedUser"]).Id;
             model.StartStationName = startStation;
             model.EndStationName = endStation;
@@ -54,7 +54,7 @@ namespace RailwaySystem.Controllers
 
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Name == model.TrainName);
-            List<Seat> seats = trainsRepository.GetSeats(s => s.TrainId == train.Id);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.Schedule.Id);
             //seats = seats.Where(s => s.SeatType == model.SeatType).ToList();
 
             if(model.Quantity > seats.Count)
@@ -76,11 +76,12 @@ namespace RailwaySystem.Controllers
             ticket.TrainType = model.TrainType;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.ScheduleId);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.Schedule.Id);
             foreach(var seat in seats)
             {
                 ticket.SeatNumbers = "|" + seat.SeatNumber;
             }
+            model.Seats = seats;
         }
 
         public ActionResult Index()
@@ -137,7 +138,12 @@ namespace RailwaySystem.Controllers
         public ActionResult ConfirmBuy(BuyVM model)
         {
             TicketsRepository ticketsRepository = new TicketsRepository();
-
+            Ticket ticket = new Ticket();
+            BuildEntity(ticket, model);
+            if(!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats))
+            {
+                ModelState.AddModelError("AuthError", "Ticket reservation failed.");
+            }
             return RedirectToAction("Index", "Ticket");
         }
     }

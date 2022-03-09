@@ -31,9 +31,11 @@ namespace RailwaySystem.Repositories
             List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId);
             List<Seat> seats = trainsRepository.GetSeats();
 
+            if (seats == null) return new List<Seat>();
+
             foreach (var res in reservations)
             {
-                seats.Remove(seats.Where(s => s.Id == res.SeatId).FirstOrDefault());
+                seats.Remove(seats.Where(s => s.Id == res.SeatId)?.FirstOrDefault());
             }
 
             return seats;
