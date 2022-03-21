@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace RailwaySystem.ViewModels.Ticket
 {
@@ -15,9 +17,15 @@ namespace RailwaySystem.ViewModels.Ticket
         public string StartStationName { get; set; }
         public string EndStationName { get; set; }
         public DateTime DepartureDate { get; set; }
+
+        [DisplayName("Number of tickets")]
+        [Required(ErrorMessage = "This field is required!")]
         public int Quantity { get; set; }
-        public List<Entities.Seat> Seats { get; set; }
+        [DisplayName("Seat type")]
+        [Required(ErrorMessage = "This field is required!")]
         public string SeatType { get; set; }
+
+        public List<Entities.Seat> Seats { get; set; }
         public decimal Price { get; set; }
         public DateTime BuyDate { get; set; }
     }

@@ -6,3 +6,9 @@
 
 <h2>Index</h2>
 
+<div>
+    @foreach (var ticket in (List<Ticket>)ViewData["items"])
+    {
+        <p>@ticket.Id - @ticket.BeginStation - @ticket.EndStation</p>
+    }
+</div>

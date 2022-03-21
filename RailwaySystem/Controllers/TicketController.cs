@@ -79,8 +79,9 @@ namespace RailwaySystem.Controllers
             List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.Schedule.Id);
             foreach(var seat in seats)
             {
-                ticket.SeatNumbers = "|" + seat.SeatNumber;
+                ticket.SeatNumbers += "|" + seat.SeatNumber;
             }
+            ticket.SeatNumbers += "|";
             model.Seats = seats;
         }
 
@@ -90,9 +91,9 @@ namespace RailwaySystem.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-
+            User loggedUser = (User)Session["loggedUser"];
             TicketsRepository ticketsRepository = new TicketsRepository();
-            ViewData["items"] = ticketsRepository.GetAll(ticket => ticket.UserId == ((User)Session["loggedUser"]).Id);
+            ViewData["items"] = ticketsRepository.GetAll(ticket => ticket.UserId == loggedUser.Id);
             return View();
         }
 
@@ -113,7 +114,6 @@ namespace RailwaySystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
             ViewData["route"] = model.StartStationName + " - " + model.EndStationName;
-            Session["ticketBuyVM"] = model;
             return View(model);
         }
 
@@ -126,6 +126,7 @@ namespace RailwaySystem.Controllers
                 return View(model);
             }
 
+            Session["ticketBuyVM"] = model;
             return RedirectToAction("TicketOverview", "Ticket");
         }
 
@@ -136,8 +137,9 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult ConfirmBuy(BuyVM model)
+        public ActionResult ConfirmBuy()
         {
+            BuyVM model = (BuyVM)Session["ticketBuyVM"];
             TicketsRepository ticketsRepository = new TicketsRepository();
             Ticket ticket = new Ticket();
             BuildEntity(ticket, model);

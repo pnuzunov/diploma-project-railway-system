@@ -5,4 +5,10 @@
 }
 
 <h2>@Model.StartStationName - @Model.EndStationName</h2>
-
+<form action="/Ticket/ConfirmBuy" method="post">
+    <div class="row">
+        <div class="col-3">
+            <input class="form-control" type="submit" value="Confirm" />
+        </div>
+    </div>
+</form>

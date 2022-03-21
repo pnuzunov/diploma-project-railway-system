@@ -12,6 +12,14 @@
         <h2>Departing at @Model.DepartureDate</h2>
     </div>
     <form action="/Ticket/Buy" method="post">
+        @Html.HiddenFor(m => m.DepartureDate)
+        @Html.HiddenFor(m => m.EndStationName)
+        @Html.HiddenFor(m => m.Schedule.Id)
+        @Html.HiddenFor(m => m.Schedule.PricePerTicket)
+        @Html.HiddenFor(m => m.StartStationName)
+        @Html.HiddenFor(m => m.TrainName)
+        @Html.HiddenFor(m => m.TrainType)
+        @Html.HiddenFor(m => m.UserId)
         <div class="grid">
             <div class="row">
                 <div class="col-1">
@@ -21,13 +29,19 @@
                     @Html.RadioButtonFor(m => m.SeatType, FirstClass) @(FirstClass) <br />
                     @Html.RadioButtonFor(m => m.SeatType, RegularClass) @(RegularClass)
                 </div>
+                <div class="col-3">
+                    @Html.ValidationMessageFor(m => m.SeatType)
+                </div>
             </div>
             <div class="row">
                 <div class="col-1">
                     @Html.LabelFor(m => m.Quantity)
                 </div>
                 <div class="col-3">
-                    @Html.TextBoxFor(m => m.Quantity, new { @type="number", @class="form-control" })
+                    @Html.TextBoxFor(m => m.Quantity, new { @type = "number", @class = "form-control" })
+                </div>
+                <div class="col-3">
+                    @Html.ValidationMessageFor(m => m.Quantity)
                 </div>
             </div>
 

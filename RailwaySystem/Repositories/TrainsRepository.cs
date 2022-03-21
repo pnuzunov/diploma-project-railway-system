@@ -30,15 +30,21 @@ namespace RailwaySystem.Repositories
             TrainsRepository trainsRepository = new TrainsRepository();
             List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId);
             List<Seat> seats = trainsRepository.GetSeats();
+            List<Seat> freeSeats = new List<Seat>();
 
-            if (seats == null) return new List<Seat>();
+            if (seats == null) return freeSeats;
 
-            foreach (var res in reservations)
+            int counter = 0;
+            foreach (var seat in seats)
             {
-                seats.Remove(seats.Where(s => s.Id == res.SeatId)?.FirstOrDefault());
+                if (counter == quantity) break;
+                if(!reservations.Any(res => res.SeatId == seat.Id)) {
+                    freeSeats.Add(seat);
+                    counter++;
+                }
             }
 
-            return seats;
+            return freeSeats;
         }
 
         public Seat GetSeat(Expression<Func<Seat, bool>> filter)

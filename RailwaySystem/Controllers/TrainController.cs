@@ -50,7 +50,7 @@ namespace RailwaySystem.Controllers
                 });
                 seatNum++;
             }
-            for (int i = (seatNum-1); i < model.RegularSeats + seatNum; i++)
+            for (int i = (seatNum-1); i < model.RegularSeats + (seatNum-1); i++)
             {
                 seats.Add(new Seat()
                 {
