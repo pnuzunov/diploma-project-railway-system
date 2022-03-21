@@ -11,6 +11,11 @@ namespace RailwaySystem.Repositories
     {
         public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats)
         {
+            ticket.BuyDate = DateTime.Now;
+            this.Add(ticket);
+
+            ticket = this.GetFirstOrDefault(t => t.BuyDate == ticket.BuyDate && t.UserId == ticket.UserId);
+
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
             foreach(var seat in seats)
             {
@@ -18,7 +23,8 @@ namespace RailwaySystem.Repositories
                 {
                     ScheduleId = schedule.Id,
                     SeatId = seat.Id,
-                    Departure = ticket.Departure
+                    Departure = ticket.Departure,
+                    TicketId = ticket.Id
                 };
                 
                 if(seatReservations.Where(sr => sr.ScheduleId == seatReservation.ScheduleId
@@ -29,7 +35,7 @@ namespace RailwaySystem.Repositories
                 }
                 seatReservations.Add(seatReservation);
             }
-            this.Add(ticket);
+            Context.SaveChanges();
             return true;
         }
     }
