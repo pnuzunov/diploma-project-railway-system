@@ -1,5 +1,7 @@
 ﻿@model RailwaySystem.ViewModels.Ticket.BuyVM
 @{
+    String FirstClass = RailwaySystem.Repositories.TrainsRepository.FIRST_CLASS;
+    String RegularClass = RailwaySystem.Repositories.TrainsRepository.REGULAR_CLASS;
     ViewBag.Title = "Buy";
     Layout = "~/Views/Shared/Shared.cshtml";
 }
@@ -9,10 +11,30 @@
         <h1>Buying ticket for @Model.StartStationName - @Model.EndStationName</h1>
         <h2>Departing at @Model.DepartureDate</h2>
     </div>
-    <form action="/Ticket/TicketOverview" method="post">
+    <form action="/Ticket/Buy" method="post">
         <div class="grid">
-            <div class="col-3">
-                <input class="form-control" type="submit" value="To Overview... "/>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.SeatType)
+                </div>
+                <div class="col-3">
+                    @Html.RadioButtonFor(m => m.SeatType, FirstClass) @(FirstClass) <br />
+                    @Html.RadioButtonFor(m => m.SeatType, RegularClass) @(RegularClass)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Quantity)
+                </div>
+                <div class="col-3">
+                    @Html.TextBoxFor(m => m.Quantity, new { @type="number", @class="form-control" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <input class="form-control" type="submit" value="To Overview... " />
+                </div>
             </div>
         </div>
     </form>

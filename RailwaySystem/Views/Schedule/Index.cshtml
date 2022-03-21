@@ -43,89 +43,91 @@
 
     </div>
 
-    <div class="card bg-light shadow m-3 p-3">
-        <div class="grid bold">
-            <div class="row">
-                <div class="col-2">
-                    Train
-                </div>
-                <div class="col-2">
-                    Departure
-                </div>
-                <div class="col-2">
-                    Arrival
-                </div>
-                <div class="col-2">
-                    Travel Time
-                </div>
-                <div class="col-2">
-                    Route
+    @if (Model != null)
+    {
+        <div class="card bg-light shadow m-3 p-3">
+            <div class="grid bold">
+                <div class="row">
+                    <div class="col-2">
+                        Train
+                    </div>
+                    <div class="col-2">
+                        Departure
+                    </div>
+                    <div class="col-2">
+                        Arrival
+                    </div>
+                    <div class="col-2">
+                        Travel Time
+                    </div>
+                    <div class="col-2">
+                        Route
+                    </div>
                 </div>
             </div>
-        </div>
-        <hr />
-        <div class="grid">
+            <hr />
+            <div class="grid">
 
-            @foreach (var item in (List<Schedule>)ViewData["items"])
-            {
-            <div class="row m-3">
-                @foreach (var train in (List<Train>)ViewData["trains"])
+                @foreach (var item in (List<Schedule>)ViewData["items"])
                 {
-
-                    if (train.Id == item.TrainId)
+                <div class="row m-3">
+                    @foreach (var train in (List<Train>)ViewData["trains"])
                     {
-                        foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
+
+                        if (train.Id == item.TrainId)
                         {
-                            if (trainType.Id == train.TypeId)
+                            foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
                             {
-                                <div class="col-2">
-                                    @(train.Name) (@(trainType.Name))
-                                </div>
-                                break;
+                                if (trainType.Id == train.TypeId)
+                                {
+                                    <div class="col-2">
+                                        @(train.Name) (@(trainType.Name))
+                                    </div>
+                                    break;
+                                }
                             }
+
                         }
-
                     }
-                }
 
-                <div class="col-2">
-                    @(item.Departure.TimeOfDay.ToString())
-                </div>
-                <div class="col-2">
-                    @(item.Arrival.TimeOfDay.ToString())
-                </div>
-                <div class="col-2">
-                    @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
-                </div>
+                    <div class="col-2">
+                        @(item.Departure.ToString("HH:mm"))
+                    </div>
+                    <div class="col-2">
+                        @(item.Arrival.ToString("HH:mm"))
+                    </div>
+                    <div class="col-2">
+                        @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
+                    </div>
 
-                @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
-                {
-                    if (route.Key == item.TrackId)
+                    @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
                     {
+                        if (route.Key == item.TrackId)
+                        {
 
-                        <div class="col-2">
-                            @(route.Value)
-                        </div>
-                        break;
+                            <div class="col-2">
+                                @(route.Value)
+                            </div>
+                            break;
+                        }
                     }
+                    <div class="col-1">
+                        <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
+                    </div>
+                    <div class="col-1">
+                        <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
+                    </div>
+                    <div class="col-1">
+                        <a href="/Ticket/Buy?id=@(item.Id)&dt=@(Model?.DepartureDate.Date.ToString("dd-MM-yyyy") + "-" + item.Departure.ToString("HH-mm"))">Ticket</a>
+                    </div>
+                </div>
                 }
-                <div class="col-1">
-                    <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
-                </div>
-                <div class="col-1">
-                    <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
-                </div>
-                <div class="col-1">
-                    <a href="/Ticket/Buy?id=@(item.Id)&date=@(Model?.DepartureDate.Date.ToString())&time=@(item.Departure.TimeOfDay.ToString())">Ticket</a>
-                </div>
             </div>
-            }
-        </div>
-        <div>
-            <a href="/Schedule/Create">Create New...</a>
-        </div>
+            <div>
+                <a href="/Schedule/Create">Create New...</a>
+            </div>
 
-    </div>
-
-</fieldset>
+        </div>
+    }
+    </fieldset>
 

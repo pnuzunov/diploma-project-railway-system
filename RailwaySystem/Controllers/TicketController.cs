@@ -96,24 +96,24 @@ namespace RailwaySystem.Controllers
             return View();
         }
 
-        public ActionResult Buy(int id, DateTime date, DateTime time)
+        public ActionResult Buy(int id, String dt)
         {
             if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            DateTime dateTime = new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, 0);
+            String[] tokens = dt.Split('-');
+
+            DateTime dateTime = new DateTime(int.Parse(tokens[2]), int.Parse(tokens[1]), int.Parse(tokens[0]), int.Parse(tokens[3]), int.Parse(tokens[4]), 0);
 
             BuyVM model = new BuyVM();
             if(!GenerateModel(id, dateTime, model))
             {
                 return RedirectToAction("Index", "Home");
             }
-            TrainsRepository trainsRepository = new TrainsRepository();
-
             ViewData["route"] = model.StartStationName + " - " + model.EndStationName;
-
+            Session["ticketBuyVM"] = model;
             return View(model);
         }
 
@@ -129,8 +129,9 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("TicketOverview", "Ticket");
         }
 
-        public ActionResult TicketOverview(BuyVM model)
+        public ActionResult TicketOverview()
         {
+            BuyVM model = (BuyVM)Session["ticketBuyVM"];
             return View(model);
         }
 
