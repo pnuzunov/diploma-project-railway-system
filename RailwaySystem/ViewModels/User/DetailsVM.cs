@@ -8,6 +8,7 @@ namespace RailwaySystem.ViewModels.User
 {
     public class DetailsVM
     {
+        public int Id { get; set; }
         [DisplayName("Username")]
         public string Username { get; set; }
         [DisplayName("Password")]
@@ -20,5 +21,7 @@ namespace RailwaySystem.ViewModels.User
         public string Email { get; set; }
         [DisplayName("Phone")]
         public string Phone { get; set; }
+        [DisplayName("Total Credit")]
+        public decimal Credit { get; set; }
     }
 }

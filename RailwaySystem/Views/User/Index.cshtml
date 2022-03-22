@@ -3,63 +3,43 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
     User loggedUser = (User)Session["loggedUser"];
-    bool canAccess = new RailwaySystem.Repositories.UsersRepository()
-        .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UserRolesRepository.Levels.FULL_ACCESS);
+    bool canDelete = new RailwaySystem.Repositories.UsersRepository()
+        .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
 }
 
-    <fieldset>
-        <div class="grid bold">
-            <div class="row">
-                <div class="col-3">
-                    Username
-                </div>
-                <div class="col-3">
-                    First Name
-                </div>
-                <div class="col-3">
-                    Last Name
-                </div>
-                <div class="col-3">
-                    Email Address
-                </div>
-                <div class="col-3">
-                    Phone Number
-                </div>
+<fieldset>
+    <div class="grid bold">
+        <div class="row">
+            <div class="col-1">
+                First Name
+            </div>
+            <div class="col-1">
+                Last Name
             </div>
         </div>
-        <hr />
-        <div class="grid">
-            @foreach (var item in (List<User>)ViewData["items"])
+    </div>
+    <hr />
+    <div class="grid">
+        @foreach (var item in (List<User>)ViewData["items"])
+        {
+        <div class="row">
+            <div class="col-1">
+                @(item.FirstName)
+            </div>
+            <div class="col-1">
+                @(item.LastName)
+            </div>
+            <div class="col-1">
+                <a href="/User/Details?id=@(item.Id)">Details</a>
+            </div>
+            @if (canDelete)
             {
-
-                if (item.Id != 1)
-                {
-                    <div class="row">
-                        <div class="col-3">
-                            @(item.Username)
-                        </div>
-                        <div class="col-3">
-                            @(item.FirstName)
-                        </div>
-                        <div class="col-3">
-                            @(item.LastName)
-                        </div>
-                        <div class="col-3">
-                            @(item.Email)
-                        </div>
-                        <div class="col-3">
-                            @(item.Phone)
-                        </div>
-                        @if (canAccess)
-                        {
-                            <div class="col-1">
-                                <a href="/Station/Delete?id=@(item.Id)">Delete</a>
-                            </div>
-                        }
-                    </div>
-                }
-
+                <div class="col-1">
+                    <a href="/User/Delete?id=@(item.Id)">Delete</a>
+                </div>
             }
         </div>
-    </fieldset>
+        }
+    </div>
+</fieldset>
 

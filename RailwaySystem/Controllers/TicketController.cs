@@ -69,7 +69,7 @@ namespace RailwaySystem.Controllers
             ticket.BeginStation = model.StartStationName;
             ticket.EndStation = model.EndStationName;
             ticket.Departure = model.DepartureDate;
-            ticket.Price = model.Price;
+            ticket.Price = model.Price*model.Quantity;
             ticket.Quantity = model.Quantity;
             ticket.SeatType = model.SeatType;
             ticket.TrainName = model.TrainName;
@@ -146,7 +146,9 @@ namespace RailwaySystem.Controllers
             if(!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats))
             {
                 ModelState.AddModelError("AuthError", "Ticket reservation failed.");
+                return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm")});
             }
+            Session["ticketBuyVM"] = null;
             return RedirectToAction("Index", "Ticket");
         }
     }

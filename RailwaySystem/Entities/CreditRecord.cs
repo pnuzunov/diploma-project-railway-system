@@ -11,7 +11,7 @@ namespace RailwaySystem.Entities
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public User Customer { get; set; }
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         [ForeignKey("EmployeeId")]
         public User Employee { get; set; }
         public decimal Amount { get; set; }

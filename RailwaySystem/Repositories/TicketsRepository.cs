@@ -11,6 +11,18 @@ namespace RailwaySystem.Repositories
     {
         public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats)
         {
+            UsersRepository usersRepository = new UsersRepository();
+            if (!usersRepository.IsCreditValid(-(ticket.Price), ticket.UserId))
+            {
+                return false;
+            }
+            usersRepository.AddCreditRecord(new CreditRecord() {
+                Amount = -(ticket.Price),
+                CustomerId = ticket.UserId,
+                EmployeeId = null,
+                Date = DateTime.Now
+            });
+
             ticket.BuyDate = DateTime.Now;
             this.Add(ticket);
 

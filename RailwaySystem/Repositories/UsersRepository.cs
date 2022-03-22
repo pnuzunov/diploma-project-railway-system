@@ -16,7 +16,8 @@ namespace RailwaySystem.Repositories
             EMPLOYEE_ACCESS = 2,
             CUSTOMER_ACCESS = 3
         }
-
+        //----------------------------------------------------------------------------------
+        #region User Roles Methods
         public List<UserRole> GetUserRoles(Expression<Func<UserRole, bool>> filter = null)
         {
             DbSet<UserRole> userRoles = Context.Set<UserRole>();
@@ -43,5 +44,49 @@ namespace RailwaySystem.Repositories
             if (userRole == null) return false;
             return userRole.LevelOfAccess <= ((int)level);
         }
+
+        #endregion
+        //----------------------------------------------------------------------------------
+        #region Credit Records Methods
+
+        public decimal GetTotalCredit(int userId)
+        {
+            DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
+            IQueryable<CreditRecord> listOfCreditRecords = creditRecords.Where(cr => cr.CustomerId == userId);
+            if (listOfCreditRecords.Count() == 0) return 0.0M;
+
+            decimal totalCredit = 0.0M;
+            foreach (var record in listOfCreditRecords)
+            {
+                totalCredit += record.Amount;
+            }
+
+            return totalCredit;
+        }
+
+        public bool IsCreditValid(decimal credit, int customerId)
+        {
+            decimal currentTotal = GetTotalCredit(customerId);
+            if (currentTotal + credit < 0.0M)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool AddCreditRecord(CreditRecord creditRecord)
+        {
+            if(!IsCreditValid(creditRecord.Amount, creditRecord.CustomerId))
+            {
+                return false;
+            }
+            DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
+            creditRecord.Date = DateTime.Now;
+            creditRecords.Add(creditRecord);
+            Context.SaveChanges();
+            return true;
+        }
+
+        #endregion
     }
 }
