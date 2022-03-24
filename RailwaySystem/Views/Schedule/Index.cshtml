@@ -5,14 +5,17 @@
 }
 @model RailwaySystem.ViewModels.Schedule.ListVM
 
-<fieldset class="m-3">
+<fieldset class="wrapper container">
     <div class="grid">
-        <div class="row border border-3 p-2">
+        <div class="row border border-3 pl-3 pt-3 pb-3">
             <div class="col-2">
                 Station to depart
             </div>
             <div class="col-2">
                 Station to arrive
+            </div>
+            <div class="col-2">
+                Date
             </div>
         </div>
         <div class="row">
@@ -36,7 +39,7 @@
                 </div>
                 <div class="col-1 p-2 d-flex">
                     <input class="btn btn-light p-2 mr-2" type="submit" value="Search" />
-                    <a href="/Schedule/Index" class="btn btn-light p-2">Clear</a>
+                    <a href="/Schedule/Index" class="btn btn-light">Clear</a>
                 </div>
             </div>
         </form>

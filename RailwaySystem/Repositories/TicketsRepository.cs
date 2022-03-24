@@ -9,6 +9,14 @@ namespace RailwaySystem.Repositories
 {
     public class TicketsRepository : BaseRepository<Ticket>
     {
+        public Ticket GetTicket(Ticket ticket)
+        {
+            DbSet<Ticket> tickets = Context.Set<Ticket>();
+            IQueryable<Ticket> query = tickets;
+            return query.Where(q => q.Equals(ticket))
+                        .FirstOrDefault();
+        }
+
         public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats)
         {
             UsersRepository usersRepository = new UsersRepository();
@@ -16,17 +24,25 @@ namespace RailwaySystem.Repositories
             {
                 return false;
             }
-            usersRepository.AddCreditRecord(new CreditRecord() {
+
+            CreditRecord creditRecord = new CreditRecord()
+            {
                 Amount = -(ticket.Price),
                 CustomerId = ticket.UserId,
                 EmployeeId = null,
                 Date = DateTime.Now
-            });
+            };
+
+            usersRepository.AddCreditRecord(creditRecord);
 
             ticket.BuyDate = DateTime.Now;
             this.Add(ticket);
 
-            ticket = this.GetFirstOrDefault(t => t.BuyDate == ticket.BuyDate && t.UserId == ticket.UserId);
+            ticket = this.GetFirstOrDefault(t => t.BuyDate.Equals(ticket.BuyDate) 
+                                              && t.UserId == ticket.UserId);
+
+            creditRecord = usersRepository.GetCreditRecord(cr => cr.Date.Equals(creditRecord.Date)
+                                                              && cr.CustomerId == creditRecord.CustomerId);
 
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
             foreach(var seat in seats)
@@ -43,6 +59,8 @@ namespace RailwaySystem.Repositories
                 && sr.SeatId == seatReservation.SeatId
                 && sr.Departure == seatReservation.Departure).FirstOrDefault() != null)
                 {
+                    this.Delete(ticket.Id);
+                    usersRepository.Delete(creditRecord.Id);
                     return false;
                 }
                 seatReservations.Add(seatReservation);

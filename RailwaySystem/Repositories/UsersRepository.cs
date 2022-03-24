@@ -87,6 +87,14 @@ namespace RailwaySystem.Repositories
             return true;
         }
 
+        public CreditRecord GetCreditRecord(Expression<Func<CreditRecord,bool>> filter)
+        {
+            DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
+            IQueryable<CreditRecord> query = creditRecords;
+            return query.Where(filter)
+                        .FirstOrDefault();
+        }
+
         #endregion
     }
 }

@@ -6,11 +6,23 @@ using System.Web.Mvc;
 using RailwaySystem.Repositories;
 using RailwaySystem.Entities;
 using RailwaySystem.ViewModels.Ticket;
+using RailwaySystem.HelperClasses;
 
 namespace RailwaySystem.Controllers
 {
     public class TicketController : Controller
     {
+        private bool CanAccessPage(BuyVM model)
+        {
+            User loggedUser = (User)Session["loggedUser"];
+
+            if (loggedUser == null || model == null || model.UserId != loggedUser.Id)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private bool GenerateModel(int scheduleId, DateTime departure, BuyVM model)
         {
             SchedulesRepository schedulesRepository = new SchedulesRepository();
@@ -120,6 +132,11 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Buy(BuyVM model)
         {
+            if (!CanAccessPage(model))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             CheckModelValid(model);
             if(!ModelState.IsValid)
             {
@@ -132,7 +149,15 @@ namespace RailwaySystem.Controllers
 
         public ActionResult TicketOverview()
         {
+
             BuyVM model = (BuyVM)Session["ticketBuyVM"];
+
+            if (!CanAccessPage(model))
+            {
+                Session["ticketBuyVM"] = null;
+                return RedirectToAction("Index", "Home");
+            }
+
             return View(model);
         }
 
@@ -140,6 +165,13 @@ namespace RailwaySystem.Controllers
         public ActionResult ConfirmBuy()
         {
             BuyVM model = (BuyVM)Session["ticketBuyVM"];
+
+            if (!CanAccessPage(model))
+            {
+                Session["ticketBuyVM"] = null;
+                return RedirectToAction("Index", "Home");
+            }
+
             TicketsRepository ticketsRepository = new TicketsRepository();
             Ticket ticket = new Ticket();
             BuildEntity(ticket, model);
@@ -150,6 +182,20 @@ namespace RailwaySystem.Controllers
             }
             Session["ticketBuyVM"] = null;
             return RedirectToAction("Index", "Ticket");
+        }
+
+        public ActionResult DownloadResource(int id)
+        {
+            TicketsRepository ticketsRepository = new TicketsRepository();
+            Ticket ticket = ticketsRepository.GetById(id);
+
+            if(ticket == null)
+            {
+                return RedirectToAction("Index", "Ticket");
+            }
+            TicketPdfBuilder ticketPdf = new TicketPdfBuilder();
+
+            return new FileContentResult(ticketPdf.GeneratePdf(ticket), "application/pdf");
         }
     }
 }

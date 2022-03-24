@@ -110,7 +110,8 @@ namespace RailwaySystem.Controllers
             ViewData["trainTypes"] = trains.GetTrainTypes();
             ViewData["tracks"] = tracks.GetAll();
             ViewData["stations"] = stations.GetAll().OrderBy(i => i.Name).ToList();
-            ViewData["items"] = schedules.GetAll();
+            ViewData["items"] = new List<Schedule>();
+            //ViewData["items"] = schedules.GetAll();
 
             if (model != null && model.StartStationId != 0 && model.EndStationId != 0 ) {
                 Track track = tracks.GetFirstOrDefault(tr => tr.StartStationId == model.StartStationId && tr.EndStationId == model.EndStationId);
@@ -139,6 +140,10 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Index(ListVM model)
         {
+            if(model.StartStationId == 0 || model.EndStationId == 0)
+            {
+                LoadFilteredData(null);
+            }
             LoadFilteredData(model);
             return View(model);
         }

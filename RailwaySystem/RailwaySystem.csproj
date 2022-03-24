@@ -248,6 +248,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelperClasses\TicketPdfBuilder.cs" />
     <Compile Include="Migrations\202002281251417_Users_Support.cs" />
     <Compile Include="Migrations\202002281251417_Users_Support.designer.cs">
       <DependentUpon>202002281251417_Users_Support.cs</DependentUpon>

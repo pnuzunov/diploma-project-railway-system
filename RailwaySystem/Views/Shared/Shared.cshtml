@@ -1,41 +1,88 @@
 ﻿@{
     Layout = null;
     User loggedUser = (User)Session["loggedUser"];
-    bool loggedAsAdmin = loggedUser?.Id == 1;
-}
+    bool isEmployee;
+    if (loggedUser == null)
+    {
+        isEmployee = false;
+    }
+    else {
+        isEmployee = new RailwaySystem.Repositories.UsersRepository()
+                          .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.EMPLOYEE_ACCESS);
+        }
+    }
 
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
 <meta name="viewport" content="width=device-width" />
 
-<div class="header">
-    <div>
-        <h1>RAILWAY SYSTEM</h1>
-    </div>
-</div>
-
 <fieldset>
-    <div>
-        <a href="/Home/DownloadResource">Test PDF Download</a>
-    </div>
-    <div>
-        <ul class="nav nav-justified mr-3 float-right">
-            @if (loggedAsAdmin)
-            {
-                <li class="p-3"><a class="btn p-1" href="/Train/Index">Trains</a></li>
-                <li class="p-3"><a class="btn p-1" href="/Station/Index">Stations</a></li>
-                <li class="p-3"><a class="btn p-1" href="/Track/Index">Tracks</a></li>
-                <li class="p-3"><a class="btn p-1" href="/User/Index">Accounts</a></li>
-            }
-            @if (loggedUser == null)
-            {
-                <li class="p-3"><a class="btn p-1" href="/Home/Login">Login</a></li>
-            }
-            else
-            {
-                <li class="p-3"><a class="btn p-1" href="/Home/Logout">Logout</a></li>
-            }
-        </ul>
-    </div>
-</fieldset>
+    <div class="bg-image" style="background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg'); height: 40vh ">
+        <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <h1 class="text-white mb-0">RAILWAY SYSTEM</h1>
+            </div>
+        </div>
 
+        @*<div class="">
+            <ul class="nav nav-justified mr-3 float-right">
+                @if (isEmployee)
+                {
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Train/Index">Trains</a></li>
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Station/Index">Stations</a></li>
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Track/Index">Tracks</a></li>
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/User/Index">Accounts</a></li>
+                }
+                @if (loggedUser == null)
+                {
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Login">Login</a></li>
+                }
+                else
+                {
+                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Logout">Logout</a></li>
+                }
+            </ul>
+        </div>*@
+
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light float-right">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    @if (isEmployee)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/Home/Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Station/Index">Stations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Train/Index">Trains</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Track/Index">Tracks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/User/Index">Accounts</a>
+                        </li>
+                    }
+                    @if (loggedUser == null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Home/Login">Login</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Home/Logout">Logout</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</fieldset>
 @RenderBody()
