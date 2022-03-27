@@ -58,7 +58,7 @@ namespace RailwaySystem.Controllers
 
         private void CheckModelValid(BuyVM model)
         {
-            if ("".Equals(model.SeatType.Trim()))
+            if (model.SeatType == null)
                 ModelState.AddModelError("AuthError", "Please select a seat type.");
             
             if (model.Quantity <= 0)
@@ -134,7 +134,7 @@ namespace RailwaySystem.Controllers
         {
             if (!CanAccessPage(model))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Home");
             }
 
             CheckModelValid(model);
@@ -155,7 +155,7 @@ namespace RailwaySystem.Controllers
             if (!CanAccessPage(model))
             {
                 Session["ticketBuyVM"] = null;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Home");
             }
 
             return View(model);
@@ -169,7 +169,7 @@ namespace RailwaySystem.Controllers
             if (!CanAccessPage(model))
             {
                 Session["ticketBuyVM"] = null;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Home");
             }
 
             TicketsRepository ticketsRepository = new TicketsRepository();
@@ -189,10 +189,17 @@ namespace RailwaySystem.Controllers
             TicketsRepository ticketsRepository = new TicketsRepository();
             Ticket ticket = ticketsRepository.GetById(id);
 
-            if(ticket == null)
+            if (ticket == null)
             {
                 return RedirectToAction("Index", "Ticket");
             }
+
+            BuyVM model = new BuyVM() { UserId = ticket.UserId };
+            if(!CanAccessPage(model))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             TicketPdfBuilder ticketPdf = new TicketPdfBuilder();
 
             return new FileContentResult(ticketPdf.GeneratePdf(ticket), "application/pdf");

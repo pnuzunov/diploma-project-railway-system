@@ -137,6 +137,12 @@ namespace RailwaySystem.Controllers
             LoadFilteredData(null);
         }
 
+        public override ActionResult Index()
+        {
+            LoadExtraViewData();
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Index(ListVM model)
         {
@@ -144,7 +150,7 @@ namespace RailwaySystem.Controllers
             {
                 LoadFilteredData(null);
             }
-            LoadFilteredData(model);
+            else LoadFilteredData(model);
             return View(model);
         }
     }

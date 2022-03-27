@@ -16,10 +16,10 @@
 <meta name="viewport" content="width=device-width" />
 
 <fieldset>
-    <div class="bg-image" style="background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg'); height: 40vh ">
-        <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+    <div class="bg-image" style="background-image: url('/Content/title-bg-image.jpg'); background-size: cover; background-position: bottom; height: 40vh ">
+        <div class="mask" style="background-color: rgba(0, 0, 0, 0.8);">
             <div class="d-flex justify-content-center align-items-center h-100">
-                <h1 class="text-white mb-0">RAILWAY SYSTEM</h1>
+                <h1><a class="text-white mb-0" href="/Home/Index">RAILWAY SYSTEM</a></h1>
             </div>
         </div>
 
@@ -45,7 +45,7 @@
 
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light float-right">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
@@ -76,6 +76,9 @@
                     else
                     {
                         <li class="nav-item">
+                            <a class="nav-link" href="/User/Details?id=@(loggedUser.Id)">My Account</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="/Home/Logout">Logout</a>
                         </li>
                     }
@@ -85,4 +88,6 @@
     </nav>
 
 </fieldset>
-@RenderBody()
+<body style="background-color: rgb(120 178 220)">
+    @RenderBody()
+</body>
