@@ -60,14 +60,36 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Index()
         {
-            UsersRepository usersRepository = new UsersRepository();
-            if (Session["loggedUser"] == null)
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            UsersRepository usersRepository = new UsersRepository();
             ViewData["items"] = usersRepository.GetAll();
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(RailwaySystem.ViewModels.BaseEditVM model)
+        {
+            UsersRepository usersRepository = new UsersRepository();
+            User loggedUser = (User)Session["loggedUser"];
+
+            if(!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            User query = usersRepository.GetById(model.Id);
+            if(query == null || query.RoleId < loggedUser.Id)
+            {
+                model = null;
+                ModelState.AddModelError("UserNotFoundError", "No user found.");
+                return View();
+            }
+            return RedirectToAction("Details", "User", new { id = model.Id });
         }
 
         public ActionResult Details(int id)
@@ -78,9 +100,8 @@ namespace RailwaySystem.Controllers
             }
             UsersRepository usersRepository = new UsersRepository();
             User loggedUser = (User)Session["loggedUser"];
-            bool canAccess = usersRepository.CanAccess(loggedUser.Id, UsersRepository.Levels.EMPLOYEE_ACCESS);
-
-            if (!canAccess && loggedUser.Id != id)
+            
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS) && loggedUser.Id != id)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -113,6 +134,11 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult AddCredit(DetailsVM model)
         {
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             UsersRepository usersRepository = new UsersRepository();
             CheckIsModelValid(model);
             if(!ModelState.IsValid)
@@ -125,7 +151,7 @@ namespace RailwaySystem.Controllers
             BuildEntity(creditRecord, model, loggedUser.Id);
             usersRepository.AddCreditRecord(creditRecord);
 
-            return RedirectToAction("Details", "User", new { id = 1 });
+            return RedirectToAction("Details", "User", new { id = model.Id });
         }
 
         public ActionResult Delete(int id)

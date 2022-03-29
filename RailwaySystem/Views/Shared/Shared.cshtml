@@ -6,11 +6,12 @@
     {
         isEmployee = false;
     }
-    else {
+    else
+    {
         isEmployee = new RailwaySystem.Repositories.UsersRepository()
                           .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.EMPLOYEE_ACCESS);
-        }
     }
+}
 
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
 <meta name="viewport" content="width=device-width" />
@@ -24,24 +25,24 @@
         </div>
 
         @*<div class="">
-            <ul class="nav nav-justified mr-3 float-right">
-                @if (isEmployee)
-                {
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Train/Index">Trains</a></li>
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Station/Index">Stations</a></li>
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Track/Index">Tracks</a></li>
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/User/Index">Accounts</a></li>
-                }
-                @if (loggedUser == null)
-                {
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Login">Login</a></li>
-                }
-                else
-                {
-                    <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Logout">Logout</a></li>
-                }
-            </ul>
-        </div>*@
+                <ul class="nav nav-justified mr-3 float-right">
+                    @if (isEmployee)
+                    {
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Train/Index">Trains</a></li>
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Station/Index">Stations</a></li>
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Track/Index">Tracks</a></li>
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/User/Index">Accounts</a></li>
+                    }
+                    @if (loggedUser == null)
+                    {
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Login">Login</a></li>
+                    }
+                    else
+                    {
+                        <li class="p-3"><a class="btn p-0 text-decoration-none" href="/Home/Logout">Logout</a></li>
+                    }
+                </ul>
+            </div>*@
 
     </div>
 

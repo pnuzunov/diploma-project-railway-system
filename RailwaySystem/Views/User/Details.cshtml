@@ -4,24 +4,28 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<div>
-    @Html.LabelFor(m => m.Username)
-    <p>@Model.Username</p>
+<div class="border border-3 shadow bg-white p-3 m-3" style="height: 100vh">
+    <div>
+        @Html.LabelFor(m => m.Username)
+        <p>@Model.Username</p>
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.FirstName)
+        <p>@Model.FirstName</p>
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.LastName)
+        <p>@Model.LastName</p>
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.Credit)
+        <p>@Model.Credit</p>
+    </div>
+
+    <a href="/User/AddCredit?id=@(Model.Id)">Add Credit...</a>
 </div>
 
-<div>
-    @Html.LabelFor(m => m.FirstName)
-    <p>@Model.FirstName</p>
-</div>
 
-<div>
-    @Html.LabelFor(m => m.LastName)
-    <p>@Model.LastName</p>
-</div>
-
-<div>
-    @Html.LabelFor(m => m.Credit)
-    <p>@Model.Credit</p>
-</div>
-
-<a href="/User/AddCredit?id=@(Model.Id)">Add Credit...</a>

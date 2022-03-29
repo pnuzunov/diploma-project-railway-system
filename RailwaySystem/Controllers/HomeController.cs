@@ -108,7 +108,7 @@ namespace RailwaySystem.Controllers
                 u.LastName = model.LastName;
                 u.Email = model.Email;
                 u.Phone = model.Phone;
-
+                u.RoleId = (int)UsersRepository.Levels.CUSTOMER_ACCESS;
                 repo.Add(u);
             }
 

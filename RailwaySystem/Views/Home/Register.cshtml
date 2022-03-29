@@ -5,41 +5,97 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<fieldset class="wrapper container">
+<fieldset>
     <div class="bg-light shadow border-3 col-8 p-3">
-        <form action="/Home/Register" method="post">
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.Username) </div>
-                <div>@Html.TextBoxFor(m => m.Username, new { @class="form-control" }) @Html.ValidationMessageFor(m => m.Username)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.Password) </div>
-                <div>@Html.PasswordFor(m => m.Password, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Password)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.RepeatPassword) </div>
-                <div>@Html.PasswordFor(m => m.RepeatPassword, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.RepeatPassword)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.FirstName) </div>
-                <div>@Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.FirstName)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.LastName) </div>
-                <div>@Html.TextBoxFor(m => m.LastName, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.LastName)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.Email) </div>
-                <div>@Html.TextBoxFor(m => m.Email, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Email)</div>
-            </div>
-            <div class="">
-                <div>@Html.DisplayNameFor(m => m.Phone) </div>
-                <div>@Html.TextBoxFor(m => m.Phone, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Phone)</div>
-            </div>
-            <br />
-            @Html.ValidationMessage("AuthError")
-        <input class="btn btn-success" type="submit" value="Register" />
-        </form>
+        <div class="grid">
+            <form action="/Home/Register" method="post">
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.Username)
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.Username)
+                    </div>
+                </div>
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.Password)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.Password)
+                    </div>
+                </div>
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.RepeatPassword)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.RepeatPassword, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.RepeatPassword)
+                    </div>
+                </div>
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.FirstName)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.FirstName)
+                    </div>
+                </div>
+
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.LastName)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.LastName)
+                    </div>
+                </div>
+
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.Email)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                </div>
+
+                <div class="row m-3">
+                    <div class="col-md-3">
+                        @Html.DisplayNameFor(m => m.Phone)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.ValidationMessageFor(m => m.Phone)
+                    </div>
+                </div>
+                <br />
+                @Html.ValidationMessage("AuthError")
+                <input class="btn btn-success" type="submit" value="Register" />
+            </form>
+        </div>
+
+
     </div>
 </fieldset>
 
