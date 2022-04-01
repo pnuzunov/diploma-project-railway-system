@@ -16,15 +16,9 @@
 
 <fieldset class="wrapper container">
     <div class="grid">
-        <div class="row border border-3 pl-3 pt-3 pb-3 bg-white">
-            <div class="col-2">
-                Station to depart
-            </div>
-            <div class="col-2">
-                Station to arrive
-            </div>
-            <div class="col-2">
-                Date
+        <div class="row border border-3 pl-3 pt-3 pb-3 bg-white d-flex justify-content-center">
+            <div>
+                ------
             </div>
         </div>
         <div class="row bg-white">
@@ -39,19 +33,22 @@
             </div>
         </div>
         <form action="/Schedule/Index" method="post">
-            <div class="row bg-dark">
-                <div class="col-2 p-3">
+            <div class="row bg-dark d-flex justify-content-center">
+                <div class="col-md-2 p-3">
+                    <p class="text-white">Departs from</p>
                     @Html.DropDownListFor(m => m.StartStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
                 </div>
-                <div class="col-2 p-3">
+                <div class="col-md-2 p-3">
+                    <p class="text-white">Arrives at</p>
                     @Html.DropDownListFor(m => m.EndStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
                 </div>
-                <div class="col-3 p-3">
-                    @Html.TextBoxFor(m => m.DepartureDate, new { @type = "datetime-local", @class = "form-control date-time-picker" })
+                <div class="col-md-3 p-3">
+                    <p class="text-white">Date</p>
+                    @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
                 </div>
-                <div class="col-1 p-2 d-flex">
-                    <input class="btn btn-light p-2 mr-2" type="submit" value="Search" />
-                    <a href="/Schedule/Index" class="btn btn-light">Clear</a>
+                <div class="col-1 p-2">
+                    <input class="btn btn-light p-2 m-1" type="submit" value="Search" />
+                    <a href="/Schedule/Index" class="btn btn-light m-1">Clear</a>
                 </div>
             </div>
         </form>

@@ -107,6 +107,12 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.5.0.0\lib\net461\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPal, Version=1.9.1.0, Culture=neutral, PublicKeyToken=5b4afc1ccaef40fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PayPal.1.9.1\lib\net451\PayPal.dll</HintPath>
+    </Reference>
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
@@ -180,6 +186,9 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\gleise-1555348_960_720.png" />
+    <Content Include="Content\icons\calendar-64.png" />
+    <Content Include="Content\icons\form-64.png" />
+    <Content Include="Content\icons\login-64.png" />
     <Content Include="Content\site.css" />
     <Content Include="Content\styles.css" />
     <Content Include="Content\title-bg-image.jpg" />
@@ -249,6 +258,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HelperClasses\PayPalConfiguration.cs" />
+    <Compile Include="HelperClasses\PayPalPaymentBuilder.cs" />
     <Compile Include="HelperClasses\TicketPdfBuilder.cs" />
     <Compile Include="Migrations\202002281251417_Users_Support.cs" />
     <Compile Include="Migrations\202002281251417_Users_Support.designer.cs">
@@ -377,6 +388,7 @@
     <Content Include="Views\Ticket\Index.cshtml" />
     <Content Include="Views\Ticket\TicketOverview.cshtml" />
     <Content Include="Views\User\AddCredit.cshtml" />
+    <Content Include="Views\Ticket\PayWithPayPal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -12,32 +12,14 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using PayPal.Api;
+using RailwaySystem.HelperClasses;
 
 namespace RailwaySystem.Controllers
 {
     public class HomeController : Controller
     {
         UsersRepository repo = new UsersRepository();
-
-        public ActionResult DownloadResource()
-        {
-            byte[] bytes;
-            String username = ((User)Session["loggedUser"]).Username; 
-            using (MemoryStream stream = new MemoryStream())
-            {
-                PdfWriter writer = new PdfWriter(stream);
-                PdfDocument pdf = new PdfDocument(writer);
-                Document document = new Document(pdf);
-                Paragraph header = new Paragraph(username)
-                   .SetTextAlignment(TextAlignment.CENTER)
-                   .SetFontSize(20);
-
-                document.Add(header);
-                document.Close();
-                bytes = stream.ToArray();
-            }
-            return new FileContentResult(bytes, "application/pdf");
-        }
 
         public ActionResult Index()
         {
@@ -115,11 +97,11 @@ namespace RailwaySystem.Controllers
             else
             {
                 if(u.Username == model.Username)
-                    ModelState.AddModelError("AuthError", "Username is taken!");
+                    ModelState.AddModelError("UserExistsError", "Username is taken!");
                 else if(u.Email == model.Email)
-                    ModelState.AddModelError("AuthError", "Email address is taken!");
+                    ModelState.AddModelError("EmailExistsError", "Email address is taken!");
                 else if(u.Phone == model.Phone)
-                    ModelState.AddModelError("AuthError", "Phone number is taken!");
+                    ModelState.AddModelError("PhoneExistsError", "Phone number is taken!");
                 return View(model);
             }
 
@@ -133,5 +115,13 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public ActionResult GetToken()
+        {
+            APIContext apiContext = PaypalConfiguration.GetAPIContext();
+
+            return Json(new { data = apiContext.AccessToken }, JsonRequestBehavior.AllowGet);
+        }
+
     }
+
 }

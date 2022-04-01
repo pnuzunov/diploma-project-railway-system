@@ -1,14 +1,36 @@
 ﻿@model RailwaySystem.ViewModels.Ticket.BuyVM
 @{
     ViewBag.Title = "TicketOverview";
+    KeyValuePair<String, String> validationMessage;
+    if (Session["BuyVMModelState"] != null)
+    {
+        validationMessage = (KeyValuePair<String, String>)Session["BuyVMModelState"];
+    }
+    else
+    {
+        validationMessage = new KeyValuePair<string, string>();
+    }
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
 <h2>@Model.StartStationName - @Model.EndStationName</h2>
-<form action="/Ticket/ConfirmBuy" method="post">
+@if (!validationMessage.Equals(new KeyValuePair<string, string>()))
+{
+    <div>
+        <p>@(validationMessage.Value)</p>
+    </div>
+
+    Session["BuyVMModelState"] = null;
+
+}
+
+<a href="/Ticket/PayBySystemAccount">Pay from system account</a>
+<a href="/Ticket/PayWithPayPal">Pay with PayPal</a>
+
+@*<form action="/Ticket/ConfirmBuy" method="post">
     <div class="row">
         <div class="col-3">
             <input class="form-control" type="submit" value="Confirm" />
         </div>
     </div>
-</form>
+</form>*@

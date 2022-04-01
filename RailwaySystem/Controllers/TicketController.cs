@@ -7,6 +7,7 @@ using RailwaySystem.Repositories;
 using RailwaySystem.Entities;
 using RailwaySystem.ViewModels.Ticket;
 using RailwaySystem.HelperClasses;
+using PayPal.Api;
 
 namespace RailwaySystem.Controllers
 {
@@ -81,7 +82,7 @@ namespace RailwaySystem.Controllers
             ticket.BeginStation = model.StartStationName;
             ticket.EndStation = model.EndStationName;
             ticket.Departure = model.DepartureDate;
-            ticket.Price = model.Price*model.Quantity;
+            ticket.Price = model.Price;
             ticket.Quantity = model.Quantity;
             ticket.SeatType = model.SeatType;
             ticket.TrainName = model.TrainName;
@@ -161,8 +162,8 @@ namespace RailwaySystem.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult ConfirmBuy()
+        //[HttpPost]
+        public ActionResult PayBySystemAccount()
         {
             BuyVM model = (BuyVM)Session["ticketBuyVM"];
 
@@ -175,7 +176,7 @@ namespace RailwaySystem.Controllers
             TicketsRepository ticketsRepository = new TicketsRepository();
             Ticket ticket = new Ticket();
             BuildEntity(ticket, model);
-            if(!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats))
+            if(!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
             {
                 ModelState.AddModelError("AuthError", "Ticket reservation failed.");
                 return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm")});
@@ -183,6 +184,70 @@ namespace RailwaySystem.Controllers
             Session["ticketBuyVM"] = null;
             return RedirectToAction("Index", "Ticket");
         }
+
+        public ActionResult PayWithPayPal(string Cancel = null)
+        {
+            BuyVM model = (BuyVM)Session["ticketBuyVM"];
+            if(!CanAccessPage(model))
+            {
+                return RedirectToAction("Index", "Ticket");
+            }
+
+            Ticket ticket = new Ticket();
+            BuildEntity(ticket, model);
+
+            APIContext apiContext = PaypalConfiguration.GetAPIContext();
+            try
+            {
+                string payerId = Request.Params["PayerID"];
+                if (string.IsNullOrEmpty(payerId))
+                {
+
+                    string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/Ticket/PayWithPayPal?";
+                    var guid = Convert.ToString((new Random()).Next(100000));
+                    string redirectUrl = baseURI + "guid=" + guid;
+
+                    PayPalPaymentBuilder paymentBuilder = new PayPalPaymentBuilder(apiContext, redirectUrl)
+                        .AddItem(ticket);
+
+                    var createdPayment = paymentBuilder.CreatePayment();
+                    var links = createdPayment.links.GetEnumerator();
+                    string paypalRedirectUrl = null;
+                    while (links.MoveNext())
+                    {
+                        Links lnk = links.Current;
+                        if (lnk.rel.ToLower().Trim().Equals("approval_url"))
+                        {
+                            paypalRedirectUrl = lnk.href;
+                        }
+                    }
+                    Session.Add(guid, createdPayment.id);
+                    return Redirect(paypalRedirectUrl);
+                }
+                else
+                {
+                    var guid = Request.Params["guid"];
+                    var executedPayment = PayPalPaymentBuilder.ExecutePayment(apiContext, payerId, Session[guid] as string);
+                    if (executedPayment.state.ToLower() != "approved")
+                    {
+                        Session["BuyVMModelState"] = new KeyValuePair<String, String>("PayPalPaymentDeniedError", "There was an error in processing your request. Please try again.");
+                        return RedirectToAction("TicketOverview", "Ticket");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Session["BuyVMModelState"] = new KeyValuePair<String, String>("PayPalPaymentDeniedError", "There was an error in processing your request. Please try again.");
+                return RedirectToAction("TicketOverview", "Ticket");
+            }
+            Session["BuyVMModelState"] = null;
+
+            TicketsRepository ticketsRepository = new TicketsRepository();
+            ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_PAY_PAL);
+
+            return RedirectToAction("Index", "Ticket");
+        }
+
 
         public ActionResult DownloadResource(int id)
         {
@@ -195,7 +260,7 @@ namespace RailwaySystem.Controllers
             }
 
             BuyVM model = new BuyVM() { UserId = ticket.UserId };
-            if(!CanAccessPage(model))
+            if (!CanAccessPage(model))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -204,5 +269,6 @@ namespace RailwaySystem.Controllers
 
             return new FileContentResult(ticketPdf.GeneratePdf(ticket), "application/pdf");
         }
+
     }
 }
