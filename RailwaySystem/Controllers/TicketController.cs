@@ -60,20 +60,21 @@ namespace RailwaySystem.Controllers
         private void CheckModelValid(BuyVM model)
         {
             if (model.SeatType == null)
-                ModelState.AddModelError("AuthError", "Please select a seat type.");
+                ModelState.AddModelError("ModelError", "Please select a seat type.");
             
             if (model.Quantity <= 0)
-                ModelState.AddModelError("AuthError", "Invalid number of seats.");
+                ModelState.AddModelError("ModelError", "Invalid number of seats.");
 
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Name == model.TrainName);
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.Schedule.Id);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule.Id, model.Schedule.TrainId, seatClass: model.SeatType, quantity: model.Quantity);
             //seats = seats.Where(s => s.SeatType == model.SeatType).ToList();
 
             if(model.Quantity > seats.Count)
             {
-                ModelState.AddModelError("AuthError", "There are not enough seats for this purchase.");
+                ModelState.AddModelError("ModelError", "There are not enough seats for this purchase.");
             }
+            model.Seats = seats;
         }
 
         private void BuildEntity(Ticket ticket, BuyVM model)
@@ -89,13 +90,25 @@ namespace RailwaySystem.Controllers
             ticket.TrainType = model.TrainType;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Quantity, model.Schedule.Id);
-            foreach(var seat in seats)
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule.Id, model.Schedule.TrainId, seatClass: model.SeatType, quantity: model.Quantity);
+            foreach (var seat in model.Seats)
             {
                 ticket.SeatNumbers += "|" + seat.SeatNumber;
             }
             ticket.SeatNumbers += "|";
-            model.Seats = seats;
+        }
+
+        private RedirectToRouteResult ReserveTicket(Ticket ticket, BuyVM model, TicketsRepository.PaymentMethod paymentMethod)
+        {
+            TicketsRepository ticketsRepository = new TicketsRepository();
+            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
+            {
+                Session["BuyVMModelState"] = "Ticket reservation failed.";
+                return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm") });
+            }
+            Session["ticketBuyVM"] = null;
+            Session["BuyVMModelState"] = "";
+            return RedirectToAction("Index", "Ticket");
         }
 
         public ActionResult Index()
@@ -127,6 +140,15 @@ namespace RailwaySystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
             ViewData["route"] = model.StartStationName + " - " + model.EndStationName;
+
+            TrainsRepository trainsRepository = new TrainsRepository();
+            var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule.Id, model.Schedule.TrainId, getAll: true);
+            if(freeSeats.Count == 0)
+            {
+                return RedirectToAction("Index", "Schedule");
+            }
+
+            ViewData["numberOfFreeSeats"] = freeSeats;
             return View(model);
         }
 
@@ -176,13 +198,16 @@ namespace RailwaySystem.Controllers
             TicketsRepository ticketsRepository = new TicketsRepository();
             Ticket ticket = new Ticket();
             BuildEntity(ticket, model);
-            if(!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
-            {
-                ModelState.AddModelError("AuthError", "Ticket reservation failed.");
-                return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm")});
-            }
-            Session["ticketBuyVM"] = null;
-            return RedirectToAction("Index", "Ticket");
+
+            return ReserveTicket(ticket, model, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT);
+
+            //if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
+            //{
+            //    Session["BuyVMModelState"] = "Ticket reservation failed.";
+            //    return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm")});
+            //}
+            //Session["ticketBuyVM"] = null;
+            //Session["BuyVMModelState"] = "";
         }
 
         public ActionResult PayWithPayPal(string Cancel = null)
@@ -230,22 +255,21 @@ namespace RailwaySystem.Controllers
                     var executedPayment = PayPalPaymentBuilder.ExecutePayment(apiContext, payerId, Session[guid] as string);
                     if (executedPayment.state.ToLower() != "approved")
                     {
-                        Session["BuyVMModelState"] = new KeyValuePair<String, String>("PayPalPaymentDeniedError", "There was an error in processing your request. Please try again.");
                         return RedirectToAction("TicketOverview", "Ticket");
                     }
                 }
             }
             catch (Exception e)
             {
-                Session["BuyVMModelState"] = new KeyValuePair<String, String>("PayPalPaymentDeniedError", "There was an error in processing your request. Please try again.");
+                Session["BuyVMModelState"] = "There was an error in processing your request. Please try again.";
                 return RedirectToAction("TicketOverview", "Ticket");
             }
-            Session["BuyVMModelState"] = null;
+            //Session["BuyVMModelState"] = "";
 
-            TicketsRepository ticketsRepository = new TicketsRepository();
-            ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_PAY_PAL);
+            //TicketsRepository ticketsRepository = new TicketsRepository();
+            //ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_PAY_PAL);
 
-            return RedirectToAction("Index", "Ticket");
+            return ReserveTicket(ticket, model, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT);
         }
 
 

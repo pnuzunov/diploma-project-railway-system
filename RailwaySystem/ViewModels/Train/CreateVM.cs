@@ -11,19 +11,19 @@ namespace RailwaySystem.ViewModels.Train
     {
 
         [DisplayName("Name")]
-        [Required(ErrorMessage = "This field is required!")]
+        [Required(ErrorMessage = "Please enter a name for the train.")]
         public string Name { get; set; }
 
         [DisplayName("Train Type")]
-        [Required(ErrorMessage = "This field is required!")]
+        [Required(ErrorMessage = "Please select a train type.")]
         public int TypeId { get; set; }
 
         [DisplayName("Seats First Class")]
-        [Required(ErrorMessage = "This field is required!")]
+        [Required(ErrorMessage = "Please enter a valid number.")]
         public int SeatsFirstClass { get; set; }
 
         [DisplayName("Regular Seats")]
-        [Required(ErrorMessage = "This field is required!")]
+        [Required(ErrorMessage = "Please enter a valid number.")]
         public int RegularSeats { get; set; }
 
     }

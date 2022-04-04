@@ -45,13 +45,24 @@ namespace RailwaySystem.Repositories
             return train;
         }
 
-        public List<SeatReservation> GetSeatReservations(int scheduleId)
+        public List<SeatReservation> GetSeatReservations(int scheduleId, int trainId)
         {
             Schedule schedule = this.GetById(scheduleId);
             if (schedule == null) return null;
-            DbSet<SeatReservation> reservations = Context.Set<SeatReservation>();
-            IQueryable<SeatReservation> query = reservations;
-            return query.Where(r => r.ScheduleId == scheduleId).ToList();
+            DbSet<SeatReservation> reservationsDb = Context.Set<SeatReservation>();
+            TrainsRepository trainsRepository = new TrainsRepository();
+            List<Seat> seats = trainsRepository.GetSeats(s => s.TrainId == trainId);
+            List<SeatReservation> reservations = new List<SeatReservation>();
+
+            foreach (var seat in seats)
+            {
+                SeatReservation seatReservation = reservationsDb.Where(r => r.SeatId == seat.Id && r.ScheduleId == scheduleId).FirstOrDefault();
+                if (seatReservation != null)
+                {
+                    reservations.Add(seatReservation);
+                }
+            }
+            return reservations;
         }
 
         public List<Schedule> GetFilteredSchedules(int trackId, TimeSpan time)

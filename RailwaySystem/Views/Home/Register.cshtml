@@ -6,98 +6,75 @@
 }
 
 <fieldset>
-    <div class="bg-light shadow border-3 col-8 p-3">
+    <div class="wrapper container bg-white p-4 rounded shadow mt-3">
         <div class="grid">
-            <div>
-                <p>All fields in this form are required.</p>
+            <div class="row bg-light d-flex align-content-center">
+                <div class="col-lg-5">
+                    <div class="bg-image" style="background-image:url('/Content/train-wallpaper.jpg'); background-size:cover">
+                        <div class="mask h-100 w-100" style="background-color: rgba(0, 0, 0, 0.8)">
+                            <p class="text-white text-center" style="padding: 30%">By registering, you accept our terms of service.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 m-1">
+                    <form action="/Home/Register" method="post">
+                        <div class="row m-3">
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.Username)
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Username)
+                                @Html.ValidationMessage("UserExistsError")
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.Password)
+                                @Html.TextBoxFor(m => m.Password, new { @type = "password", @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password)
+                            </div>
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.RepeatPassword)
+                                @Html.TextBoxFor(m => m.RepeatPassword, new { @type = "password", @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.RepeatPassword)
+                            </div>
+
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.FirstName)
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.LastName)
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.LastName)
+                            </div>
+                        </div>
+
+                        <div class="row m-3">
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.Email)
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Email)
+                                @Html.ValidationMessage("EmailExistsError")
+                            </div>
+                            <div class="col-lg-6">
+                                @Html.DisplayNameFor(m => m.Phone)
+                                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Phone)
+                                @Html.ValidationMessage("PhoneExistsError")
+                            </div>
+                        </div>
+                        <div class="m-3">
+                            <input class="btn btn-success" type="submit" value="Register" />
+                            <a class="btn btn-light text-black" href="/Home/Index">Cancel</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form action="/Home/Register" method="post">
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.Username)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.Username)
-                        @Html.ValidationMessage("UserExistsError")
-                    </div>
-                </div>
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.Password)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.Password)
-                    </div>
-                </div>
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.RepeatPassword)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.RepeatPassword, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.RepeatPassword)
-                    </div>
-                </div>
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.FirstName)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.FirstName)
-                    </div>
-                </div>
 
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.LastName)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.LastName)
-                    </div>
-                </div>
 
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.Email)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.Email)
-                        @Html.ValidationMessage("EmailExistsError")
-                    </div>
-                </div>
-
-                <div class="row m-3">
-                    <div class="col-md-3">
-                        @Html.DisplayNameFor(m => m.Phone)
-                    </div>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.ValidationMessageFor(m => m.Phone)
-                        @Html.ValidationMessage("PhoneExistsError")
-                    </div>
-                </div>
-                <br />
-                <input class="btn btn-success" type="submit" value="Register" />
-            </form>
         </div>
 
 

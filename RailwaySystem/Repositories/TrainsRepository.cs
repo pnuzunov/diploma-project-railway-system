@@ -24,12 +24,14 @@ namespace RailwaySystem.Repositories
             return query.Where(filter).ToList();
         }
 
-        public List<Seat> GetNonReservedSeats(int quantity, int scheduleId)
+        public List<Seat> GetNonReservedSeats(int scheduleId, int trainId, int quantity = 0, string seatClass = "", bool getAll = false)
         {
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId);
-            List<Seat> seats = trainsRepository.GetSeats();
+            List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId, trainId);
+            bool ignoreClass = seatClass.Equals("");
+            bool isFirstClass = seatClass.Equals(TrainsRepository.FIRST_CLASS);
+            List<Seat> seats = trainsRepository.GetSeats(s => s.TrainId == trainId && (ignoreClass || s.IsFirstClass == isFirstClass));
             List<Seat> freeSeats = new List<Seat>();
 
             if (seats == null) return freeSeats;
@@ -37,7 +39,7 @@ namespace RailwaySystem.Repositories
             int counter = 0;
             foreach (var seat in seats)
             {
-                if (counter == quantity) break;
+                if (!getAll && counter == quantity) break;
                 if(!reservations.Any(res => res.SeatId == seat.Id)) {
                     freeSeats.Add(seat);
                     counter++;

@@ -23,5 +23,8 @@ namespace RailwaySystem.ViewModels.Schedule
         [DisplayName("Arrives"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "This field is required!")]
         public DateTime Arrival { get; set; }
+        [DisplayName("Price per ticket")]
+        [Required(ErrorMessage = "This field is required!")]
+        public decimal PricePerTicket { get; set; }
     }
 }

@@ -76,6 +76,7 @@ namespace RailwaySystem.Repositories
             }
 
             ticket.BuyDate = DateTime.Now;
+            ticket.Price *= ticket.Quantity;
             this.Add(ticket);
 
             ticket = this.GetFirstOrDefault(t => t.BuyDate.Equals(ticket.BuyDate) 

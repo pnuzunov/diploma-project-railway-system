@@ -1,26 +1,26 @@
 ﻿@model RailwaySystem.ViewModels.Ticket.BuyVM
 @{
     ViewBag.Title = "TicketOverview";
-    KeyValuePair<String, String> validationMessage;
+    string validationMessage;
     if (Session["BuyVMModelState"] != null)
     {
-        validationMessage = (KeyValuePair<String, String>)Session["BuyVMModelState"];
+        validationMessage = Session["BuyVMModelState"].ToString();
     }
     else
     {
-        validationMessage = new KeyValuePair<string, string>();
+        validationMessage = "";
     }
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
 <h2>@Model.StartStationName - @Model.EndStationName</h2>
-@if (!validationMessage.Equals(new KeyValuePair<string, string>()))
+@if (!validationMessage.Equals(""))
 {
     <div>
-        <p>@(validationMessage.Value)</p>
+        <p>@(validationMessage)</p>
     </div>
 
-    Session["BuyVMModelState"] = null;
+    Session["BuyVMModelState"] = "";
 
 }
 

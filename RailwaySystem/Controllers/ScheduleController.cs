@@ -70,6 +70,7 @@ namespace RailwaySystem.Controllers
             entity.Departure = model.Departure;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
+            entity.PricePerTicket = model.PricePerTicket;
         }
 
         protected override void GenerateEntity(Schedule entity, EditVM model)
@@ -111,24 +112,34 @@ namespace RailwaySystem.Controllers
             ViewData["tracks"] = tracks.GetAll();
             ViewData["stations"] = stations.GetAll().OrderBy(i => i.Name).ToList();
             ViewData["items"] = new List<Schedule>();
-            //ViewData["items"] = schedules.GetAll();
 
-            if (model != null && model.StartStationId != 0 && model.EndStationId != 0 ) {
-                Track track = tracks.GetFirstOrDefault(tr => tr.StartStationId == model.StartStationId && tr.EndStationId == model.EndStationId);
-                if (track == null)
+            if (model != null && model.StartStationId != 0 
+                              && model.EndStationId != 0 ) {
+                if(DateTime.Compare(DateTime.Now.Date, model.DepartureDate) <= 0)
                 {
-                    ViewData["items"] = new List<Schedule>();
-                    return;
+                    Track track = tracks.GetFirstOrDefault(tr => tr.StartStationId == model.StartStationId 
+                                                              && tr.EndStationId == model.EndStationId);
+                    if (track == null)
+                    {
+                        ViewData["items"] = new List<Schedule>();
+                        ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
+                        return;
+                    }
+                    ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.TimeOfDay)
+                                                 .OrderBy(s => s.Departure.TimeOfDay)
+                                                 .ToList();
+                    if( ( (List<Schedule>)ViewData["items"] ).Count == 0 )
+                    {
+                        ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
+                    }
+                    else
+                    {
+                        foreach (var schedule in (List<Schedule>)ViewData["items"])
+                        {
+                            ViewData["freeSeats" + schedule.Id] = trains.GetNonReservedSeats(schedule.Id, schedule.TrainId, getAll: true);
+                        }
+                    }
                 }
-                //ViewData["items"] = schedules.GetAll(i => i.TrackId == track.Id);
-                //List<Schedule> schedulesByTrack = schedules.GetAll(i => i.TrackId == track.Id);
-                ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.TimeOfDay);
-
-                //if (schedulesByTrack.Count > 0)
-                //{
-                //    schedulesByTrack = schedulesByTrack.Where(s => DateTime.Compare(s.Departure, model.DepartureDate) >= 0).ToList();
-                //    ViewData["items"] = schedulesByTrack;
-                //}
             }
         }
 
@@ -146,11 +157,7 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Index(ListVM model)
         {
-            if(model.StartStationId == 0 || model.EndStationId == 0)
-            {
-                LoadFilteredData(null);
-            }
-            else LoadFilteredData(model);
+            LoadFilteredData(model);
             return View(model);
         }
     }

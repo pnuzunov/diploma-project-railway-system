@@ -3,9 +3,11 @@
     Layout = "~/Views/Shared/Shared.cshtml";
     User loggedUser = (User)Session["loggedUser"];
     bool canCreateEditDelete;
-    if (loggedUser == null) {
+    if (loggedUser == null)
+    {
         canCreateEditDelete = false;
-    } else
+    }
+    else
     {
         canCreateEditDelete = new RailwaySystem.Repositories.UsersRepository()
                                   .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
@@ -19,17 +21,6 @@
         <div class="row border border-3 pl-3 pt-3 pb-3 bg-white d-flex justify-content-center">
             <div>
                 ------
-            </div>
-        </div>
-        <div class="row bg-white">
-            <div class="col-2">
-                @Html.ValidationMessageFor(m => m.StartStationId)
-            </div>
-            <div class="col-2">
-                @Html.ValidationMessageFor(m => m.EndStationId)
-            </div>
-            <div class="col-2">
-                @Html.ValidationMessageFor(m => m.DepartureDate)
             </div>
         </div>
         <form action="/Schedule/Index" method="post">
@@ -46,9 +37,23 @@
                     <p class="text-white">Date</p>
                     @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
                 </div>
-                <div class="col-1 p-2">
+                <div class="col-md-1 p-2">
                     <input class="btn btn-light p-2 m-1" type="submit" value="Search" />
                     <a href="/Schedule/Index" class="btn btn-light m-1">Clear</a>
+                </div>
+            </div>
+            <div class="row bg-white d-flex justify-content-center">
+                <div class="col-md-2 p-3">
+                    @Html.ValidationMessageFor(m => m.StartStationId)
+                </div>
+                <div class="col-md-2 p-3">
+                    @Html.ValidationMessageFor(m => m.EndStationId)
+                </div>
+                <div class="col-md-3 p-3">
+                    @Html.ValidationMessageFor(m => m.DepartureDate)
+                </div>
+                <div class="col-1 p-2">
+
                 </div>
             </div>
         </form>
@@ -56,96 +61,109 @@
 
     @if (Model != null)
     {
-<div class="card bg-light shadow m-3 p-3">
-    <div class="grid bold">
-        <div class="row">
-            <div class="col-2">
-                Train
-            </div>
-            <div class="col-2">
-                Departure
-            </div>
-            <div class="col-2">
-                Arrival
-            </div>
-            <div class="col-2">
-                Travel Time
-            </div>
-            <div class="col-2">
-                Route
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="grid">
+        <div class="card bg-light shadow m-3 p-3">
+            <div class="grid">
 
-        @foreach (var item in (List<Schedule>)ViewData["items"])
-        {
-        <div class="row m-3">
-            @foreach (var train in (List<Train>)ViewData["trains"])
-            {
-
-                if (train.Id == item.TrainId)
-                {
-                    foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
-                    {
-                        if (trainType.Id == train.TypeId)
-                        {
-                            <div class="col-2">
-                                @(train.Name) (@(trainType.Name))
-                            </div>
-                            break;
-                        }
-                    }
-
-                }
-            }
-
-            <div class="col-2">
-                @(item.Departure.ToString("HH:mm"))
-            </div>
-            <div class="col-2">
-                @(item.Arrival.ToString("HH:mm"))
-            </div>
-            <div class="col-2">
-                @((item.Arrival - item.Departure).Hours) hour(s) @((item.Arrival - item.Departure).Minutes) minute(s)
-            </div>
-
-            @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
-            {
-                if (route.Key == item.TrackId)
-                {
-
-                    <div class="col-2">
-                        @(route.Value)
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="text-center">Results for @(Model.DepartureDate.Date)</h3>
                     </div>
-                    break;
+                </div>
+
+                <div class="row m-3">
+                    @Html.ValidationMessage("NoRecordsFound")
+                </div>
+
+                @foreach (var item in (List<Schedule>)ViewData["items"])
+                {
+            <div class="row m-3 d-flex align-content-center border border-1 rounded p-3">
+
+                @foreach (var train in (List<Train>)ViewData["trains"])
+                {
+
+                    if (train.Id == item.TrainId)
+                    {
+                        foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
+                        {
+                            if (trainType.Id == train.TypeId)
+                            {
+                                <div class="col-lg-4 m-1">
+                                    <img src="~/Content/icons/train-30.png" title="Train" />
+                                    @(train.Name) (@(trainType.Name))
+                                </div>
+                                break;
+                            }
+                        }
+
+                    }
                 }
+
+                <div class="col-lg-3 m-1">
+                    <img src="~/Content/icons/right-arrow-30.png" title="Departs at" />
+                    @(item.Departure.ToString("HH:mm")) - @(item.Arrival.ToString("HH:mm"))
+                </div>
+                <div class="col-lg-2 m-1">
+                    <img src="~/Content/icons/time-30.png" title="Travel Time" />
+                    @((item.Arrival - item.Departure).ToString(@"hh\:mm"))
+                </div>
+
+                @*@foreach (var route in (Dictionary<int, string>)ViewData["routes"])
+        {
+            if (route.Key == item.TrackId)
+            {
+
+                <div class="col-lg-2">
+                    @(route.Value)
+                </div>
+                break;
             }
+        }*@
+
+
+                @{
+                    var freeSeats = (List<Seat>)ViewData["freeSeats" + item.Id];
+                    if (freeSeats.Count > 0)
+                    {
+                        <div class="col-lg-2 m-1">
+                            <p>@(((List<Seat>)ViewData["freeSeats" + item.Id]).Count) free seat(s)</p>
+                        </div>
+                        <div class="col-lg-2 m-1">
+                            <a class="btn btn-success" href="/Ticket/Buy?id=@(item.Id)&dt=@(Model?.DepartureDate.Date.ToString("dd-MM-yyyy") + "-" + item.Departure.ToString("HH-mm"))">
+                                Buy E-Ticket
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2 m-1">
+                            <p>No free seats</p>
+                        </div>
+                    }
+                }
+
+
+                @if (canCreateEditDelete)
+                {
+                    <div class="col-lg-1 m-1">
+                        <a href="/Schedule/Edit?id=@(item.Id)">
+                            <img src="~/Content/icons/edit-30.png" title="Edit" />
+                        </a>
+                    </div>
+                }
+
+            </div>
+
+                }
+            </div>
             @if (canCreateEditDelete)
             {
-                <div class="col-1">
-                    <a href="/Schedule/Edit?id=@(item.Id)">Edit...</a>
-                </div>
-                <div class="col-1">
-                    <a href="/Schedule/Delete?id=@(item.Id)">Delete</a>
+                <div>
+                    <a href="/Schedule/Create">Create New...</a>
                 </div>
             }
-            <div class="col-1">
-                <a href="/Ticket/Buy?id=@(item.Id)&dt=@(Model?.DepartureDate.Date.ToString("dd-MM-yyyy") + "-" + item.Departure.ToString("HH-mm"))">Ticket</a>
-            </div>
-        </div>
-        }
-    </div>
-    @if (canCreateEditDelete)
-    {
-        <div>
-            <a href="/Schedule/Create">Create New...</a>
-        </div>
-    }
 
 
-</div>
+        </div>
     }
 </fieldset>
 

@@ -7,51 +7,77 @@
 }
 
 <fieldset>
-    <div>
-        <h1>Buying ticket for @Model.StartStationName - @Model.EndStationName</h1>
-        <h2>Departing at @Model.DepartureDate</h2>
-    </div>
-    <form action="/Ticket/Buy" method="post">
-        @Html.HiddenFor(m => m.DepartureDate)
-        @Html.HiddenFor(m => m.EndStationName)
-        @Html.HiddenFor(m => m.Schedule.Id)
-        @Html.HiddenFor(m => m.Schedule.PricePerTicket)
-        @Html.HiddenFor(m => m.StartStationName)
-        @Html.HiddenFor(m => m.TrainName)
-        @Html.HiddenFor(m => m.TrainType)
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.Price)
-        <div class="grid">
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.SeatType)
-                </div>
-                <div class="col-3">
-                    @Html.RadioButtonFor(m => m.SeatType, FirstClass) @(FirstClass) <br />
-                    @Html.RadioButtonFor(m => m.SeatType, RegularClass) @(RegularClass)
-                </div>
-                <div class="col-3">
-                    @Html.ValidationMessageFor(m => m.SeatType)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.Quantity)
-                </div>
-                <div class="col-3">
-                    @Html.TextBoxFor(m => m.Quantity, new { @type = "number", @class = "form-control" })
-                </div>
-                <div class="col-3">
-                    @Html.ValidationMessageFor(m => m.Quantity)
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-3">
-                    <input class="form-control" type="submit" value="To Overview... " />
-                </div>
-            </div>
+    <div class="wrapper container">
+        <div class="bg-light text-center p-3 mt-2">
+            <h3>Route: @Model.StartStationName - @Model.EndStationName</h3>
+            <h3>Departs on @Model.DepartureDate</h3>
         </div>
-    </form>
+        <form action="/Ticket/Buy" method="post">
+            @Html.HiddenFor(m => m.DepartureDate)
+            @Html.HiddenFor(m => m.EndStationName)
+            @Html.HiddenFor(m => m.Schedule.Id)
+            @Html.HiddenFor(m => m.Schedule.PricePerTicket)
+            @Html.HiddenFor(m => m.Schedule.TrainId)
+            @Html.HiddenFor(m => m.StartStationName)
+            @Html.HiddenFor(m => m.TrainName)
+            @Html.HiddenFor(m => m.TrainType)
+            @Html.HiddenFor(m => m.UserId)
+            @Html.HiddenFor(m => m.Price)
+            <div class="grid bg-light border border-2 shadow p-3 m-3">
+                <div class="border border-1 rounded p-3 m-1">
+                    <div class="row">
+                        <div class="col-md-6 modal-header">
+                            <p class="text-center">@Html.LabelFor(m => m.SeatType)</p>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-content-center">
+                        <div class="col-md-3">
+                            <p class="text-center">@(FirstClass) @Html.RadioButtonFor(m => m.SeatType, FirstClass, new { @class = "form-control" })</p>
+                        </div>
+                        <div class="col-sm-1">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="text-center">@(RegularClass) @Html.RadioButtonFor(m => m.SeatType, RegularClass, new { @class = "form-control" })</p>
+                        </div>
+                        <div class="col-sm-1">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            @Html.ValidationMessageFor(m => m.SeatType)
+                        </div>
+                    </div>
+                </div>
+                <div class="border border-1 rounded p-3 m-1">
+                    <div class="row">
+                        <div class="modal-header col-md-1">
+                            <p class="text-center">@Html.LabelFor(m => m.Quantity)</p>
+                        </div>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(m => m.Quantity, new { @type = "number", @class = "form-control" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.ValidationMessageFor(m => m.Quantity)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.ValidationMessage("ModelError")
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input class="form-control" type="submit" value="To Overview... " />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
 </fieldset>
 
