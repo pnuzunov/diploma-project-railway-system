@@ -14,6 +14,9 @@ namespace RailwaySystem.Entities
         public int? EmployeeId { get; set; }
         [ForeignKey("EmployeeId")]
         public User Employee { get; set; }
+        public int? TicketId { get; set; }
+        [ForeignKey("TicketId")]
+        public Ticket Ticket { get; set; }
         public decimal Amount { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime Date { get; set; }

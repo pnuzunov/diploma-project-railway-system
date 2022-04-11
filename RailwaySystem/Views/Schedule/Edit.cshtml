@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-2">
                         @Html.DropDownListFor(m => m.TrainId,
-                            new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--")
+                            new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.TrainId)
@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-2">
                         @Html.DropDownListFor(m => m.TrackId,
-                            new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--")
+                            new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--", new { @class="form-control" })
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.TrackId)
@@ -38,7 +38,7 @@
                         @Html.LabelFor(m => m.Departure)
                     </div>
                     <div class="col-2">
-                        @Html.TextBoxFor(m => m.Departure/*, new { @type = "datetime-local", @class = "form-control date-picker" }*/)
+                        @Html.TextBoxFor(m => m.Departure, new { @type = "datetime-local", @class = "form-control date-picker" })
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.Departure)
@@ -49,7 +49,7 @@
                         @Html.LabelFor(m => m.Arrival)
                     </div>
                     <div class="col-2">
-                        @Html.TextBoxFor(m => m.Arrival/*, new { @type = "datetime-local", @class = "form-control date-picker" }*/)
+                        @Html.TextBoxFor(m => m.Arrival, new { @type = "datetime-local", @class = "form-control date-picker" })
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.Arrival)

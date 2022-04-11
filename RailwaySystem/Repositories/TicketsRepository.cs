@@ -43,13 +43,11 @@ namespace RailwaySystem.Repositories
                 {
                     ScheduleId = schedule.Id,
                     SeatId = seat.Id,
-                    Departure = ticket.Departure,
                     TicketId = ticket.Id
                 };
 
                 if (seatReservations.Where(sr => sr.ScheduleId == newReservation.ScheduleId
-                && sr.SeatId == newReservation.SeatId
-                && sr.Departure == newReservation.Departure).FirstOrDefault() != null)
+                && sr.SeatId == newReservation.SeatId).FirstOrDefault() != null)
                 {
                     return null;
                 }

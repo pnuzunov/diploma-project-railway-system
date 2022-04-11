@@ -6,10 +6,28 @@
 
 <h2>Index</h2>
 
-<div>
-    @foreach (var ticket in (List<Ticket>)ViewData["items"])
-    {
-        <p>@ticket.Id - @ticket.BeginStation - @ticket.EndStation</p>
-        <a href="/Ticket/DownloadResource?id=@(ticket.Id)">Download PDF</a> <hr />
-    }
+<div class="wrapper container bg-light d-flex justify-content-center">
+    <div class="grid">
+        <div class="modal-header">
+            <h3 class="m-auto">Your tickets</h3>
+        </div>
+        <div class="row modal-body">
+            @foreach (var ticket in (List<Ticket>)ViewData["items"])
+            {
+                <div class="col-lg-3 m-2 p-2 card bg-light">
+                    <div class="card-title text-center">
+                        <p>@ticket.BeginStation - @ticket.EndStation</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Departs on @ticket.Departure.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p>Buy Date: @ticket.BuyDate.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p>Seats: @ticket.SeatNumbers</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-success w-100" href="/Ticket/DownloadResource?id=@(ticket.Id)">Download PDF</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>

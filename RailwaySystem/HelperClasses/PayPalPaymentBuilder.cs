@@ -11,7 +11,6 @@ namespace RailwaySystem.HelperClasses
         private APIContext apiContext;
         private Payment payment;
         private ItemList itemList;
-        private Item item;
         private Payer payer;
         private Amount amount;
         private List<Transaction> transactions;

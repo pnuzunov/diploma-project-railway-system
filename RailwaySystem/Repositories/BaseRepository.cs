@@ -20,14 +20,14 @@ namespace RailwaySystem.Repositories
             Items = Context.Set<T>();
         }
 
-        public List<T> GetAll(Expression<Func<T, bool>> filter = null)
+        public virtual List<T> GetAll(Expression<Func<T, bool>> filter = null)
         {
             if (filter == null) return Items.ToList();
             IQueryable<T> query = Items;
             return query.Where(filter).ToList();
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter)
+        public virtual T GetFirstOrDefault(Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = Items;
             return query
@@ -35,7 +35,7 @@ namespace RailwaySystem.Repositories
                    .FirstOrDefault();
         }
 
-        public T GetById(int id)
+        public virtual T GetById(int id)
         {
             IQueryable<T> query = Items;
             return query
@@ -43,20 +43,20 @@ namespace RailwaySystem.Repositories
                         .FirstOrDefault();
         }
 
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             Items.Add(item);
             Context.SaveChanges();
         }
 
-        public void Delete(int id)
+        public virtual void Delete(int id)
         {
             T item = Items.Where(i => i.Id == id).FirstOrDefault();
             Items.Remove(item);
             Context.SaveChanges();
         }
 
-        public void Update(T item)
+        public virtual void Update(T item)
         {
             DbEntityEntry entry = Context.Entry(item);
             entry.State = EntityState.Modified;

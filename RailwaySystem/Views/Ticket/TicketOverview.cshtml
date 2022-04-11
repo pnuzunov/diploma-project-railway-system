@@ -1,6 +1,8 @@
 ﻿@model RailwaySystem.ViewModels.Ticket.BuyVM
 @{
     ViewBag.Title = "TicketOverview";
+    Layout = "~/Views/Shared/Shared.cshtml";
+
     string validationMessage;
     if (Session["BuyVMModelState"] != null)
     {
@@ -10,27 +12,51 @@
     {
         validationMessage = "";
     }
-    Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<h2>@Model.StartStationName - @Model.EndStationName</h2>
-@if (!validationMessage.Equals(""))
-{
-    <div>
-        <p>@(validationMessage)</p>
+
+<div class="wrapper container bg-white mt-3 d-flex justify-content-center">
+    <div class="grid m-3">
+        <div class="row">
+            <div class="modal-title">
+                <h3>You're almost done!</h3>
+                <p>Please elect a payment method, after which your e-ticket will be successfully created.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="modal-body">
+                <div class="col-md-3">
+                    <a class="btn btn-success m-1" href="/Ticket/PayBySystemAccount">Pay from system account</a>
+                    <p>Current amount:</p>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-success m-1" href="/Ticket/PayWithPayPal">Pay with PayPal</a>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-success m-1" href="/Schedule/Index">Cancel</a>
+                </div>
+            </div>
+        </div>
+        @if (!validationMessage.Equals(""))
+        {
+            <div class="row">
+                <p>@(validationMessage)</p>
+            </div>
+
+            Session["BuyVMModelState"] = "";
+
+        }
     </div>
 
-    Session["BuyVMModelState"] = "";
 
-}
+</div>
 
-<a href="/Ticket/PayBySystemAccount">Pay from system account</a>
-<a href="/Ticket/PayWithPayPal">Pay with PayPal</a>
+
 
 @*<form action="/Ticket/ConfirmBuy" method="post">
-    <div class="row">
-        <div class="col-3">
-            <input class="form-control" type="submit" value="Confirm" />
+        <div class="row">
+            <div class="col-3">
+                <input class="form-control" type="submit" value="Confirm" />
+            </div>
         </div>
-    </div>
-</form>*@
+    </form>*@

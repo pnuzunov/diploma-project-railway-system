@@ -18,6 +18,10 @@ namespace RailwaySystem.Controllers
             {
                 ModelState.AddModelError("AuthError", "Station already exists!");
             }
+            if (repo.GetFirstOrDefault(i => i.Latitude == model.Latitude && i.Longitude == model.Longitude) != null)
+            {
+                ModelState.AddModelError("AuthError", "There is already a station on those coordinates!");
+            }
         }
 
         protected override void CheckIsModelValid(EditVM model)
@@ -32,6 +36,9 @@ namespace RailwaySystem.Controllers
         protected override void GenerateEntity(Station entity, CreateVM model)
         {
             entity.Name = model.Name;
+            entity.CityId = model.CityId;
+            entity.Latitude = model.Latitude;
+            entity.Longitude = model.Longitude;
         }
 
         protected override void GenerateEntity(Station entity, EditVM model)
@@ -45,5 +52,10 @@ namespace RailwaySystem.Controllers
             model.Name = entity.Name;
         }
 
+        protected override void LoadExtraViewData()
+        {
+            StationsRepository stationsRepository = new StationsRepository();
+            ViewData["cities"] = stationsRepository.GetCities().OrderBy(c => c.Name).ToList();
+        }
     }
 }

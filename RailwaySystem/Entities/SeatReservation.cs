@@ -14,8 +14,6 @@ namespace RailwaySystem.Entities
         public int ScheduleId { get; set; }
         [ForeignKey("ScheduleId")]
         public Schedule Schedule { get; set; }
-        [Column(TypeName = "datetime2")]
-        public DateTime Departure { get; set; }
         public int TicketId { get; set; }
         [ForeignKey("TicketId")]
         public Ticket Ticket { get; set; }

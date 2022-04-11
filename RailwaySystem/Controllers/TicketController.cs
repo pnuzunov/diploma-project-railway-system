@@ -24,7 +24,7 @@ namespace RailwaySystem.Controllers
             return true;
         }
 
-        private bool GenerateModel(int scheduleId, DateTime departure, BuyVM model)
+        private bool GenerateModel(int scheduleId, BuyVM model)
         {
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
@@ -50,7 +50,8 @@ namespace RailwaySystem.Controllers
             model.UserId = ((User)Session["loggedUser"]).Id;
             model.StartStationName = startStation;
             model.EndStationName = endStation;
-            model.DepartureDate = departure;
+            model.DepartureDate = schedule.Departure;
+            model.ArrivalDate = schedule.Arrival;
             model.TrainName = train.Name;
             model.TrainType = trainType.Name;
             model.Price = schedule.PricePerTicket;
@@ -83,6 +84,7 @@ namespace RailwaySystem.Controllers
             ticket.BeginStation = model.StartStationName;
             ticket.EndStation = model.EndStationName;
             ticket.Departure = model.DepartureDate;
+            ticket.Arrival = model.ArrivalDate;
             ticket.Price = model.Price;
             ticket.Quantity = model.Quantity;
             ticket.SeatType = model.SeatType;
@@ -101,7 +103,7 @@ namespace RailwaySystem.Controllers
         private RedirectToRouteResult ReserveTicket(Ticket ticket, BuyVM model, TicketsRepository.PaymentMethod paymentMethod)
         {
             TicketsRepository ticketsRepository = new TicketsRepository();
-            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
+            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, paymentMethod))
             {
                 Session["BuyVMModelState"] = "Ticket reservation failed.";
                 return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm") });
@@ -123,19 +125,15 @@ namespace RailwaySystem.Controllers
             return View();
         }
 
-        public ActionResult Buy(int id, String dt)
+        public ActionResult Buy(int id)
         {
             if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            String[] tokens = dt.Split('-');
-
-            DateTime dateTime = new DateTime(int.Parse(tokens[2]), int.Parse(tokens[1]), int.Parse(tokens[0]), int.Parse(tokens[3]), int.Parse(tokens[4]), 0);
-
             BuyVM model = new BuyVM();
-            if(!GenerateModel(id, dateTime, model))
+            if(!GenerateModel(id, model))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -269,7 +267,7 @@ namespace RailwaySystem.Controllers
             //TicketsRepository ticketsRepository = new TicketsRepository();
             //ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_PAY_PAL);
 
-            return ReserveTicket(ticket, model, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT);
+            return ReserveTicket(ticket, model, TicketsRepository.PaymentMethod.BY_PAY_PAL);
         }
 
 

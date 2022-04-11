@@ -24,6 +24,16 @@ namespace RailwaySystem.Controllers
                 ModelState.AddModelError("AuthError", "Invalid departure date!");
             }
 
+            if (model.Departure > model.LastDateToCreate)
+            {
+                ModelState.AddModelError("AuthError", "The last scheduled date must be on or after the departure date.");
+            }
+
+            if(model.ScheduleMode == 0)
+            {
+                ModelState.AddModelError("AuthError", "Invalid schedule type.");
+            }
+
             if (model.Arrival < model.Departure)
             {
                 ModelState.AddModelError("AuthError", "Arrival date must be after departure date!");
@@ -35,6 +45,7 @@ namespace RailwaySystem.Controllers
             {
                 ModelState.AddModelError("AuthError", "Schedule cannot be created due to conflict!");
             }
+
         }
 
         protected override void CheckIsModelValid(EditVM model)
@@ -70,6 +81,7 @@ namespace RailwaySystem.Controllers
             entity.Departure = model.Departure;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
+            entity.ScheduleModeId = model.ScheduleMode;
             entity.PricePerTicket = model.PricePerTicket;
         }
 
@@ -98,14 +110,13 @@ namespace RailwaySystem.Controllers
             SchedulesRepository schedules = new SchedulesRepository();
             Dictionary<int, string> routes = new Dictionary<int, string>();
 
-            foreach (var item in tracks.GetAll())
+            foreach(var track in tracks.GetAll())
             {
-                routes[item.Id] =
-                    stations.GetFirstOrDefault(s => s.Id == item.StartStationId).Name
-                    + " - " +
-                    stations.GetFirstOrDefault(s => s.Id == item.EndStationId).Name;
+                string startStation = stations.GetById(track.StartStationId).Name;
+                string endStation = stations.GetById(track.EndStationId).Name;
+                routes.Add(track.Id, startStation + " - " + endStation);
             }
-     
+
             ViewData["routes"] = routes;
             ViewData["trains"] = trains.GetAll();
             ViewData["trainTypes"] = trains.GetTrainTypes();
@@ -125,7 +136,7 @@ namespace RailwaySystem.Controllers
                         ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
                         return;
                     }
-                    ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.TimeOfDay)
+                    ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.Date)
                                                  .OrderBy(s => s.Departure.TimeOfDay)
                                                  .ToList();
                     if( ( (List<Schedule>)ViewData["items"] ).Count == 0 )
@@ -159,6 +170,35 @@ namespace RailwaySystem.Controllers
         {
             LoadFilteredData(model);
             return View(model);
+        }
+
+        [HttpPost]
+        public override ActionResult Create(CreateVM model)
+        {
+            if (Session["loggedUser"] == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (ModelState.IsValid)
+            {
+                CheckIsModelValid(model);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                LoadExtraViewData();
+                return View(model);
+            }
+
+            Schedule entity = new Schedule();
+            SchedulesRepository repo = new SchedulesRepository();
+
+            GenerateEntity(entity, model);
+
+            repo.Add(entity, model.LastDateToCreate);
+
+            return RedirectToAction("Index");
         }
     }
 }

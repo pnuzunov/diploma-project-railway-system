@@ -25,43 +25,45 @@
             @Html.HiddenFor(m => m.Price)
             <div class="grid bg-light border border-2 shadow p-3 m-3">
                 <div class="border border-1 rounded p-3 m-1">
-                    <div class="row">
-                        <div class="col-md-6 modal-header">
-                            <p class="text-center">@Html.LabelFor(m => m.SeatType)</p>
-                        </div>
-                    </div>
+
                     <div class="row d-flex align-content-center">
-                        <div class="col-md-3">
-                            <p class="text-center">@(FirstClass) @Html.RadioButtonFor(m => m.SeatType, FirstClass, new { @class = "form-control" })</p>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <p class="text-center">@Html.LabelFor(m => m.SeatType)</p>
+                            </div>
+                            <div class="grid">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                            <p class="text-center">@(FirstClass) @Html.RadioButtonFor(m => m.SeatType, FirstClass, new { @class = "form-control" })</p>
+                                        @*<div class="row">
+                                            @Html.RadioButtonFor(m => m.SeatType, FirstClass, new { @class = "form-control" })
+                                        </div>*@
+                                    </div>
+                                    <div class="col-md-6">
+                                            <p class="text-center">@(RegularClass) @Html.RadioButtonFor(m => m.SeatType, RegularClass, new { @class = "form-control" })</p>
+                                        @*<div class="row">
+                                            @Html.RadioButtonFor(m => m.SeatType, RegularClass, new { @class = "form-control" })
+                                        </div>*@
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-1">
 
+                        <div class="col-md-2">
+                            <div class="row">
+                                <p class="text-center">@Html.LabelFor(m => m.Quantity)</p>
+                            </div>
+                            <div class="row">
+                                @Html.TextBoxFor(m => m.Quantity, new { @type = "number", @class = "form-control" })
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <p class="text-center">@(RegularClass) @Html.RadioButtonFor(m => m.SeatType, RegularClass, new { @class = "form-control" })</p>
-                        </div>
-                        <div class="col-sm-1">
 
-                        </div>
-                    </div>
+
+                    
                     <div class="row">
                         <div class="col-md-3">
                             @Html.ValidationMessageFor(m => m.SeatType)
-                        </div>
-                    </div>
-                </div>
-                <div class="border border-1 rounded p-3 m-1">
-                    <div class="row">
-                        <div class="modal-header col-md-1">
-                            <p class="text-center">@Html.LabelFor(m => m.Quantity)</p>
-                        </div>
-                        <div class="col-md-3">
-                            @Html.TextBoxFor(m => m.Quantity, new { @type = "number", @class = "form-control" })
-                        </div>
-                        <div class="col-md-3">
-                            @Html.ValidationMessageFor(m => m.Quantity)
                         </div>
                     </div>
                 </div>
@@ -73,6 +75,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <input class="form-control" type="submit" value="To Overview... " />
+                        <a class="btn btn-light m-1" href="/Schedule/Index">Cancel</a>
                     </div>
                 </div>
             </div>

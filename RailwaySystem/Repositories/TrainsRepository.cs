@@ -26,6 +26,8 @@ namespace RailwaySystem.Repositories
 
         public List<Seat> GetNonReservedSeats(int scheduleId, int trainId, int quantity = 0, string seatClass = "", bool getAll = false)
         {
+            if (seatClass == null) return new List<Seat>();
+
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
             List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId, trainId);

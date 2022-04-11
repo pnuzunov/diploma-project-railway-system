@@ -9,8 +9,18 @@ namespace RailwaySystem.ViewModels.Station
 {
     public class CreateVM : BaseCreateVM
     {
+        [DisplayName("City")]
+        [Required(ErrorMessage = "This field is required!")]
+        public int CityId { get; set; }
+
         [DisplayName("Name")]
         [Required(ErrorMessage = "This field is required!")]
         public string Name { get; set; }
+        [DisplayName("Latitude")]
+        [Required(ErrorMessage = "This field is required!")]
+        public decimal Latitude { get; set; }
+        [DisplayName("Longitude")]
+        [Required(ErrorMessage = "This field is required!")]
+        public decimal Longitude { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace RailwaySystem.ViewModels.Ticket
         public string StartStationName { get; set; }
         public string EndStationName { get; set; }
         public DateTime DepartureDate { get; set; }
+        public DateTime ArrivalDate { get; set; }
 
         [DisplayName("Number of tickets")]
         [Required(ErrorMessage = "This field is required!")]

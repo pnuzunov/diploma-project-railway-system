@@ -16,6 +16,8 @@ namespace RailwaySystem.Entities
         [Column(TypeName = "datetime2")]
         public DateTime Departure { get; set; }
         [Column(TypeName = "datetime2")]
+        public DateTime Arrival { get; set; }
+        [Column(TypeName = "datetime2")]
         public DateTime BuyDate { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
