@@ -13,53 +13,92 @@ namespace RailwaySystem.Controllers
     {
         protected override void CheckIsModelValid(CreateVM model)
         {
-            TracksRepository repo = new TracksRepository();
-            if (model.StartStationId == model.EndStationId)
+            if (model.WayStations == null || model.WayStations.Count < 2)
             {
-                ModelState.AddModelError("AuthError", "Track must have different start and end stations!");
+                ModelState.AddModelError("AuthError", "Please select at least two stations!");
+                return;
             }
 
-            if (
-                repo.GetFirstOrDefault(i => i.StartStationId == model.StartStationId && i.EndStationId == model.EndStationId) != null)
+            foreach (var pc in model.PriceChanges)
             {
-                ModelState.AddModelError("AuthError", "Track already exists!");
+                if(pc < 0.0m)
+                {
+                    ModelState.AddModelError("AuthError", "Invalid price change!");
+                    return;
+                }
+            }
+
+            foreach (var min in model.MinutesToArrive)
+            {
+                if(min < 0)
+                {
+                    ModelState.AddModelError("AuthError", "Incorrectly assigned time!");
+                    return;
+                }
+            }
+
+            var hasDuplicate = model.WayStations.GroupBy(ws => ws).Any(g => g.Count() > 1);
+            if (hasDuplicate)
+            {
+                ModelState.AddModelError("AuthError", "Duplicate stations found.");
+                return;
             }
         }
 
         protected override void CheckIsModelValid(EditVM model)
         {
-            TracksRepository repo = new TracksRepository();
-            if (model.StartStationId == model.EndStationId)
-            {
-                ModelState.AddModelError("AuthError", "Track must have different start and end stations!");
-            }
 
-            Track check = repo.GetFirstOrDefault(i =>
-               (
-                (i.StartStationId == model.StartStationId && i.EndStationId == model.EndStationId) && i.Id != model.Id));
-            if (check != null)
-            {
-                ModelState.AddModelError("AuthError", "Track already exists!");
-            }
         }
 
         protected override void GenerateEntity(Track entity, CreateVM model)
         {
-            entity.StartStationId = model.StartStationId;
-            entity.EndStationId = model.EndStationId;
+            List<WayStation> wayStations = new List<WayStation>();
+
+            //foreach(var ws in model.WayStations)
+            //{
+            //    WayStation newWayStation = new WayStation()
+            //    {
+            //        StationId = ws,
+
+            //    };
+            //    wayStations.Add(newWayStation);
+            //}
+
+            for (int i = 0; i < model.WayStations.Count; i++)
+            {
+                WayStation newWayStation = new WayStation()
+                {
+                    StationId = model.WayStations[i],
+                    MinutesToArrive = model.MinutesToArrive[i],
+                    TicketPriceChange = model.PriceChanges[i],
+                    ConsecutiveNumber = i
+
+                };
+                wayStations.Add(newWayStation);
+            }
+
+            TracksRepository tracksRepository = new TracksRepository();
+            tracksRepository.Add(entity, wayStations);
         }
 
         protected override void GenerateEntity(Track entity, EditVM model)
         {
             entity.Id = model.Id;
-            entity.StartStationId = model.StartStationId;
-            entity.EndStationId = model.EndStationId;
+            entity.StandardTicketPrice = model.StandardTicketPrice;
         }
 
         protected override void GenerateModel(EditVM model, Track entity)
         {
-            model.StartStationId = entity.StartStationId;
-            model.EndStationId = entity.EndStationId;
+            List<WayStation> wayStations = new List<WayStation>();
+
+            foreach (var ws in model.WayStations)
+            {
+                WayStation newWayStation = new WayStation()
+                {
+                    StationId = ws
+                };
+                wayStations.Add(newWayStation);
+            }
         }
 
         protected override void LoadExtraViewData()
@@ -68,5 +107,44 @@ namespace RailwaySystem.Controllers
             ViewData["stations"] = stations.GetAll();
         }
 
+        public override ActionResult Create()
+        {
+            LoadExtraViewData();
+            CreateVM model = new CreateVM();
+            model.WayStations = new List<int>();
+            Session["trackCreateVM"] = model;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public override ActionResult Create(CreateVM model)
+        {
+            CheckIsModelValid(model);
+            if(!ModelState.IsValid)
+            {
+                LoadExtraViewData();
+                return View(model);
+            }
+
+            TracksRepository tracksRepository = new TracksRepository();
+            Track track = new Track();
+            GenerateEntity(track, model);
+            //tracksRepository.Add();
+
+            return RedirectToAction("Index", "Track");
+        }
+
+        public override ActionResult Edit(int id)
+        {
+            StationsRepository stations = new StationsRepository();
+            TracksRepository tracksRepository = new TracksRepository();
+            ViewData["stations"] = stations.GetAll();
+            ViewData["wayStations"] = tracksRepository.GetWayStations(id);
+            EditVM model = new EditVM();
+            GenerateModel(model, tracksRepository.GetById(id));
+
+            return View(model);
+        }
     }
 }

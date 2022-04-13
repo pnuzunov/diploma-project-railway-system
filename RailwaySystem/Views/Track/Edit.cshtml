@@ -33,6 +33,16 @@
                         @Html.ValidationMessageFor(m => m.EndStationId)
                     </div>
                 </div>
+
+                @foreach (var ws in (List<WayStation>)ViewData["wayStations"])
+                {
+                    <div class="row">
+                        <div class="col-3">
+                            @(((List<Station>)ViewData["stations"]).FirstOrDefault(s => s.Id == ws.StationId).Name)
+                        </div>
+                    </div>
+                }
+
                 <div class="row">
                     <div class="col-3">
                         @Html.ValidationMessage("AuthError")

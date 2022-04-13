@@ -253,6 +253,7 @@
     <Compile Include="Entities\City.cs" />
     <Compile Include="Entities\CreditRecord.cs" />
     <Compile Include="Entities\Schedule.cs" />
+    <Compile Include="Entities\ScheduledWayStation.cs" />
     <Compile Include="Entities\Seat.cs" />
     <Compile Include="Entities\SeatReservation.cs" />
     <Compile Include="Entities\Station.cs" />
@@ -341,6 +342,14 @@
     <Compile Include="Migrations\202204110824364_Update-11-04-2022_Stations-Lat-Lng.designer.cs">
       <DependentUpon>202204110824364_Update-11-04-2022_Stations-Lat-Lng.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204121245112_Update-12-04-2022.cs" />
+    <Compile Include="Migrations\202204121245112_Update-12-04-2022.designer.cs">
+      <DependentUpon>202204121245112_Update-12-04-2022.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202204121442486_Update-12-04-2022-01.cs" />
+    <Compile Include="Migrations\202204121442486_Update-12-04-2022-01.designer.cs">
+      <DependentUpon>202204121442486_Update-12-04-2022-01.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
@@ -353,6 +362,7 @@
     <Compile Include="Repositories\UsersRepository.cs" />
     <Compile Include="ViewModels\Schedule\DeleteVM.cs" />
     <Compile Include="ViewModels\Schedule\ListVM.cs" />
+    <Compile Include="ViewModels\Schedule\WayStationsVM.cs" />
     <Compile Include="ViewModels\Shared\BaseCreateVM.cs" />
     <Compile Include="ViewModels\Shared\BaseEditVM.cs" />
     <Compile Include="ViewModels\Home\LoginVM.cs" />
@@ -372,6 +382,7 @@
     <Compile Include="ViewModels\User\DetailsVM.cs" />
     <Compile Include="ViewModels\User\EditVM.cs" />
     <Compile Include="ViewModels\User\ListVM.cs" />
+    <Compile Include="ViewModels\WayStation\CreateVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -476,6 +487,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204110824364_Update-11-04-2022_Stations-Lat-Lng.resx">
       <DependentUpon>202204110824364_Update-11-04-2022_Stations-Lat-Lng.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204121245112_Update-12-04-2022.resx">
+      <DependentUpon>202204121245112_Update-12-04-2022.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204121442486_Update-12-04-2022-01.resx">
+      <DependentUpon>202204121442486_Update-12-04-2022-01.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

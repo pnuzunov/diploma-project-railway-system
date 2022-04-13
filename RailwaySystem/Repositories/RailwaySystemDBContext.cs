@@ -16,6 +16,7 @@ namespace RailwaySystem.Repositories
         public DbSet<Station> Stations { get; set; }
         public DbSet<WayStation> WayStations { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScheduledWayStation> ScheduledWayStations { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<SeatReservation> SeatReservations { get; set; }
@@ -32,7 +33,8 @@ namespace RailwaySystem.Repositories
             Cities = this.Set<City>();
             Stations = this.Set<Station>();
             WayStations = this.Set<WayStation>();
-            Schedules = this.Set<Schedule>();            
+            Schedules = this.Set<Schedule>();
+            ScheduledWayStations = this.Set<ScheduledWayStation>();
             Tickets = this.Set<Ticket>();
             Seats = this.Set<Seat>();
             SeatReservations = this.Set<SeatReservation>();

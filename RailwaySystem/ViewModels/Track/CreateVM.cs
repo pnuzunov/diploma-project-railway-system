@@ -9,11 +9,13 @@ namespace RailwaySystem.ViewModels.Track
 {
     public class CreateVM : BaseCreateVM
     {
-        [DisplayName("Start Station")]
+        [DisplayName("Station")]
+        public List<int> WayStations { get; set; }
+        [DisplayName("Price for ticket")]
+        public List<decimal> PriceChanges { get; set; }
+        [DisplayName("Minutes to arrive")]
+        public List<int> MinutesToArrive { get; set; }
         [Required(ErrorMessage = "This field is required!")]
-        public int StartStationId { get; set; }
-        [DisplayName("End Station")]
-        [Required(ErrorMessage = "This field is required!")]
-        public int EndStationId { get; set; }
+        public decimal StandardTicketPrice { get; set; }
     }
 }

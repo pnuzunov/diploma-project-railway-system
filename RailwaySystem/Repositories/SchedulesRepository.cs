@@ -63,24 +63,6 @@ namespace RailwaySystem.Repositories
             Context.SaveChanges();
         }
 
-        public Station GetStartStation(int scheduleId)
-        {
-            Track track = GetTrack(scheduleId);
-            if (track == null) return null;
-            StationsRepository stationsRepository = new StationsRepository();
-            Station station = stationsRepository.GetFirstOrDefault(st => st.Id == track.StartStationId);
-            return station;
-        }
-
-        public Station GetEndStation(int scheduleId)
-        {
-            Track track = GetTrack(scheduleId);
-            if (track == null) return null;
-            StationsRepository stationsRepository = new StationsRepository();
-            Station station = stationsRepository.GetFirstOrDefault(st => st.Id == track.EndStationId);
-            return station;
-        }
-
         public Track GetTrack(int scheduleId)
         {
             Schedule schedule = this.GetById(scheduleId);
@@ -119,14 +101,21 @@ namespace RailwaySystem.Repositories
             return reservations;
         }
 
-        public List<Schedule> GetFilteredSchedules(int trackId, DateTime date)
+        public List<Schedule> GetFilteredSchedules(int trackId, DateTime date, int startStationId, int endStationId)
         {
+            TracksRepository tracksRepository = new TracksRepository();
             List<Schedule> schedules = this.GetAll()
                                             .Where(s => s.TrackId == trackId
                                                         && s.Departure.Year == date.Year
                                                         && s.Departure.Month == date.Month
                                                         && s.Departure.Day == date.Day)
                                             .ToList();
+            foreach (var schedule in schedules)
+            {
+                WayStation start = tracksRepository.GetWayStation(trackId, startStationId);
+                schedule.Departure = schedule.Departure.AddMinutes(start.MinutesToArrive);
+                schedule.Arrival = schedule.Departure + tracksRepository.CalculateTravelTime(trackId, startStationId, endStationId);
+            }
             return schedules;
         }
     }

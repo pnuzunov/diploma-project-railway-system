@@ -26,28 +26,30 @@
                 <div class="col-3">
                     No@(item.Id)
                 </div>
-                @foreach (var station in (List<Station>)ViewData["stations"])
-                {
-                    if (item.StartStationId == station.Id)
-                    {
-                        <div class="col-3">
-                            @(station.Name)
-                        </div>
-                        break;
-                    }
 
-                }
-                @foreach (var station in (List<Station>)ViewData["stations"])
-                {
-                    if (item.EndStationId == station.Id)
-                    {
-                        <div class="col-3">
-                            @(station.Name)
-                        </div>
-                        break;
-                    }
 
-                }
+                @*@foreach (var station in (List<Station>)ViewData["stations"])
+        {
+            if (item.StartStationId == station.Id)
+            {
+                <div class="col-3">
+                    @(station.Name)
+                </div>
+                break;
+            }
+
+        }
+        @foreach (var station in (List<Station>)ViewData["stations"])
+        {
+            if (item.EndStationId == station.Id)
+            {
+                <div class="col-3">
+                    @(station.Name)
+                </div>
+                break;
+            }
+
+        }*@
                 <div class="col-1">
                     <a href="/Track/Edit?id=@(item.Id)">Edit...</a>
                 </div>

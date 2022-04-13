@@ -10,6 +10,13 @@ namespace RailwaySystem.Repositories
 {
     public class StationsRepository : BaseRepository<Station>
     {
+        public City GetCity(int id)
+        {
+            DbSet<City> cities = Context.Set<City>();
+            IQueryable<City> query = cities;
+            return query.Where(q => q.Id == id).FirstOrDefault();
+        }
+
         public List<City> GetCities(Expression<Func<City, bool>> filter = null)
         {
             DbSet<City> cities = Context.Set<City>();

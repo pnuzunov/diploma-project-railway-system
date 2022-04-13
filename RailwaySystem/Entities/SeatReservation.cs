@@ -17,5 +17,9 @@ namespace RailwaySystem.Entities
         public int TicketId { get; set; }
         [ForeignKey("TicketId")]
         public Ticket Ticket { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime Departure { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime Arrival { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace RailwaySystem.Controllers
         {
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
+            TracksRepository tracksRepository = new TracksRepository();
 
             Schedule schedule = schedulesRepository.GetById(scheduleId);
             Train train = schedulesRepository.GetTrain(scheduleId);
@@ -37,21 +38,24 @@ namespace RailwaySystem.Controllers
                 return false;
             }
 
-            string startStation = schedulesRepository.GetStartStation(scheduleId)?.Name;
-            string endStation = schedulesRepository.GetEndStation(scheduleId)?.Name;
-            
             TrainType trainType = trainsRepository.GetTrainType(train.Id);
             if (trainType == null)
             {
                 return false;
             }
 
+            WayStation start = tracksRepository.GetWayStation(schedule.TrackId, model.StartStation.Id);
+            WayStation end = tracksRepository.GetWayStation(schedule.TrackId, model.EndStation.Id);
+
+            if (start == null || end == null)
+            {
+                return false;
+            }
+
             model.Schedule = schedule;
             model.UserId = ((User)Session["loggedUser"]).Id;
-            model.StartStationName = startStation;
-            model.EndStationName = endStation;
-            model.DepartureDate = schedule.Departure;
-            model.ArrivalDate = schedule.Arrival;
+            model.DepartureDate = schedule.Departure.AddMinutes(start.MinutesToArrive);
+            model.ArrivalDate = model.DepartureDate + tracksRepository.CalculateTravelTime(schedule.TrackId, model.StartStation.Id, model.EndStation.Id);
             model.TrainName = train.Name;
             model.TrainType = trainType.Name;
             model.Price = schedule.PricePerTicket;
@@ -81,8 +85,8 @@ namespace RailwaySystem.Controllers
         private void BuildEntity(Ticket ticket, BuyVM model)
         {
             ticket.UserId = ((User)Session["loggedUser"]).Id;
-            ticket.BeginStation = model.StartStationName;
-            ticket.EndStation = model.EndStationName;
+            ticket.BeginStation = model.StartStation.Name;
+            ticket.EndStation = model.EndStation.Name;
             ticket.Departure = model.DepartureDate;
             ticket.Arrival = model.ArrivalDate;
             ticket.Price = model.Price;
@@ -125,7 +129,7 @@ namespace RailwaySystem.Controllers
             return View();
         }
 
-        public ActionResult Buy(int id)
+        public ActionResult Buy(int id, int ssid, int esid)
         {
             if (Session["loggedUser"] == null)
             {
@@ -133,11 +137,17 @@ namespace RailwaySystem.Controllers
             }
 
             BuyVM model = new BuyVM();
-            if(!GenerateModel(id, model))
+            StationsRepository stationsRepository = new StationsRepository();
+
+            model.StartStation = stationsRepository.GetFirstOrDefault(s => s.CityId == ssid);
+            model.EndStation = stationsRepository.GetFirstOrDefault(s => s.CityId == esid);
+            if (!GenerateModel(id, model))
             {
                 return RedirectToAction("Index", "Home");
             }
-            ViewData["route"] = model.StartStationName + " - " + model.EndStationName;
+            string startCityName = stationsRepository.GetCity(model.StartStation.Id).Name;
+            string endCityName = stationsRepository.GetCity(model.EndStation.Id).Name;
+            ViewData["route"] = startCityName + " - " + endCityName;
 
             TrainsRepository trainsRepository = new TrainsRepository();
             var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule.Id, model.Schedule.TrainId, getAll: true);

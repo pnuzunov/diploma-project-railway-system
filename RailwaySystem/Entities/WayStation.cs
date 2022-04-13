@@ -15,5 +15,7 @@ namespace RailwaySystem.Entities
         [ForeignKey("StationId")]
         public Station Station { get; set; }
         public int ConsecutiveNumber { get; set; }
+        public decimal TicketPriceChange { get; set; }
+        public int MinutesToArrive { get; set; }
     }
 }

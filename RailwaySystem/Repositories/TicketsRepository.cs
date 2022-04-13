@@ -29,6 +29,7 @@ namespace RailwaySystem.Repositories
                 Amount = -(ticket.Price * ticket.Quantity),
                 CustomerId = ticket.UserId,
                 EmployeeId = null,
+                TicketId = ticket.Id,
                 Date = DateTime.Now
             };
         }

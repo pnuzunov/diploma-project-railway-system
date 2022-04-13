@@ -11,13 +11,21 @@ namespace RailwaySystem.Controllers
 {
     public class ScheduleController : BaseController<Schedule, SchedulesRepository, CreateVM, EditVM>
     {
+        protected void CheckIsModelValid(ListVM model)
+        {
+            if (DateTime.Compare(DateTime.Now.Date, model.DepartureDate) >= 0)
+            {
+                ModelState.AddModelError("InvalidDateError", "Invalid date.");
+                return;
+            }
+        }
         protected override void CheckIsModelValid(CreateVM model)
         {
             SchedulesRepository repo = new SchedulesRepository();
-            if (model.Arrival == null)
-            {
-                ModelState.AddModelError("AuthError", "Invalid arrival date!");
-            }
+            //if (model.Arrival == null)
+            //{
+            //    ModelState.AddModelError("AuthError", "Invalid arrival date!");
+            //}
 
             if (model.Departure == null)
             {
@@ -34,10 +42,10 @@ namespace RailwaySystem.Controllers
                 ModelState.AddModelError("AuthError", "Invalid schedule type.");
             }
 
-            if (model.Arrival < model.Departure)
-            {
-                ModelState.AddModelError("AuthError", "Arrival date must be after departure date!");
-            }
+            //if (model.Arrival < model.Departure)
+            //{
+            //    ModelState.AddModelError("AuthError", "Arrival date must be after departure date!");
+            //}
 
             if (repo.GetFirstOrDefault(i =>
                                 i.Departure == model.Departure &&
@@ -77,7 +85,10 @@ namespace RailwaySystem.Controllers
 
         protected override void GenerateEntity(Schedule entity, CreateVM model)
         {
-            entity.Arrival = model.Arrival;
+            TracksRepository tracksRepository = new TracksRepository();
+            TimeSpan time = tracksRepository.CalculateTravelTime(model.TrackId, tracksRepository.GetStartStation(model.TrackId).Id, tracksRepository.GetEndStation(model.TrackId).Id);
+            DateTime arrival = model.Departure + time;
+            entity.Arrival = arrival;
             entity.Departure = model.Departure;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
@@ -112,34 +123,42 @@ namespace RailwaySystem.Controllers
 
             foreach(var track in tracks.GetAll())
             {
-                string startStation = stations.GetById(track.StartStationId).Name;
-                string endStation = stations.GetById(track.EndStationId).Name;
-                routes.Add(track.Id, startStation + " - " + endStation);
+                string startCity = stations.GetCity(tracks.GetStartStation(track.Id).CityId).Name;
+                string endCity = stations.GetCity(tracks.GetEndStation(track.Id).CityId).Name;
+                routes.Add(track.Id, startCity + " - " + endCity);
             }
 
             ViewData["routes"] = routes;
             ViewData["trains"] = trains.GetAll();
             ViewData["trainTypes"] = trains.GetTrainTypes();
             ViewData["tracks"] = tracks.GetAll();
+            ViewData["cities"] = stations.GetCities().OrderBy(i => i.Name).ToList();
             ViewData["stations"] = stations.GetAll().OrderBy(i => i.Name).ToList();
             ViewData["items"] = new List<Schedule>();
 
-            if (model != null && model.StartStationId != 0 
-                              && model.EndStationId != 0 ) {
-                if(DateTime.Compare(DateTime.Now.Date, model.DepartureDate) <= 0)
+            if (model != null && model.StartCityId != 0 
+                              && model.EndCityId != 0 ) {
+                if(DateTime.Compare(DateTime.Now.Date, model.DepartureDate) >= 0)
                 {
-                    Track track = tracks.GetFirstOrDefault(tr => tr.StartStationId == model.StartStationId 
-                                                              && tr.EndStationId == model.EndStationId);
-                    if (track == null)
+                    List<WayStation> wayStations = tracks.GetWayStations();
+                    int startStationId = stations.GetFirstOrDefault(s => s.CityId == model.StartCityId).Id;
+                    int endStationId = stations.GetFirstOrDefault(s => s.CityId == model.EndCityId).Id;
+                    List<Track> trackList = tracks.FindTracks(startStationId, endStationId);
+                    if (trackList.Count == 0)
                     {
                         ViewData["items"] = new List<Schedule>();
                         ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
                         return;
                     }
-                    ViewData["items"] = schedules.GetFilteredSchedules(track.Id, model.DepartureDate.Date)
+                    List<Schedule> schedulesList = new List<Schedule>();
+                    foreach (var track in trackList)
+                    {
+                        schedulesList.AddRange(schedules.GetFilteredSchedules(track.Id, model.DepartureDate.Date, startStationId, endStationId)
                                                  .OrderBy(s => s.Departure.TimeOfDay)
-                                                 .ToList();
-                    if( ( (List<Schedule>)ViewData["items"] ).Count == 0 )
+                                                 .ToList());
+                    }
+                    ViewData["items"] = schedulesList;
+                    if ( ( (List<Schedule>)ViewData["items"] ).Count == 0 )
                     {
                         ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
                     }
@@ -199,6 +218,18 @@ namespace RailwaySystem.Controllers
             repo.Add(entity, model.LastDateToCreate);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult WayStations(CreateVM model)
+        {
+            Session["scheduleCreateVM"] = model;
+            WayStationsVM wayStationsVM = new WayStationsVM();
+            TracksRepository tracksRepository = new TracksRepository();
+            List<WayStation> wayStations = tracksRepository.GetWayStations(model.TrackId);
+            wayStationsVM.WayStations = wayStations;
+
+            return View(wayStationsVM);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace RailwaySystem.ViewModels.Ticket
         public string TrainName { get; set; }
         public string TrainType { get; set; }
         public Entities.Schedule Schedule { get; set; }
-        public string StartStationName { get; set; }
-        public string EndStationName { get; set; }
+        public Entities.Station StartStation { get; set; }
+        public Entities.Station EndStation { get; set; }
         public DateTime DepartureDate { get; set; }
         public DateTime ArrivalDate { get; set; }
 

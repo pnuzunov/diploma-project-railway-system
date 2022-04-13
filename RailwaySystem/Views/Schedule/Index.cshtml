@@ -26,18 +26,19 @@
             <div class="row bg-dark d-flex justify-content-center">
                 <div class="col-md-2 p-3">
                     <p class="text-white">Departs from</p>
-                    @Html.DropDownListFor(m => m.StartStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
-                    <p style="color:red">@Html.ValidationMessageFor(m => m.StartStationId)</p>
+                    @Html.DropDownListFor(m => m.StartCityId, new SelectList((List<City>)ViewData["cities"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                    <p style="color:red">@Html.ValidationMessageFor(m => m.StartCityId)</p>
                 </div>
                 <div class="col-md-2 p-3">
                     <p class="text-white">Arrives at</p>
-                    @Html.DropDownListFor(m => m.EndStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
-                    <p style="color:red">@Html.ValidationMessageFor(m => m.EndStationId)</p>
+                    @Html.DropDownListFor(m => m.EndCityId, new SelectList((List<City>)ViewData["cities"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                    <p style="color:red">@Html.ValidationMessageFor(m => m.EndCityId)</p>
                 </div>
                 <div class="col-md-3 p-3">
                     <p class="text-white">Date</p>
                     @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
                     <p style="color:red">@Html.ValidationMessageFor(m => m.DepartureDate)</p>
+                    <p style="color:red">@Html.ValidationMessage("InvalidDateError")</p>
                 </div>
                 <div class="col-md-1 p-2">
                     <input class="btn btn-light p-2 m-1" type="submit" value="Search" />
@@ -67,38 +68,38 @@
 
                 @foreach (var item in (List<Schedule>)ViewData["items"])
                 {
-                    <div class="row m-3 d-flex align-content-center border border-1 rounded p-3">
+            <div class="row m-3 d-flex align-content-center border border-1 rounded p-3">
 
-                        @foreach (var train in (List<Train>)ViewData["trains"])
+                @foreach (var train in (List<Train>)ViewData["trains"])
+                {
+
+                    if (train.Id == item.TrainId)
+                    {
+                        foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
                         {
-
-                            if (train.Id == item.TrainId)
+                            if (trainType.Id == train.TypeId)
                             {
-                                foreach (var trainType in (List<TrainType>)ViewData["trainTypes"])
-                                {
-                                    if (trainType.Id == train.TypeId)
-                                    {
-                                        <div class="col-lg-4 m-1">
-                                            <img src="~/Content/icons/train-30.png" title="Train" />
-                                            @(train.Name) (@(trainType.Name))
-                                        </div>
-                                        break;
-                                    }
-                                }
-
+                                <div class="col-lg-4 m-1">
+                                    <img src="~/Content/icons/train-30.png" title="Train" />
+                                    @(train.Name) (@(trainType.Name))
+                                </div>
+                                break;
                             }
                         }
 
-                        <div class="col-lg-3 m-1">
-                            <img src="~/Content/icons/right-arrow-30.png" title="Departs at" />
-                            @(item.Departure.ToString("HH:mm")) - @(item.Arrival.ToString("HH:mm"))
-                        </div>
-                        <div class="col-lg-2 m-1">
-                            <img src="~/Content/icons/time-30.png" title="Travel Time" />
-                            @((item.Arrival - item.Departure).ToString(@"hh\:mm"))
-                        </div>
+                    }
+                }
 
-                        @*@foreach (var route in (Dictionary<int, string>)ViewData["routes"])
+                <div class="col-lg-3 m-1">
+                    <img src="~/Content/icons/right-arrow-30.png" title="Departs at" />
+                    @(item.Departure.ToString("HH:mm")) - @(item.Arrival.ToString("HH:mm"))
+                </div>
+                <div class="col-lg-2 m-1">
+                    <img src="~/Content/icons/time-30.png" title="Travel Time" />
+                    @((item.Arrival - item.Departure).ToString(@"hh\:mm"))
+                </div>
+
+                @foreach (var route in (Dictionary<int, string>)ViewData["routes"])
                 {
                     if (route.Key == item.TrackId)
                     {
@@ -108,41 +109,45 @@
                         </div>
                         break;
                     }
-                }*@
+                }
 
 
-                        @{
-                            var freeSeats = (List<Seat>)ViewData["freeSeats" + item.Id];
-                            if (freeSeats.Count > 0)
-                            {
-                                <div class="col-lg-2 m-1">
-                                    <p>@(((List<Seat>)ViewData["freeSeats" + item.Id]).Count) free seat(s)</p>
-                                </div>
-                                <div class="col-lg-2 m-1">
-                                    <a class="btn btn-success" href="/Ticket/Buy?id=@(item.Id)">
-                                        Buy E-Ticket
-                                    </a>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="col-lg-2 m-1">
-                                    <p>No free seats</p>
-                                </div>
-                            }
-                        }
+                @*@{
+            var freeSeats = (List<Seat>)ViewData["freeSeats" + item.Id];
+            if (freeSeats.Count > 0)
+            {
+                <div class="col-lg-2 m-1">
+                    <p>@(((List<Seat>)ViewData["freeSeats" + item.Id]).Count) free seat(s)</p>
+                </div>
+                <div class="col-lg-2 m-1">
+                    <a class="btn btn-success" href="/Ticket/Buy?id=@(item.Id)">
+                        Buy E-Ticket
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-2 m-1">
+                    <p>No free seats</p>
+                </div>
+            }
+        }*@
+            <div class="col-lg-2 m-1">
+                <a class="btn btn-success" href="/Ticket/Buy?id=@(item.Id)&ssid=@(Model.StartCityId)&esid=@(Model.EndCityId)">
+                    Buy E-Ticket
+                </a>
+            </div>
 
-
-                        @if (canCreateEditDelete)
-                        {
-                            <div class="col-lg-1 m-1">
-                                <a href="/Schedule/Edit?id=@(item.Id)">
-                                    <img src="~/Content/icons/edit-30.png" title="Edit" />
-                                </a>
-                            </div>
-                        }
-
+                @if (canCreateEditDelete)
+                {
+                    <div class="col-lg-1 m-1">
+                        <a href="/Schedule/Edit?id=@(item.Id)">
+                            <img src="~/Content/icons/edit-30.png" title="Edit" />
+                        </a>
                     </div>
+                }
+
+            </div>
 
                 }
             </div>
