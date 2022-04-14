@@ -34,7 +34,7 @@ namespace RailwaySystem.Repositories
             };
         }
 
-        private List<SeatReservation> BuildSeatReservations(Ticket ticket, Schedule schedule, List<Seat> seats)
+        private List<SeatReservation> BuildSeatReservations(Ticket ticket, Schedule schedule, List<Seat> seats, DateTime departure, DateTime arrival)
         {
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
             List<SeatReservation> seatReservationsList = new List<SeatReservation>();
@@ -44,11 +44,15 @@ namespace RailwaySystem.Repositories
                 {
                     ScheduleId = schedule.Id,
                     SeatId = seat.Id,
-                    TicketId = ticket.Id
+                    TicketId = ticket.Id,
+                    Departure = departure,
+                    Arrival = arrival
                 };
 
-                if (seatReservations.Where(sr => sr.ScheduleId == newReservation.ScheduleId
-                && sr.SeatId == newReservation.SeatId).FirstOrDefault() != null)
+                if (seatReservations.Where(sr => sr.ScheduleId == newReservation.ScheduleId &&
+                                           sr.SeatId == newReservation.SeatId &&
+                                           DateTime.Compare(sr.Arrival, newReservation.Departure) > 0 )
+                    .FirstOrDefault() != null)
                 {
                     return null;
                 }
@@ -57,10 +61,13 @@ namespace RailwaySystem.Repositories
             return seatReservationsList;
         }
 
-        public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats, PaymentMethod paymentMethod)
+        public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats, DateTime departure, DateTime arrival, PaymentMethod paymentMethod)
         {
             UsersRepository usersRepository = new UsersRepository();
             CreditRecord creditRecord = new CreditRecord();
+
+            ticket.BuyDate = DateTime.Now;
+            ticket = this.Add(ticket);
 
             if (paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT)
             {
@@ -74,15 +81,11 @@ namespace RailwaySystem.Repositories
 
             }
 
-            ticket.BuyDate = DateTime.Now;
-            ticket.Price *= ticket.Quantity;
-            this.Add(ticket);
-
-            ticket = this.GetFirstOrDefault(t => t.BuyDate.Equals(ticket.BuyDate) 
-                                              && t.UserId == ticket.UserId);
+            //ticket = this.GetFirstOrDefault(t => t.BuyDate.Equals(ticket.BuyDate) 
+            //                                  && t.UserId == ticket.UserId);
 
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
-            List<SeatReservation> newReservations = BuildSeatReservations(ticket, schedule, seats);
+            List<SeatReservation> newReservations = BuildSeatReservations(ticket, schedule, seats, departure, arrival);
             if(newReservations == null)
             {
                 this.Delete(ticket.Id);

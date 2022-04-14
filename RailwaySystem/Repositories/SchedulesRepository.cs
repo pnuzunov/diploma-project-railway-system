@@ -101,6 +101,14 @@ namespace RailwaySystem.Repositories
             return reservations;
         }
 
+        public void Transform(Schedule schedule, int startStationId, int endStationId)
+        {
+            TracksRepository tracksRepository = new TracksRepository();
+            Station firstStation = tracksRepository.GetStartStation(schedule.TrackId);
+            schedule.Departure = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, firstStation.Id, startStationId);
+            schedule.Arrival = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, startStationId, endStationId);
+        }
+
         public List<Schedule> GetFilteredSchedules(int trackId, DateTime date, int startStationId, int endStationId)
         {
             TracksRepository tracksRepository = new TracksRepository();
@@ -112,9 +120,7 @@ namespace RailwaySystem.Repositories
                                             .ToList();
             foreach (var schedule in schedules)
             {
-                WayStation start = tracksRepository.GetWayStation(trackId, startStationId);
-                schedule.Departure = schedule.Departure.AddMinutes(start.MinutesToArrive);
-                schedule.Arrival = schedule.Departure + tracksRepository.CalculateTravelTime(trackId, startStationId, endStationId);
+                Transform(schedule, startStationId, endStationId);
             }
             return schedules;
         }

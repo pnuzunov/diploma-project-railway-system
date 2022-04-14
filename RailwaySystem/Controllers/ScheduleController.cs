@@ -13,7 +13,13 @@ namespace RailwaySystem.Controllers
     {
         protected void CheckIsModelValid(ListVM model)
         {
-            if (DateTime.Compare(DateTime.Now.Date, model.DepartureDate) >= 0)
+            if (model == null || model.StartCityId != 0
+                              || model.EndCityId != 0)
+            {
+
+            }
+
+                if (DateTime.Compare(DateTime.Now.Date, model.DepartureDate) >= 0)
             {
                 ModelState.AddModelError("InvalidDateError", "Invalid date.");
                 return;
@@ -138,8 +144,6 @@ namespace RailwaySystem.Controllers
 
             if (model != null && model.StartCityId != 0 
                               && model.EndCityId != 0 ) {
-                if(DateTime.Compare(DateTime.Now.Date, model.DepartureDate) >= 0)
-                {
                     List<WayStation> wayStations = tracks.GetWayStations();
                     int startStationId = stations.GetFirstOrDefault(s => s.CityId == model.StartCityId).Id;
                     int endStationId = stations.GetFirstOrDefault(s => s.CityId == model.EndCityId).Id;
@@ -166,10 +170,9 @@ namespace RailwaySystem.Controllers
                     {
                         foreach (var schedule in (List<Schedule>)ViewData["items"])
                         {
-                            ViewData["freeSeats" + schedule.Id] = trains.GetNonReservedSeats(schedule.Id, schedule.TrainId, getAll: true);
+                            ViewData["freeSeats" + schedule.Id] = trains.GetNonReservedSeats(schedule, getAll: true);
                         }
                     }
-                }
             }
         }
 

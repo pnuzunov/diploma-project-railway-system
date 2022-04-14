@@ -24,16 +24,16 @@ namespace RailwaySystem.Repositories
             return query.Where(filter).ToList();
         }
 
-        public List<Seat> GetNonReservedSeats(int scheduleId, int trainId, int quantity = 0, string seatClass = "", bool getAll = false)
+        public List<Seat> GetNonReservedSeats(Schedule schedule, int quantity = 0, string seatClass = "", bool getAll = false)
         {
             if (seatClass == null) return new List<Seat>();
 
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(scheduleId, trainId);
+            List<SeatReservation> reservations = schedulesRepository.GetSeatReservations(schedule.Id, schedule.TrainId);
             bool ignoreClass = seatClass.Equals("");
             bool isFirstClass = seatClass.Equals(TrainsRepository.FIRST_CLASS);
-            List<Seat> seats = trainsRepository.GetSeats(s => s.TrainId == trainId && (ignoreClass || s.IsFirstClass == isFirstClass));
+            List<Seat> seats = trainsRepository.GetSeats(s => s.TrainId == schedule.TrainId && (ignoreClass || s.IsFirstClass == isFirstClass));
             List<Seat> freeSeats = new List<Seat>();
 
             if (seats == null) return freeSeats;
@@ -42,7 +42,7 @@ namespace RailwaySystem.Repositories
             foreach (var seat in seats)
             {
                 if (!getAll && counter == quantity) break;
-                if(!reservations.Any(res => res.SeatId == seat.Id)) {
+                if(!reservations.Any(res => res.SeatId == seat.Id && DateTime.Compare(res.Arrival, schedule.Departure) > 0)) {
                     freeSeats.Add(seat);
                     counter++;
                 }

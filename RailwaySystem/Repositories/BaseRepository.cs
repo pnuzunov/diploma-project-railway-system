@@ -43,10 +43,11 @@ namespace RailwaySystem.Repositories
                         .FirstOrDefault();
         }
 
-        public virtual void Add(T item)
+        public virtual T Add(T item)
         {
-            Items.Add(item);
+            T entry = Items.Add(item);
             Context.SaveChanges();
+            return entry;
         }
 
         public virtual void Delete(int id)
