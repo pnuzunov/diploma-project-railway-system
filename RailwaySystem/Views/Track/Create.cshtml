@@ -11,12 +11,6 @@
         <div class="col-3">
             Station name @Html.DropDownListFor(m => m.WayStations, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--", new { @class = "form-control"})
         </div>
-        <div class="col-3">
-            Price Change @Html.TextBoxFor(m => m.PriceChanges, new { @type = "number", @step = ".01", @class = "form-control" })
-        </div>
-        <div class="col-3">
-            Minutes to arrive @Html.TextBoxFor(m => m.MinutesToArrive, new { @type = "number", @class = "form-control" })
-        </div>
 </script>
 
 <script type="text/javascript">
@@ -26,7 +20,7 @@
         var removeBtns = document.getElementsByClassName("ws-remove-btn");
         var wsCount = waystations.length;
         for (var i = 0; i < wsCount; i++) {
-            waystations[i].id = "ws-" + (i + 1);
+            waystations[i].id = "ws-" + (i + 2);
             document.getElementById(removeBtns[i].id).outerHTML = '<button id=\"ws-remove-' + waystations[i].id + '\" class=\"btn btn-danger ws-remove-btn\" type=\"button\" onClick=\"RemoveWayStation(\'' + waystations[i].id + '\')\"> Remove</button></div>';
 
         }
@@ -37,7 +31,7 @@
         var newWS = document.createElement("div");
         var template = document.getElementById("ws-template");
         newWS.className = "way-station";
-        newWS.id = "ws-" + (wsCount+1);
+        newWS.id = "ws-" + (wsCount+2);
         newWS.innerHTML = template.innerHTML + '<button id=\"ws-remove-' + newWS.id + '\" class=\"btn btn-danger ws-remove-btn\" type=\"button\" onClick=\"RemoveWayStation(\'' + newWS.id + '\')\"> Remove</button></div>';
         document.getElementById("ws-area").appendChild(newWS);
     }
@@ -54,29 +48,29 @@
     <div class="container wrapper bg-light">
         <form action="/Track/Create" method="post">
             <div class="grid">
+                <div class="row">
+                    <div class="col-3">
+                        @Html.LabelFor(m => m.Description, new { @class = "form-control" })
+                    </div>
+                    <div class="col-3">
+                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                    </div>
+                </div>
                 <div class="grid" id="ws-area">
                     <div class="row m-3">
                         <div class="col-3">
                             Station name @Html.DropDownListFor(m => m.WayStations, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--", new { @class = "form-control" })
                         </div>
-                        @Html.HiddenFor(m => m.PriceChanges)
-                        @Html.HiddenFor(m => m.MinutesToArrive)
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-3">
+                            Station name @Html.DropDownListFor(m => m.WayStations, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--", new { @class = "form-control" })
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-3">
                         <button class="btn" type="button" onclick="AddWayStation();">Add station</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-3">
-                        @Html.LabelFor(m => m.StandardTicketPrice)
-                    </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.StandardTicketPrice, new { @type = "number", @step = ".01", @class = "form-control" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.StandardTicketPrice)
                     </div>
                 </div>
                 <div class="row">

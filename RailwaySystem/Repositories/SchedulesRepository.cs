@@ -16,7 +16,7 @@ namespace RailwaySystem.Repositories
             ONLY_WEEKENDS = 3
         }
 
-        public void Add(Schedule item, DateTime lastDate)
+        public void Add(Schedule item, DateTime lastDate, List<ScheduledWayStation> scheduledWS)
         {
             DateTime nextDeparture = item.Departure;
             DateTime nextArrival = item.Arrival;
@@ -33,12 +33,9 @@ namespace RailwaySystem.Repositories
                 };
 
                 ScheduleMode scheduleMode = (ScheduleMode)schedule.ScheduleModeId;
-                this.Items.Add(schedule);
-                if(item.ScheduleModeId == null)
-                {
-                    Context.SaveChanges();
-                    return;
-                }
+                schedule = this.Items.Add(schedule);
+
+                AddScheduledWS(schedule, scheduledWS);
 
                 nextDeparture = nextDeparture.AddDays(1);
                 nextArrival = nextArrival.AddDays(1);
@@ -61,6 +58,54 @@ namespace RailwaySystem.Repositories
 
             } while (DateTime.Compare(nextDeparture.Date, lastDate.Date) < 0);
             Context.SaveChanges();
+        }
+
+        public void AddScheduledWS(Schedule schedule, List<ScheduledWayStation> scheduledWS)
+        {
+            DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
+
+            foreach (var sws in scheduledWS)
+            {
+                sws.ScheduleId = schedule.Id;
+                if(!sws.Departure.Equals(new DateTime())) 
+                    sws.Departure = schedule.Departure.Date + sws.Departure.TimeOfDay;
+                if (!sws.Arrival.Equals(new DateTime()))
+                    sws.Arrival = sws.Departure.Date + sws.Arrival.TimeOfDay;
+                scheduledsDbSet.Add(sws);
+            }
+            Context.SaveChanges();
+        }
+
+        public void CascadeDelete(int scheduleId)
+        {
+            DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
+            List<ScheduledWayStation> swsToDelete = scheduledsDbSet.Where(sws => sws.ScheduleId == scheduleId).ToList();
+            foreach (var sws in swsToDelete)
+            {
+                scheduledsDbSet.Remove(sws);
+            }
+            Context.SaveChanges();
+            this.Delete(scheduleId);
+        }
+
+        public List<ScheduledWayStation> GetScheduledWayStations(int scheduleId)
+        {
+            DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
+            IQueryable<ScheduledWayStation> query = scheduledsDbSet;
+            return query.Where(q => q.ScheduleId == scheduleId).ToList();
+        }
+
+        public ScheduledWayStation GetScheduledWayStation(Schedule schedule, int stationId)
+        {
+            DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
+            DbSet<WayStation> wayStationsDbSet = Context.Set<WayStation>();
+
+            WayStation wayStation = wayStationsDbSet.Where(ws => ws.StationId == stationId && ws.TrackId == schedule.TrackId).FirstOrDefault();
+
+            if (wayStation == null) return null;
+
+            IQueryable<ScheduledWayStation> query = scheduledsDbSet;
+            return query.Where(q => q.ScheduleId == schedule.Id && q.WayStationId == wayStation.Id).FirstOrDefault();
         }
 
         public Track GetTrack(int scheduleId)
@@ -103,10 +148,10 @@ namespace RailwaySystem.Repositories
 
         public void Transform(Schedule schedule, int startStationId, int endStationId)
         {
-            TracksRepository tracksRepository = new TracksRepository();
-            Station firstStation = tracksRepository.GetStartStation(schedule.TrackId);
-            schedule.Departure = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, firstStation.Id, startStationId);
-            schedule.Arrival = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, startStationId, endStationId);
+            ScheduledWayStation firstSWS = GetScheduledWayStation(schedule, startStationId);
+            ScheduledWayStation lastSWS = GetScheduledWayStation(schedule, endStationId);
+            schedule.Departure = schedule.Departure.Date + firstSWS.Departure.TimeOfDay;
+            schedule.Arrival = schedule.Departure.Date + lastSWS.Arrival.TimeOfDay;
         }
 
         public List<Schedule> GetFilteredSchedules(int trackId, DateTime date, int startStationId, int endStationId)
@@ -124,5 +169,17 @@ namespace RailwaySystem.Repositories
             }
             return schedules;
         }
+
+        public void DeleteCascade(int scheduleId)
+        {
+            DbSet<ScheduledWayStation> scheduledWayStations = Context.Set<ScheduledWayStation>();
+            IEnumerable<ScheduledWayStation> query = scheduledWayStations.Where(q => q.ScheduleId == scheduleId);
+
+            if(query != null && query.Count() > 0)
+                scheduledWayStations.RemoveRange(query);
+            this.Delete(scheduleId);
+            Context.SaveChanges();
+        }
+
     }
 }

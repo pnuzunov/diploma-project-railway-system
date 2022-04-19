@@ -81,26 +81,33 @@ namespace RailwaySystem.Repositories
 
             }
 
-            //ticket = this.GetFirstOrDefault(t => t.BuyDate.Equals(ticket.BuyDate) 
-            //                                  && t.UserId == ticket.UserId);
-
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
             List<SeatReservation> newReservations = BuildSeatReservations(ticket, schedule, seats, departure, arrival);
             if(newReservations == null)
             {
-                this.Delete(ticket.Id);
                 if (paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT && !creditRecord.Equals(new CreditRecord()))
                 {
                     creditRecord = usersRepository.GetCreditRecord(cr => cr.Date.Equals(creditRecord.Date)
                                                   && cr.CustomerId == creditRecord.CustomerId);
                     usersRepository.Delete(creditRecord.Id);
                 }
+                this.Delete(ticket.Id);
                 return false;
             }
             seatReservations.AddRange(newReservations);
 
             Context.SaveChanges();
             return true;
+        }
+
+        public void DeleteCascade(int ticketId)
+        {
+            DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
+            CreditRecord creditRecord = creditRecords.Where(cr => cr.TicketId == ticketId).FirstOrDefault();
+            if (creditRecord != null)
+                creditRecords.Remove(creditRecord);
+            this.Delete(ticketId);
+            Context.SaveChanges();
         }
     }
 }

@@ -19,24 +19,6 @@ namespace RailwaySystem.Controllers
                 return;
             }
 
-            foreach (var pc in model.PriceChanges)
-            {
-                if(pc < 0.0m)
-                {
-                    ModelState.AddModelError("AuthError", "Invalid price change!");
-                    return;
-                }
-            }
-
-            foreach (var min in model.MinutesToArrive)
-            {
-                if(min < 0)
-                {
-                    ModelState.AddModelError("AuthError", "Incorrectly assigned time!");
-                    return;
-                }
-            }
-
             var hasDuplicate = model.WayStations.GroupBy(ws => ws).Any(g => g.Count() > 1);
             if (hasDuplicate)
             {
@@ -69,8 +51,6 @@ namespace RailwaySystem.Controllers
                 WayStation newWayStation = new WayStation()
                 {
                     StationId = model.WayStations[i],
-                    MinutesToArrive = model.MinutesToArrive[i],
-                    TicketPriceChange = model.PriceChanges[i],
                     ConsecutiveNumber = i
 
                 };
@@ -84,21 +64,21 @@ namespace RailwaySystem.Controllers
         protected override void GenerateEntity(Track entity, EditVM model)
         {
             entity.Id = model.Id;
-            entity.StandardTicketPrice = model.StandardTicketPrice;
+            entity.Description = model.Description;
         }
 
         protected override void GenerateModel(EditVM model, Track entity)
         {
+            TracksRepository tracksRepository = new TracksRepository();
             List<WayStation> wayStations = new List<WayStation>();
-
-            foreach (var ws in model.WayStations)
+            wayStations = tracksRepository.GetWayStations(entity.Id).OrderBy(ws => ws.ConsecutiveNumber).ToList();
+            model.WayStations = new List<int>();
+            for(int i = 0; i < wayStations.Count; i++)
             {
-                WayStation newWayStation = new WayStation()
-                {
-                    StationId = ws
-                };
-                wayStations.Add(newWayStation);
+                model.WayStations[i] = wayStations[i].StationId;
             }
+            model.Id = entity.Id;
+            model.Description = entity.Description;
         }
 
         protected override void LoadExtraViewData()

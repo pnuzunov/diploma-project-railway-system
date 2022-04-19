@@ -27,39 +27,38 @@ namespace RailwaySystem.Controllers
         }
         protected override void CheckIsModelValid(CreateVM model)
         {
-            SchedulesRepository repo = new SchedulesRepository();
+            //SchedulesRepository repo = new SchedulesRepository();
             //if (model.Arrival == null)
             //{
             //    ModelState.AddModelError("AuthError", "Invalid arrival date!");
             //}
 
-            if (model.Departure == null)
-            {
-                ModelState.AddModelError("AuthError", "Invalid departure date!");
-            }
+            //if (model.Departure == null)
+            //{
+            //    ModelState.AddModelError("AuthError", "Invalid departure date!");
+            //}
 
-            if (model.Departure > model.LastDateToCreate)
-            {
-                ModelState.AddModelError("AuthError", "The last scheduled date must be on or after the departure date.");
-            }
+            //if (model.Departure > model.LastDateToCreate)
+            //{
+            //    ModelState.AddModelError("AuthError", "The last scheduled date must be on or after the departure date.");
+            //}
 
-            if(model.ScheduleMode == 0)
-            {
-                ModelState.AddModelError("AuthError", "Invalid schedule type.");
-            }
+            //if(model.ScheduleMode == 0)
+            //{
+            //    ModelState.AddModelError("AuthError", "Invalid schedule type.");
+            //}
 
             //if (model.Arrival < model.Departure)
             //{
             //    ModelState.AddModelError("AuthError", "Arrival date must be after departure date!");
             //}
 
-            if (repo.GetFirstOrDefault(i =>
-                                i.Departure == model.Departure &&
-                                i.TrackId == model.TrackId) != null)
-            {
-                ModelState.AddModelError("AuthError", "Schedule cannot be created due to conflict!");
-            }
-
+            //if (repo.GetFirstOrDefault(i =>
+            //                    i.Departure == model.Departure &&
+            //                    i.TrackId == model.TrackId) != null)
+            //{
+            //    ModelState.AddModelError("AuthError", "Schedule cannot be created due to conflict!");
+            //}
         }
 
         protected override void CheckIsModelValid(EditVM model)
@@ -91,15 +90,14 @@ namespace RailwaySystem.Controllers
 
         protected override void GenerateEntity(Schedule entity, CreateVM model)
         {
-            TracksRepository tracksRepository = new TracksRepository();
-            TimeSpan time = tracksRepository.CalculateTravelTime(model.TrackId, tracksRepository.GetStartStation(model.TrackId).Id, tracksRepository.GetEndStation(model.TrackId).Id);
-            DateTime arrival = model.Departure + time;
-            entity.Arrival = arrival;
-            entity.Departure = model.Departure;
+            entity.Departure = model.DepartDate;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
             entity.ScheduleModeId = model.ScheduleMode;
             entity.PricePerTicket = model.PricePerTicket;
+
+            DateTime scheduleArrival = model.Arrivals[model.Arrivals.Count - 1];
+            entity.Arrival = scheduleArrival;
         }
 
         protected override void GenerateEntity(Schedule entity, EditVM model)
@@ -144,7 +142,6 @@ namespace RailwaySystem.Controllers
 
             if (model != null && model.StartCityId != 0 
                               && model.EndCityId != 0 ) {
-                    List<WayStation> wayStations = tracks.GetWayStations();
                     int startStationId = stations.GetFirstOrDefault(s => s.CityId == model.StartCityId).Id;
                     int endStationId = stations.GetFirstOrDefault(s => s.CityId == model.EndCityId).Id;
                     List<Track> trackList = tracks.FindTracks(startStationId, endStationId);
@@ -194,6 +191,13 @@ namespace RailwaySystem.Controllers
             return View(model);
         }
 
+        public override ActionResult Create()
+        {
+            LoadExtraViewData();
+
+            return View();
+        }
+
         [HttpPost]
         public override ActionResult Create(CreateVM model)
         {
@@ -213,26 +217,78 @@ namespace RailwaySystem.Controllers
                 return View(model);
             }
 
-            Schedule entity = new Schedule();
-            SchedulesRepository repo = new SchedulesRepository();
+            //Schedule entity = new Schedule();
+            //SchedulesRepository repo = new SchedulesRepository();
 
-            GenerateEntity(entity, model);
+            //GenerateEntity(entity, model);
 
-            repo.Add(entity, model.LastDateToCreate);
+            //repo.Add(entity, model.LastDateToCreate);
 
-            return RedirectToAction("Index");
+            Session["scheduleCreateVM"] = model;
+            return RedirectToAction("SetWayStations");
+        }
+
+        public ActionResult SetWayStations()
+        {
+            CreateVM model = (CreateVM)Session["scheduleCreateVM"];
+            TracksRepository tracksRepository = new TracksRepository();
+            StationsRepository stationsRepository = new StationsRepository();
+            List<WayStation> wayStations = tracksRepository.GetWayStations(model.TrackId);
+            foreach (var ws in wayStations)
+            {
+                ws.Station = stationsRepository.GetById(ws.StationId);
+            }
+            model.WayStations = wayStations;
+
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult WayStations(CreateVM model)
+        public ActionResult SetWayStations(CreateVM model)
         {
-            Session["scheduleCreateVM"] = model;
-            WayStationsVM wayStationsVM = new WayStationsVM();
-            TracksRepository tracksRepository = new TracksRepository();
-            List<WayStation> wayStations = tracksRepository.GetWayStations(model.TrackId);
-            wayStationsVM.WayStations = wayStations;
+            CreateVM savedModel = (CreateVM)Session["scheduleCreateVM"];
+            model.LastDateToCreate = savedModel.LastDateToCreate;
+            model.PricePerTicket = savedModel.PricePerTicket;
+            model.ScheduleMode = savedModel.ScheduleMode;
+            model.TrackId = savedModel.TrackId;
+            model.TrainId = savedModel.TrainId;
+            model.DepartDate = savedModel.DepartDate;
+            model.WayStations = savedModel.WayStations;
 
-            return View(wayStationsVM);
+            List<ScheduledWayStation> scheduledWS = new List<ScheduledWayStation>();
+
+            for (int i = 0; i < model.WayStations.Count; i++)
+            {
+                ScheduledWayStation newSWS = new ScheduledWayStation();
+                newSWS.WayStationId = model.WayStations[i].Id;
+                if(i != 0)
+                {
+                    newSWS.Arrival = model.Arrivals[i - 1];
+                }
+                else
+                {
+                    newSWS.Arrival = new DateTime();
+                }
+                if(i != model.WayStations.Count - 1)
+                {
+                    newSWS.Departure = model.Departures[i];
+                }
+                else
+                {
+                    newSWS.Departure = new DateTime();
+                }
+                scheduledWS.Add(newSWS);
+            }
+
+            Schedule schedule = new Schedule();
+            GenerateEntity(schedule, model);
+
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            schedulesRepository.Add(schedule, model.LastDateToCreate, scheduledWS);
+
+
+            Session["scheduleCreateVM"] = null;
+            return RedirectToAction("Index", "Schedule");
         }
     }
 }

@@ -94,20 +94,5 @@ namespace RailwaySystem.Repositories
             }
             return tracks;
         }
-
-        public TimeSpan CalculateTravelTime(int trackId, int startStationId, int endStationId)
-        {
-            TimeSpan timeSpan = new TimeSpan(0, 0, 0);
-            WayStation startWayStation = this.GetWayStation(trackId, startStationId);
-            WayStation endWayStation = this.GetWayStation(trackId, endStationId);
-
-            int consecNumber = startWayStation.ConsecutiveNumber+1;            
-            while (consecNumber <= endWayStation.ConsecutiveNumber)
-            {
-                WayStation next = this.GetWayStationByConsecNumber(trackId, consecNumber++);
-                timeSpan = timeSpan.Add(new TimeSpan(0, next.MinutesToArrive, 0));
-            }
-            return timeSpan;
-        }
     }
 }

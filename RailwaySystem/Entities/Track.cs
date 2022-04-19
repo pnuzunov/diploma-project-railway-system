@@ -8,6 +8,6 @@ namespace RailwaySystem.Entities
 {
     public class Track : BaseEntity
     {
-        public decimal StandardTicketPrice { get; set; }
+        public string Description { get; set; }
     }
 }

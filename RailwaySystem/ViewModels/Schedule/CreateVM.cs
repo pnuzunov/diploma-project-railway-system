@@ -17,13 +17,19 @@ namespace RailwaySystem.ViewModels.Schedule
         [Required(ErrorMessage = "This field is required!")]
         public int TrackId { get; set; }
 
-        [DisplayName("Departs"), DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
-        [Required(ErrorMessage = "This field is required!")]
-        public DateTime Departure { get; set; }
+        //[DisplayName("Departs"), DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
+        //[Required(ErrorMessage = "This field is required!")]
+        public DateTime DepartDate { get; set; }
 
         //[DisplayName("Arrives"), DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
         //[Required(ErrorMessage = "This field is required!")]
         //public DateTime Arrival { get; set; }
+
+        public List<Entities.WayStation> WayStations { get; set; }
+
+        public List<DateTime> Departures { get; set; }
+
+        public List<DateTime> Arrivals { get; set; }
 
         [DisplayName("Create entries until")]
         public DateTime LastDateToCreate { get; set; }
