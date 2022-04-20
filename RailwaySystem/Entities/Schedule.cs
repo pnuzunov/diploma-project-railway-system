@@ -9,12 +9,7 @@ namespace RailwaySystem.Entities
     public class Schedule : BaseEntity
     {
         public int TrainId { get; set; }
-        public int TrackId { get; set; }
-
-        [Column(TypeName = "datetime2")]
-        public DateTime Departure { get; set; }
-        [Column(TypeName = "datetime2")]
-        public DateTime Arrival { get; set; }
+        public int TrackId { get; set; }    
 
         [ForeignKey("TrainId")]
         public Train WhichTrain { get; set; }

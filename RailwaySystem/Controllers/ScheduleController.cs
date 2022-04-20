@@ -78,41 +78,25 @@ namespace RailwaySystem.Controllers
             {
                 ModelState.AddModelError("AuthError", "Arrival date must be after departure date!");
             }
-
-            Schedule check = repo.GetFirstOrDefault(i =>
-                                i.Departure == model.Departure && i.TrackId == model.TrackId && i.Id != model.Id);
-
-            if (check != null)
-            {
-                ModelState.AddModelError("AuthError", "Schedule cannot be created due to conflict!");
-            }
         }
 
         protected override void GenerateEntity(Schedule entity, CreateVM model)
         {
-            entity.Departure = model.DepartDate;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
             entity.ScheduleModeId = model.ScheduleMode;
             entity.PricePerTicket = model.PricePerTicket;
-
-            DateTime scheduleArrival = model.Arrivals[model.Arrivals.Count - 1];
-            entity.Arrival = scheduleArrival;
         }
 
         protected override void GenerateEntity(Schedule entity, EditVM model)
         {
             entity.Id = model.Id;
-            entity.Arrival = model.Arrival;
-            entity.Departure = model.Departure;
             entity.TrackId = model.TrackId;
             entity.TrainId = model.TrainId;
         }
 
         protected override void GenerateModel(EditVM model, Schedule entity)
         {
-            model.Departure = entity.Departure;
-            model.Arrival = entity.Arrival;
             model.TrackId = entity.TrackId;
             model.TrainId = entity.TrainId;
         }
@@ -154,8 +138,7 @@ namespace RailwaySystem.Controllers
                     List<Schedule> schedulesList = new List<Schedule>();
                     foreach (var track in trackList)
                     {
-                        schedulesList.AddRange(schedules.GetFilteredSchedules(track.Id, model.DepartureDate.Date, startStationId, endStationId)
-                                                 .OrderBy(s => s.Departure.TimeOfDay)
+                        schedulesList.AddRange(schedules.GetFilteredSchedules(track.Id)
                                                  .ToList());
                     }
                     ViewData["items"] = schedulesList;
@@ -167,7 +150,8 @@ namespace RailwaySystem.Controllers
                     {
                         foreach (var schedule in (List<Schedule>)ViewData["items"])
                         {
-                            ViewData["freeSeats" + schedule.Id] = trains.GetNonReservedSeats(schedule, getAll: true);
+                            ViewData["itemsDepartDate" + schedule.Id] = schedules.GetDepartureDate(schedule.Id, startStationId);
+                            ViewData["itemsArrivalDate" + schedule.Id] = schedules.GetArrivalDate(schedule.Id, endStationId);
                         }
                     }
             }
@@ -257,6 +241,12 @@ namespace RailwaySystem.Controllers
 
             List<ScheduledWayStation> scheduledWS = new List<ScheduledWayStation>();
 
+            for(int i = 0; i < model.Arrivals.Count; i++)
+            {
+                model.Arrivals[i] = new DateTime(model.DepartDate.Ticks).Date.AddHours(model.Arrivals[i].Hour).AddMinutes(model.Arrivals[i].Minute);
+                model.Departures[i] = new DateTime(model.DepartDate.Ticks).Date.AddHours(model.Departures[i].Hour).AddMinutes(model.Departures[i].Minute);
+            }
+
             for (int i = 0; i < model.WayStations.Count; i++)
             {
                 ScheduledWayStation newSWS = new ScheduledWayStation();
@@ -284,8 +274,7 @@ namespace RailwaySystem.Controllers
             GenerateEntity(schedule, model);
 
             SchedulesRepository schedulesRepository = new SchedulesRepository();
-            schedulesRepository.Add(schedule, model.LastDateToCreate, scheduledWS);
-
+            schedulesRepository.Add(schedule, model.DepartDate, model.LastDateToCreate, scheduledWS);
 
             Session["scheduleCreateVM"] = null;
             return RedirectToAction("Index", "Schedule");

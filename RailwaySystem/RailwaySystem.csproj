@@ -354,6 +354,10 @@
     <Compile Include="Migrations\202204191008279_Update-19-04-2022.designer.cs">
       <DependentUpon>202204191008279_Update-19-04-2022.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204201329209_Update-20-04-2022.cs" />
+    <Compile Include="Migrations\202204201329209_Update-20-04-2022.designer.cs">
+      <DependentUpon>202204201329209_Update-20-04-2022.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
@@ -501,6 +505,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204191008279_Update-19-04-2022.resx">
       <DependentUpon>202204191008279_Update-19-04-2022.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204201329209_Update-20-04-2022.resx">
+      <DependentUpon>202204201329209_Update-20-04-2022.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

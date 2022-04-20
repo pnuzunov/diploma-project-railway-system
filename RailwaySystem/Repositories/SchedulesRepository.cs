@@ -16,10 +16,9 @@ namespace RailwaySystem.Repositories
             ONLY_WEEKENDS = 3
         }
 
-        public void Add(Schedule item, DateTime lastDate, List<ScheduledWayStation> scheduledWS)
+        public void Add(Schedule item, DateTime firstDate, DateTime lastDate, List<ScheduledWayStation> scheduledWS)
         {
-            DateTime nextDeparture = item.Departure;
-            DateTime nextArrival = item.Arrival;
+            DateTime nextDeparture = firstDate;
             do
             {
                 Schedule schedule = new Schedule()
@@ -27,25 +26,21 @@ namespace RailwaySystem.Repositories
                     PricePerTicket = item.PricePerTicket,
                     ScheduleModeId = item.ScheduleModeId,
                     TrackId = item.TrackId,
-                    TrainId = item.TrainId,
-                    Arrival = nextArrival,
-                    Departure = nextDeparture
+                    TrainId = item.TrainId
                 };
 
                 ScheduleMode scheduleMode = (ScheduleMode)schedule.ScheduleModeId;
                 schedule = this.Items.Add(schedule);
 
-                AddScheduledWS(schedule, scheduledWS);
+                AddScheduledWS(schedule.Id, nextDeparture, scheduledWS);
 
                 nextDeparture = nextDeparture.AddDays(1);
-                nextArrival = nextArrival.AddDays(1);
                 
                 while(scheduleMode.Equals(ScheduleMode.ONLY_WEEKDAYS) &&
                      (nextDeparture.DayOfWeek.Equals(DayOfWeek.Saturday) ||
                       nextDeparture.DayOfWeek.Equals(DayOfWeek.Sunday)))
                 {
                     nextDeparture = nextDeparture.AddDays(1);
-                    nextArrival = nextArrival.AddDays(1);
                 }
 
                 while (scheduleMode.Equals(ScheduleMode.ONLY_WEEKENDS) &&
@@ -53,24 +48,42 @@ namespace RailwaySystem.Repositories
                        !nextDeparture.DayOfWeek.Equals(DayOfWeek.Sunday))
                 {
                     nextDeparture = nextDeparture.AddDays(1);
-                    nextArrival = nextArrival.AddDays(1);
                 }
 
             } while (DateTime.Compare(nextDeparture.Date, lastDate.Date) < 0);
             Context.SaveChanges();
         }
 
-        public void AddScheduledWS(Schedule schedule, List<ScheduledWayStation> scheduledWS)
+        public void AddScheduledWS(int scheduleId, DateTime nextDeparture, List<ScheduledWayStation> scheduledWS)
         {
             DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
+            DateTime date = new DateTime(nextDeparture.Date.Ticks);
+            TimeSpan timeSpan = new TimeSpan();
 
             foreach (var sws in scheduledWS)
             {
-                sws.ScheduleId = schedule.Id;
-                if(!sws.Departure.Equals(new DateTime())) 
-                    sws.Departure = schedule.Departure.Date + sws.Departure.TimeOfDay;
+                sws.ScheduleId = scheduleId;
+
                 if (!sws.Arrival.Equals(new DateTime()))
-                    sws.Arrival = sws.Departure.Date + sws.Arrival.TimeOfDay;
+                {
+                    if(!timeSpan.Equals(new TimeSpan()) && TimeSpan.Compare(timeSpan, sws.Arrival.TimeOfDay) > 0 && DateTime.Compare(date, sws.Arrival.Date) == 0)
+                    {
+                        date = date.AddDays(1);
+                    }
+                    sws.Arrival = date + sws.Arrival.TimeOfDay;
+                    timeSpan = sws.Arrival.TimeOfDay;
+                }
+
+                if (!sws.Departure.Equals(new DateTime()))
+                {
+                    if (!timeSpan.Equals(new TimeSpan()) && TimeSpan.Compare(timeSpan, sws.Departure.TimeOfDay) > 0 && DateTime.Compare(date, sws.Departure.Date) == 0)
+                    {
+                        date = date.AddDays(1);
+                    }
+                    sws.Departure = date + sws.Departure.TimeOfDay;
+                    timeSpan = sws.Departure.TimeOfDay;
+                }
+                    
                 scheduledsDbSet.Add(sws);
             }
             Context.SaveChanges();
@@ -146,27 +159,26 @@ namespace RailwaySystem.Repositories
             return reservations;
         }
 
-        public void Transform(Schedule schedule, int startStationId, int endStationId)
+        public DateTime GetDepartureDate(int scheduleId, int startStationId)
         {
-            ScheduledWayStation firstSWS = GetScheduledWayStation(schedule, startStationId);
-            ScheduledWayStation lastSWS = GetScheduledWayStation(schedule, endStationId);
-            schedule.Departure = schedule.Departure.Date + firstSWS.Departure.TimeOfDay;
-            schedule.Arrival = schedule.Departure.Date + lastSWS.Arrival.TimeOfDay;
+            Schedule schedule = Items.Where(i => i.Id == scheduleId).FirstOrDefault();
+            ScheduledWayStation scheduledWayStation = this.GetScheduledWayStation(schedule, startStationId);
+            return scheduledWayStation.Departure;
         }
 
-        public List<Schedule> GetFilteredSchedules(int trackId, DateTime date, int startStationId, int endStationId)
+        public DateTime GetArrivalDate(int scheduleId, int endStationId)
+        {
+            Schedule schedule = Items.Where(i => i.Id == scheduleId).FirstOrDefault();
+            ScheduledWayStation scheduledWayStation = this.GetScheduledWayStation(schedule, endStationId);
+            return scheduledWayStation.Arrival;
+        }
+
+        public List<Schedule> GetFilteredSchedules(int trackId)
         {
             TracksRepository tracksRepository = new TracksRepository();
             List<Schedule> schedules = this.GetAll()
-                                            .Where(s => s.TrackId == trackId
-                                                        && s.Departure.Year == date.Year
-                                                        && s.Departure.Month == date.Month
-                                                        && s.Departure.Day == date.Day)
+                                            .Where(s => s.TrackId == trackId)
                                             .ToList();
-            foreach (var schedule in schedules)
-            {
-                Transform(schedule, startStationId, endStationId);
-            }
             return schedules;
         }
 

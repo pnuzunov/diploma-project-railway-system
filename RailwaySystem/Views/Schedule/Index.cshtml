@@ -90,13 +90,13 @@
                     }
                 }
 
-                <div class="col-lg-3 m-1">
-                    <img src="~/Content/icons/right-arrow-30.png" title="Departs at" />
-                    @(item.Departure.ToString("HH:mm")) - @(item.Arrival.ToString("HH:mm"))
-                </div>
+            <div class="col-lg-3 m-1">
+                <img src="~/Content/icons/right-arrow-30.png" title="Departs at" />
+                @(((DateTime)ViewData["itemsDepartDate" + item.Id]).ToString("HH:mm")) - @(((DateTime)ViewData["itemsArrivalDate" + item.Id]).ToString("HH:mm"))
+            </div>
                 <div class="col-lg-2 m-1">
                     <img src="~/Content/icons/time-30.png" title="Travel Time" />
-                    @((item.Arrival - item.Departure).ToString(@"hh\:mm"))
+                    @( ( ((DateTime)ViewData["itemsDepartDate" + item.Id]) - ( (DateTime)ViewData["itemsArrivalDate" + item.Id] ) ).ToString(@"hh\:mm") )
                 </div>
 
                 @foreach (var route in (Dictionary<int, string>)ViewData["routes"])

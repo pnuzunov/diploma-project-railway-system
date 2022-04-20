@@ -53,7 +53,8 @@ namespace RailwaySystem.Controllers
             }
 
             model.Schedule = schedule;
-            schedulesRepository.Transform(model.Schedule, model.StartStation.Id, model.EndStation.Id);
+            model.DepartureDate = schedulesRepository.GetDepartureDate(scheduleId, model.StartStation.Id);
+            model.ArrivalDate = schedulesRepository.GetArrivalDate(scheduleId, model.EndStation.Id);
             //model.Schedule.Departure = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, , model.StartStation.Id);
             //model.Schedule.Arrival = schedule.Departure + tracksRepository.CalculateTravelTime(schedule.TrackId, model.StartStation.Id, model.EndStation.Id);
 
@@ -74,7 +75,7 @@ namespace RailwaySystem.Controllers
 
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Name == model.TrainName);
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, seatClass: model.SeatType, quantity: model.Quantity);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, seatClass: model.SeatType, quantity: model.Quantity);
             //seats = seats.Where(s => s.SeatType == model.SeatType).ToList();
 
             if(model.Quantity > seats.Count)
@@ -93,8 +94,8 @@ namespace RailwaySystem.Controllers
             ticket.UserId = ((User)Session["loggedUser"]).Id;
             ticket.BeginStation = model.StartStation.Name + ", " + startCity.Name;
             ticket.EndStation = model.EndStation.Name + ", " + endCity.Name;
-            ticket.Departure = model.Schedule.Departure;
-            ticket.Arrival = model.Schedule.Arrival;
+            ticket.Departure = model.DepartureDate;
+            ticket.Arrival = model.ArrivalDate;
             ticket.Price = model.Price;
             ticket.Quantity = model.Quantity;
             ticket.SeatType = model.SeatType;
@@ -102,7 +103,7 @@ namespace RailwaySystem.Controllers
             ticket.TrainType = model.TrainType;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, seatClass: model.SeatType, quantity: model.Quantity);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, seatClass: model.SeatType, quantity: model.Quantity);
             model.Seats = seats;
 
             foreach (var seat in model.Seats)
@@ -115,7 +116,7 @@ namespace RailwaySystem.Controllers
         private RedirectToRouteResult ReserveTicket(Ticket ticket, BuyVM model, TicketsRepository.PaymentMethod paymentMethod)
         {
             TicketsRepository ticketsRepository = new TicketsRepository();
-            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, model.Schedule.Departure, model.Schedule.Arrival, paymentMethod))
+            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, model.DepartureDate, model.ArrivalDate, paymentMethod))
             {
                 Session["BuyVMModelState"] = "Ticket reservation failed.";
                 return RedirectToAction("TicketOverview", "Ticket");
@@ -158,7 +159,7 @@ namespace RailwaySystem.Controllers
             ViewData["route"] = startCityName + " - " + endCityName;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule, getAll: true);
+            var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, getAll: true);
             if(freeSeats.Count == 0)
             {
                 return RedirectToAction("Index", "Schedule");

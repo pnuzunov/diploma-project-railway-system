@@ -27,13 +27,13 @@
             <div class="col-2">
                 @if (i != 0)
                 {
-                        @Html.TextBoxFor(m => m.Arrivals, new { id = "arrival", @type = "time", @class = "form-control time-picker" })
+                        @Html.TextBoxFor(m => m.Arrivals, new { id = "arrival", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
                 }
             </div>
             <div class="col-2">
                 @if (i != Model.WayStations.Count - 1)
                 {
-                        @Html.TextBoxFor(m => m.Departures, new { id = "departure", @type = "time", @class = "form-control time-picker" })
+                        @Html.TextBoxFor(m => m.Departures, new { id = "departure", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
                 }
             </div>
         </div>

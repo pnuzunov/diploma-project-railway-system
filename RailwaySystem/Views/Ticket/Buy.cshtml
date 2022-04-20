@@ -10,19 +10,9 @@
     <div class="wrapper container">
         <div class="bg-light text-center p-3 mt-2">
             <h3>Route: @Model.StartStation.Name - @Model.EndStation.Name</h3>
-            <h3>Departs on @Model.Schedule.Departure</h3>
+            <h3>Departs on @Model.DepartureDate</h3>
         </div>
         <form action="/Ticket/Buy" method="post">
-            @*@Html.HiddenFor(m => m.DepartureDate)
-            @Html.HiddenFor(m => m.EndStation.Name)
-            @Html.HiddenFor(m => m.Schedule.Id)
-            @Html.HiddenFor(m => m.Schedule.PricePerTicket)
-            @Html.HiddenFor(m => m.Schedule.TrainId)
-            @Html.HiddenFor(m => m.StartStation.Name)
-            @Html.HiddenFor(m => m.TrainName)
-            @Html.HiddenFor(m => m.TrainType)
-            @Html.HiddenFor(m => m.UserId)
-            @Html.HiddenFor(m => m.Price)*@
             <div class="grid bg-light border border-2 shadow p-3 m-3">
                 <div class="border border-1 rounded p-3 m-1">
 
