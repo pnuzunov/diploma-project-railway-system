@@ -6,30 +6,68 @@
 }
 
     <fieldset>
-        <form action="/Station/Edit" method="post">
-            <div class="grid">
-                @Html.HiddenFor(m => m.Id)
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.Name)
+        <div class="wrapper container mt-3 p-3 bg-light">
+            <form action="/Station/Edit" method="post">
+                <div class="grid">
+                    @Html.HiddenFor(m => m.Id)
+                    <div class="row">
+                        <div class="col-1">
+                            @Html.LabelFor(m => m.Name)
+                        </div>
+                        <div class="col-2">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                        <div class="col-2">
+                            @Html.ValidationMessageFor(m => m.Name)
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.Name)
+                    <div class="row">
+                        <div class="col-1">
+                            @Html.LabelFor(m => m.CityId)
+                        </div>
+                        <div class="col-2">
+                            @Html.DropDownListFor(m => m.CityId,
+                            new SelectList((List<City>)ViewData["cities"], "Id", "Name"), "--Select city--", new { @class = "form-control" })
+                        </div>
+                        <div class="col-2">
+                            @Html.ValidationMessageFor(m => m.CityId)
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.Name)
+                    <div class="row">
+                        <div class="col-1">
+                            @Html.LabelFor(m => m.Latitude)
+                        </div>
+                        <div class="col-2">
+                            @Html.TextBoxFor(m => m.Latitude, new { @type = "number", @step = ".01", @class = "form-control" })
+                        </div>
+                        <div class="col-2">
+                            @Html.ValidationMessageFor(m => m.Latitude)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1">
+                            @Html.LabelFor(m => m.Longitude)
+                        </div>
+                        <div class="col-2">
+                            @Html.TextBoxFor(m => m.Longitude, new { @type = "number", @step = ".01", @class = "form-control" })
+                        </div>
+                        <div class="col-2">
+                            @Html.ValidationMessageFor(m => m.Longitude)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 m-3">
+                            <a href="/Station/Delete?id=@(Model.Id)" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 ml-3">
+                            <input class="btn btn-success" type="submit" value="Save" />
+                            <button type="button" class="btn">Cancel</button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-3">
-                        @Html.ValidationMessage("AuthError")
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-3">
-                        <input class="right" type="submit" value="Save" />
-                    </div>
-                </div>
-            </div>
-        </form>
+            </form>
+
+        </div>
     </fieldset>

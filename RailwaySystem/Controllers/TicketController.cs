@@ -130,6 +130,8 @@ namespace RailwaySystem.Controllers
             User loggedUser = (User)Session["loggedUser"];
             TicketsRepository ticketsRepository = new TicketsRepository();
             ViewData["items"] = ticketsRepository.GetAll(ticket => ticket.UserId == loggedUser.Id);
+            if (((List<Ticket>)ViewData["items"]).Count == 0)
+                ModelState.AddModelError("NoTickets", "You currently have no bought tickets.");
             return View();
         }
 

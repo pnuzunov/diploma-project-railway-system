@@ -12,5 +12,16 @@ namespace RailwaySystem.ViewModels.Station
         [DisplayName("Name")]
         [Required(ErrorMessage = "This field is required!")]
         public string Name { get; set; }
+
+        [DisplayName("City")]
+        [Required(ErrorMessage = "This field is required!")]
+        public int CityId { get; set; }
+
+        [DisplayName("Latitude")]
+        [Required(ErrorMessage = "This field is required!")]
+        public decimal Latitude { get; set; }
+        [DisplayName("Longitude")]
+        [Required(ErrorMessage = "This field is required!")]
+        public decimal Longitude { get; set; }
     }
 }

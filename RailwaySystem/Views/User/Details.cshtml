@@ -4,28 +4,54 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<div class="border border-3 shadow bg-white p-3 m-3" style="height: 100vh">
-    <div>
-        @Html.LabelFor(m => m.Username)
-        <p>@Model.Username</p>
-    </div>
+<fieldset>
+    <div class="wrapper container mt-3 bg-light" style="min-height: 50vh">
+        <div class="modal-title text-center m-1">
+            <h3>ACCOUNT INFORMATION</h3>
+        </div>
+        <div class="m-5">
 
-    <div>
-        @Html.LabelFor(m => m.FirstName)
-        <p>@Model.FirstName</p>
-    </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="col-sm-2">
+                <div class="row m-1">
+                    <a href="/User/Details?id=@(Model.Id)">General</a>
+                </div>
+                <div class="row m-1">
+                    <a href="/Ticket/Index">Tickets</a>
+                </div>
+            </div>
+            <div class="border border-1 bg-black" style="width: 1px">
 
-    <div>
-        @Html.LabelFor(m => m.LastName)
-        <p>@Model.LastName</p>
-    </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="row m-1">
+                    @Html.LabelFor(m => m.Username)
+                    <p class="ml-3">@Model.Username</p>
+                </div>
 
-    <div>
-        @Html.LabelFor(m => m.Credit)
-        <p>@Model.Credit</p>
-    </div>
+                <div class="row m-1">
+                    @Html.LabelFor(m => m.FirstName)
+                    <p class="ml-3">@Model.FirstName</p>
+                </div>
 
-    <a href="/User/AddCredit?id=@(Model.Id)">Add Credit...</a>
-</div>
+                <div class="row m-1">
+                    @Html.LabelFor(m => m.LastName)
+                    <p class="ml-3">@Model.LastName</p>
+                </div>
+
+                <div class="row m-1">
+                    @Html.LabelFor(m => m.Credit)
+                    <p class="ml-3">@Model.Credit</p>
+                </div>
+
+                <a href="/User/AddCredit?id=@(Model.Id)">Add Credit...</a>
+            </div>
+        </div>
+    </div>
+    
+</fieldset>
+
+
 
 

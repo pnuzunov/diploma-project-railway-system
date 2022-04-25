@@ -39,103 +39,92 @@ namespace RailwaySystem.Controllers
 
         protected void LoadFilteredData(ListVM model)
         {
-            TrainsRepository trainsRepository = new TrainsRepository();
-            TracksRepository tracksRepository = new TracksRepository();
-            StationsRepository stationsRepository = new StationsRepository();
-            SchedulesRepository schedulesRepository = new SchedulesRepository();
-            Dictionary<int, string> routes = new Dictionary<int, string>();
 
-            foreach (var track in tracksRepository.GetAll())
+            LoadExtraViewData();
+
+            TracksRepository tracksRepository = new TracksRepository();
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            StationsRepository stationsRepository = new StationsRepository();
+
+            var routes = (Dictionary<int, string>)ViewData["routes"];
+            var trains = (List<Train>)ViewData["trains"];
+            var trainTypes = (List<TrainType>)ViewData["trainTypes"];
+            var items = new List<ListItemVM>();
+
+            List<Track> trackList = tracksRepository.FindTracks(model.StartStationId, model.EndStationId);
+            if (trackList.Count == 0)
             {
-                string startStation = stationsRepository.GetById(model.StartStationId).Name;
-                string endStation = stationsRepository.GetById(model.EndStationId).Name;
-                string description = tracksRepository.GetById(track.Id).Description;
-                string value = startStation + " - " + endStation + ((description == null || "".Equals(description)) ? "" : " (" + description + ")");
-                routes.Add(track.Id, value);
+                ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
+                return;
             }
 
-            ViewData["routes"] = routes;
-            ViewData["trains"] = trainsRepository.GetAll();
-            ViewData["trainTypes"] = trainsRepository.GetTrainTypes();
-            ViewData["tracks"] = tracksRepository.GetAll();
-            ViewData["stations"] = stationsRepository.GetAll().OrderBy(i => i.Name).ToList();
-
-            ViewData["items"] = new List<ListItemVM>();
-
-            var trains = trainsRepository.GetAll();
-            var trainTypes = trainsRepository.GetTrainTypes();
-            var items = (List<ListItemVM>)ViewData["items"];
-
-            if (model != null && model.StartStationId != 0 
-                              && model.EndStationId != 0 ) {
-                    List<Track> trackList = tracksRepository.FindTracks(model.StartStationId, model.EndStationId);
-                    if (trackList.Count == 0)
-                    {
-                        items = new List<ListItemVM>();
-                        ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
-                        return;
-                    }
-                    List<Schedule> schedulesList = new List<Schedule>();
-                    foreach (var track in trackList)
-                    {
-                        schedulesList.AddRange(schedulesRepository
-                                                 .GetFilteredSchedules(track.Id, 
-                                                                       model.StartStationId, 
-                                                                       model.DepartureDate, 
-                                                                       SchedulesRepository.DateCompareMode.SAME_DATE)
+            List<Schedule> schedulesList = new List<Schedule>();
+            foreach (var track in trackList)
+            {
+            schedulesList.AddRange(schedulesRepository
+                                   .GetFilteredSchedules(track.Id, 
+                                                         model.StartStationId, 
+                                                         model.DepartureDate, 
+                                                         SchedulesRepository.DateCompareMode.SAME_DATE)
                                                  .ToList());
-                    }
+            }
 
-                foreach (var schedule in schedulesList)
+            foreach (var schedule in schedulesList)
+            {
+                var listItem = new ListItemVM();
+                listItem.Departure = schedulesRepository.GetDepartureDate(schedule.Id, model.StartStationId);
+                listItem.Arrival = schedulesRepository.GetArrivalDate(schedule.Id, model.EndStationId);
+                listItem.Route = routes.FirstOrDefault(r => r.Key == schedule.TrackId).Value;
+                listItem.Schedule = schedule;
+                Train train = trains.FirstOrDefault(t => t.Id == schedule.TrainId);
+                TrainType trainType = trainTypes.FirstOrDefault(tt => tt.Id == train.TypeId);
+                listItem.Train = train.Name + "(" + trainType.Name + ")";
+
+                listItem.ScheduledWayStations = new List<SwsVM>();
+                List<WayStation> wayStations = tracksRepository.GetWayStations(listItem.Schedule.TrackId);
+                foreach (var ws in wayStations)
                 {
-                    var listItem = new ListItemVM();
-                    listItem.Departure = schedulesRepository.GetDepartureDate(schedule.Id, model.StartStationId);
-                    listItem.Arrival = schedulesRepository.GetArrivalDate(schedule.Id, model.EndStationId);
-                    listItem.Route = routes.FirstOrDefault(r => r.Key == schedule.TrackId).Value;
-                    listItem.Schedule = schedule;
-                    Train train = trains.FirstOrDefault(t => t.Id == schedule.TrainId);
-                    TrainType trainType = trainTypes.FirstOrDefault(tt => tt.Id == train.TypeId);
-                    listItem.Train = train.Name + "(" + trainType.Name + ")";
-
-                    listItem.ScheduledWayStations = new List<SwsVM>();
-                    List<WayStation> wayStations = tracksRepository.GetWayStations(listItem.Schedule.TrackId);
-                    foreach (var ws in wayStations)
+                    string name = stationsRepository.GetById(ws.StationId).Name;
+                    ScheduledWayStation scheduledWayStation = schedulesRepository.GetScheduledWayStation(schedule, ws.StationId);
+                    listItem.ScheduledWayStations.Add(new SwsVM()
                     {
-                        string name = stationsRepository.GetById(ws.StationId).Name;
-                        ScheduledWayStation scheduledWayStation = schedulesRepository.GetScheduledWayStation(schedule, ws.StationId);
-                        listItem.ScheduledWayStations.Add(new SwsVM()
-                        {
-                            StationName = name,
-                            Arrival = scheduledWayStation.Arrival,
-                            Departure = scheduledWayStation.Departure
-                        });
-                    }
-                    listItem.ScheduledWayStations = listItem.ScheduledWayStations.OrderBy(sws => sws.Arrival).ToList();
-
-                    items.Add(listItem);
+                        StationName = name,
+                        Arrival = scheduledWayStation.Arrival,
+                        Departure = scheduledWayStation.Departure
+                        
+                    });
                 }
+                listItem.ScheduledWayStations = listItem.ScheduledWayStations.OrderBy(sws => sws.Arrival).ToList();
+                items.Add(listItem);
+            }
 
-                    if ( items.Count == 0 )
-                    {
-                        ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
-                    }
-                    else
-                    {
-                        items = items.OrderBy(i => i.Departure).ToList();
-                        ViewData["items"] = items;
-                    }
+            if ( items.Count == 0 )
+            {
+                ModelState.AddModelError("NoRecordsFound", "No departures found matching your criteria.");
+                ViewData["items"] = new List<ListItemVM>();
+            }
+            else
+            {
+                items = items.OrderBy(i => i.Departure).ToList();
+                ViewData["items"] = items;
             }
         }
 
         protected void LoadExtraViewData()
         {
-            LoadFilteredData(null);
+            StationsRepository stationsRepository = new StationsRepository();
+            TrainsRepository trainsRepository = new TrainsRepository();
+            TracksRepository tracksRepository = new TracksRepository();
+
+            ViewData["stations"] = stationsRepository.GetAll().OrderBy(i => i.Name).ToList();
+            ViewData["routes"] = tracksRepository.GetAsKeyValuePairs();
+            ViewData["trains"] = trainsRepository.GetAll();
+            ViewData["trainTypes"] = trainsRepository.GetTrainTypes();
         }
 
         public ActionResult Index()
         {
-            StationsRepository stationsRepository = new StationsRepository();
-            ViewData["stations"] = stationsRepository.GetAll().OrderBy(i => i.Name).ToList();
+            LoadExtraViewData();
 
             return View();
         }
@@ -146,8 +135,7 @@ namespace RailwaySystem.Controllers
             CheckIsModelValid(model);
             if (!ModelState.IsValid)
             {
-                StationsRepository stationsRepository = new StationsRepository();
-                ViewData["stations"] = stationsRepository.GetAll().OrderBy(i => i.Name).ToList();
+                LoadExtraViewData();
                 return View();
             }
             LoadFilteredData(model);

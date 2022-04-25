@@ -10,57 +10,28 @@
                 <div class="col-3">
                     Track
                 </div>
-                <div class="col-3">
-                    Departs from
-                </div>
-                <div class="col-3">
-                    Arrives at
-                </div>
             </div>
         </div>
         <hr />
         <div class="grid">
-            @foreach (var item in (List<Track>)ViewData["items"])
+            @foreach (var item in (Dictionary<int, string>)ViewData["routes"])
             {
             <div class="row">
                 <div class="col-3">
-                    No@(item.Id)
+                    @(item.Value)
                 </div>
 
-
-                @*@foreach (var station in (List<Station>)ViewData["stations"])
-        {
-            if (item.StartStationId == station.Id)
-            {
-                <div class="col-3">
-                    @(station.Name)
-                </div>
-                break;
-            }
-
-        }
-        @foreach (var station in (List<Station>)ViewData["stations"])
-        {
-            if (item.EndStationId == station.Id)
-            {
-                <div class="col-3">
-                    @(station.Name)
-                </div>
-                break;
-            }
-
-        }*@
-                <div class="col-1">
-                    <a href="/Track/Edit?id=@(item.Id)">Edit...</a>
-                </div>
-                <div class="col-1">
-                    <a href="/Track/Delete?id=@(item.Id)">Delete</a>
-                </div>
+                @if (ViewData["cannotEdit" + item.Key] == null)
+                {
+                    <div class="col-1">
+                        <a href="/Track/Edit?id=@(item.Key)">Edit...</a>
+                    </div>
+                }
             </div>
-            }
-            <div>
-                <a href="/Track/Create">Create New...</a>
-            </div>
-        </div>
+                    }
+                    <div>
+                        <a href="/Track/Create">Create New...</a>
+                    </div>
+                </div>
     </fieldset>
 

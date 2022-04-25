@@ -45,12 +45,12 @@
 </script>
 
 <fieldset>
-    <div class="container wrapper bg-light">
+    <div class="container wrapper bg-light mt-3 p-3">
         <form action="/Track/Create" method="post">
             <div class="grid">
                 <div class="row">
                     <div class="col-3">
-                        @Html.LabelFor(m => m.Description, new { @class = "form-control" })
+                        @Html.LabelFor(m => m.Description)
                     </div>
                     <div class="col-3">
                         @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })

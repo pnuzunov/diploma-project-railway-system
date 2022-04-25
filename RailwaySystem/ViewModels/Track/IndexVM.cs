@@ -7,7 +7,7 @@ namespace RailwaySystem.ViewModels.Track
 {
     public class IndexVM
     {
-        public Entities.Station StartStation { get; set; }
-        public Entities.Station EndStation { get; set; }
+        public string StartStation { get; set; }
+        public string EndStation { get; set; }
     }
 }

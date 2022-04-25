@@ -68,7 +68,6 @@
 
                 @foreach (var item in (List<RailwaySystem.ViewModels.Schedule.ListItemVM>)ViewData["items"])
                 {
-                    @(item.Schedule.Id)
             <div class="row m-3 d-flex align-content-center border border-1 rounded p-3">
                 <div class="col-lg-4 m-1">
                     <img src="~/Content/icons/train-30.png" title="Train" />
@@ -87,14 +86,14 @@
                 </div>
 
                 <div class="col-lg-2" style="color:red;">
-                    @(item.Schedule.Cancelled ? "cancelled" : "")
+                    @(item.Schedule.Cancelled ? "Cancelled" : "")
                 </div>
 
-                <div class="col-lg-4 m-1">
+                <div class="col-lg-8 m-1">
                     @foreach (var sws in item.ScheduledWayStations)
                     {
                         <div>
-                            @(sws.Arrival.Equals(new DateTime()) ? "" : sws.Arrival.ToString("HH:mm")) --- @(sws.StationName) --- @(sws.Departure.Equals(new DateTime()) ? "" : sws.Departure.ToString("HH:mm"))
+                            @(sws.Arrival.Equals(new DateTime()) ? "deprt" : sws.Arrival.ToString("HH:mm")) --- @(sws.StationName) --- @(sws.Departure.Equals(new DateTime()) ? "arriv" : sws.Departure.ToString("HH:mm"))
                         </div>
 
                     }

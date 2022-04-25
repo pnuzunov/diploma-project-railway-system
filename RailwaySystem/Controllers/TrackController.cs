@@ -75,7 +75,7 @@ namespace RailwaySystem.Controllers
             model.WayStations = new List<int>();
             for(int i = 0; i < wayStations.Count; i++)
             {
-                model.WayStations[i] = wayStations[i].StationId;
+                model.WayStations.Add(wayStations[i].StationId);
             }
             model.Id = entity.Id;
             model.Description = entity.Description;
@@ -85,6 +85,25 @@ namespace RailwaySystem.Controllers
         {
             StationsRepository stations = new StationsRepository();
             ViewData["stations"] = stations.GetAll();
+        }
+
+        public override ActionResult Index()
+        {
+            LoadExtraViewData();
+            TracksRepository tracksRepository = new TracksRepository();
+            var routes = tracksRepository.GetAsKeyValuePairs();
+            ViewData["routes"] = routes;
+
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            foreach (var item in ((Dictionary<int, string>)ViewData["routes"]))
+            {
+                if(schedulesRepository.GetFirstOrDefault(s => s.TrackId == item.Key) != null)
+                {
+                    ViewData["cannotEdit" + item.Key] = true;
+                }
+            }
+
+            return View();
         }
 
         public override ActionResult Create()
@@ -117,8 +136,15 @@ namespace RailwaySystem.Controllers
 
         public override ActionResult Edit(int id)
         {
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            if(schedulesRepository.GetFirstOrDefault(s => s.TrackId == id) != null)
+            {
+                return RedirectToAction("Index", "Track");
+            }
+
             StationsRepository stations = new StationsRepository();
             TracksRepository tracksRepository = new TracksRepository();
+            
             ViewData["stations"] = stations.GetAll();
             ViewData["wayStations"] = tracksRepository.GetWayStations(id);
             EditVM model = new EditVM();

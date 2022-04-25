@@ -4,17 +4,15 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<h2>Your tickets</h2>
-
-<div class="wrapper container bg-light d-flex justify-content-center">
+<div class="wrapper container bg-light mt-3">
     <div class="grid">
-        <div class="modal-header">
+        <div class="row modal-header">
             <h3 class="m-auto">Your tickets</h3>
         </div>
-        <div class="row modal-body">
+        <div class="row d-flex justify-content-center">
             @foreach (var ticket in (List<Ticket>)ViewData["items"])
             {
-                <div class="col-lg-3 m-2 p-2 card bg-light">
+                <div class="col-lg-4 p-2 card bg-light">
                     <div class="card-title text-center">
                         <p>@ticket.BeginStation - @ticket.EndStation</p>
                     </div>
@@ -28,6 +26,7 @@
                     </div>
                 </div>
             }
+            @Html.ValidationMessage("NoTickets")
         </div>
     </div>
 </div>

@@ -5,33 +5,29 @@
 }
 
     <fieldset>
-        <div class="grid bold">
-            <div class="row">
-                <div class="col-3">
-                    Name
-                </div>
+        <div class="wrapper container mt-3 p-3 bg-light">
+            <div class="row modal-title m-3">
+                <h3>Stations</h3>
+            </div>
+            <hr />
+            <div class="grid">
+                @foreach (var item in (List<Station>)ViewData["items"])
+                {
+                    <div class="row">
+                        <div class="col-3">
+                            @(item.Name)
+                        </div>
+                        <div class="col-1">
+                            <a href="/Station/Edit?id=@(item.Id)">Edit...</a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div>
+                <a href="/Station/Create">Create New...</a>
             </div>
         </div>
-        <hr />
-        <div class="grid">
-            @foreach (var item in (List<Station>)ViewData["items"])
-            {
-                <div class="row">
-                    <div class="col-3">
-                        @(item.Name)
-                    </div>
-                    <div class="col-1">
-                        <a href="/Station/Edit?id=@(item.Id)">Edit...</a>
-                    </div>
-                    <div class="col-1">
-                        <a href="/Station/Delete?id=@(item.Id)">Delete</a>
-                    </div>
-                </div>
-            }
 
-        </div>
-        <div>
-            <a href="/Station/Create">Create New...</a>
-        </div>
     </fieldset>
 
