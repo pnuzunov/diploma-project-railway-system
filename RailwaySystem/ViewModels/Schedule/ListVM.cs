@@ -10,9 +10,9 @@ namespace RailwaySystem.ViewModels.Schedule
     public class ListVM
     {
         [Required(ErrorMessage = "Please select a station.")]
-        public int StartCityId { get; set; }
+        public int StartStationId { get; set; }
         [Required(ErrorMessage = "Please select a station.")]
-        public int EndCityId { get; set; }
+        public int EndStationId { get; set; }
         [Required(ErrorMessage = "Please select the date of departure.")]
         public DateTime DepartureDate { get; set; }
     }

@@ -1,69 +1,51 @@
-﻿@model RailwaySystem.ViewModels.Schedule.EditVM
-
+﻿
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-    <fieldset>
+@model RailwaySystem.ViewModels.Schedule.EditVM
+
+<fieldset>
+    <div class="wrapper container bg-light">
         <form action="/Schedule/Edit" method="post">
+            @Html.HiddenFor(m => m.Id)
             <div class="grid">
-                @Html.HiddenFor(m => m.Id)
+
+                <div class="row">
+                    @Html.DropDownListFor(m => m.TrainId, new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--")
+                </div>
+
                 <div class="row">
                     <div class="col-1">
-                        @Html.LabelFor(m => m.TrainId)
-                    </div>
-                    <div class="col-2">
-                        @Html.DropDownListFor(m => m.TrainId,
-                            new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.TrainId)
+                        @Html.LabelFor(m => m.EditOption)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.TrackId)
-                    </div>
                     <div class="col-2">
-                        @Html.DropDownListFor(m => m.TrackId,
-                            new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--", new { @class="form-control" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.TrackId)
+                        <div class="row">
+
+                            Option 0 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ONLY_THIS_ENTRY, new { @class = "form-control" })
+
+
+                            Option 1 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.BY_DEFINED_PERIOD, new { @class = "form-control" })
+
+                            Last Date to delete @Html.TextBoxFor(m => m.LastDateToApply, new { id = "arrival", @type = "date", @class = "form-control date-picker" })
+
+                            Option 2 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ALL_MATCHING_ENTRIES, new { @class = "form-control" })
+
+                        </div>
+                        <div class="col-2">
+                            @Html.ValidationMessageFor(m => m.EditOption)
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.Departure)
+                    <div class="col-2">
+                        @Html.LabelFor(m => m.Cancelled)
                     </div>
                     <div class="col-2">
-                        @Html.TextBoxFor(m => m.Departure, new { @type = "datetime-local", @class = "form-control date-picker" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.Departure)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.Arrival)
-                    </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.Arrival, new { @type = "datetime-local", @class = "form-control date-picker" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.Arrival)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.PricePerTicket)
-                    </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @class = "form-control" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.PricePerTicket)
+                        @Html.CheckBoxFor(m => m.Cancelled)
                     </div>
                 </div>
                 <div class="row">
@@ -73,10 +55,13 @@
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        <input class="right" type="submit" value="Save" />
+                        <input class="btn btn-danger" type="submit" value="Confirm" />
+                        <a href="/Schedule/Edit" class="btn">Clear</a>
                     </div>
                 </div>
             </div>
         </form>
-    </fieldset>
+    </div>
+    
+</fieldset>
 

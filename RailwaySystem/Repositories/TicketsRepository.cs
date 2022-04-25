@@ -73,6 +73,7 @@ namespace RailwaySystem.Repositories
             {
                 if (!usersRepository.IsCreditValid(-(ticket.Price * ticket.Quantity), ticket.UserId))
                 {
+                    this.Delete(ticket.Id);
                     return false;
                 }
 

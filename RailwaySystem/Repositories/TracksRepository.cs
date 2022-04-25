@@ -10,6 +10,20 @@ namespace RailwaySystem.Repositories
 {
     public class TracksRepository : BaseRepository<Track>
     {
+        public Dictionary<int, string> GetAsKeyValuePairs(Expression<Func<Track, bool>> filter = null)
+        {
+            List<Track> tracks = GetAll(filter);
+            Dictionary<int, string> result = new Dictionary<int, string>();
+            foreach (var item in tracks)
+            {
+                string value = GetStartStation(item.Id).Name 
+                               + " - " + GetEndStation(item.Id).Name 
+                               + (item.Description == null ? "" : " (" + item.Description + ")");
+                result.Add(item.Id, value);
+            }
+            return result;
+        }
+
         public void Add(Track track, List<WayStation> wayStations)
         {
             track = this.Items.Add(track);

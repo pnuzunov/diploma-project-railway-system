@@ -16,6 +16,8 @@ namespace RailwaySystem.Entities
         [ForeignKey("TrackId")]
         public Track WhichTrack { get; set; }
         public decimal PricePerTicket { get; set; }
-        public int? ScheduleModeId { get; set; }
+        public int ScheduleModeId { get; set; }
+
+        public bool Cancelled { get; set; }
     }
 }

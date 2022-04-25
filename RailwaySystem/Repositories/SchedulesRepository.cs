@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Data.Entity.Infrastructure;
 
 namespace RailwaySystem.Repositories
 {
@@ -14,6 +15,13 @@ namespace RailwaySystem.Repositories
             EVERY_DAY = 1,
             ONLY_WEEKDAYS = 2,
             ONLY_WEEKENDS = 3
+        }
+
+        public enum DateCompareMode
+        {
+            BEFORE = -1,
+            SAME_DATE = 0,
+            AFTER = 1
         }
 
         public void Add(Schedule item, DateTime firstDate, DateTime lastDate, List<ScheduledWayStation> scheduledWS)
@@ -173,13 +181,40 @@ namespace RailwaySystem.Repositories
             return scheduledWayStation.Arrival;
         }
 
-        public List<Schedule> GetFilteredSchedules(int trackId)
+        public List<Schedule> GetFilteredSchedules(int trackId, int startStationId, DateTime departure, DateCompareMode dateCompareMode)
         {
             TracksRepository tracksRepository = new TracksRepository();
             List<Schedule> schedules = this.GetAll()
                                             .Where(s => s.TrackId == trackId)
                                             .ToList();
+            List<Schedule> result = new List<Schedule>();
+            result.AddRange(schedules);
+            foreach (var schedule in result)
+            {
+                DateTime scheduleDeparture = this.GetDepartureDate(schedule.Id, startStationId);
+
+                if (dateCompareMode == DateCompareMode.SAME_DATE)
+                {
+                    if (DateTime.Compare(scheduleDeparture.Date, departure.Date) != 0)
+                        schedules.Remove(schedule);
+                }
+
+                else {
+                    int cmpResult = DateTime.Compare(scheduleDeparture.Date, departure.Date);
+                    cmpResult /= cmpResult;
+                    if(cmpResult != (int)dateCompareMode)
+                        schedules.Remove(schedule);
+                }
+            }
             return schedules;
+        }
+
+        public List<Schedule> GetFilteredSchedules(int scheduleId, DateTime departure, DateCompareMode dateCompareMode)
+        {
+            Schedule schedule = GetById(scheduleId);
+            TracksRepository tracksRepository = new TracksRepository();
+            Station station = tracksRepository.GetStartStation(schedule.TrackId);
+            return GetFilteredSchedules(schedule.TrackId, station.Id, departure, dateCompareMode);
         }
 
         public void DeleteCascade(int scheduleId)
@@ -190,6 +225,17 @@ namespace RailwaySystem.Repositories
             if(query != null && query.Count() > 0)
                 scheduledWayStations.RemoveRange(query);
             this.Delete(scheduleId);
+            Context.SaveChanges();
+        }
+
+        public void Update(List<Schedule> schedules)
+        {
+            foreach (var item in schedules)
+            {
+                DbEntityEntry<Schedule> entry = Context.Entry(item);
+                entry.State = EntityState.Modified;
+            }
+
             Context.SaveChanges();
         }
 

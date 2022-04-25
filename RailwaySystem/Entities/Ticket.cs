@@ -11,6 +11,11 @@ namespace RailwaySystem.Entities
         public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
+
+        public int ScheduleId { get; set; }
+        [ForeignKey("ScheduleId")]
+        public Schedule Schedule { get; set; }
+
         public string BeginStation { get; set; }
         public string EndStation { get; set; }
         [Column(TypeName = "datetime2")]
@@ -26,5 +31,6 @@ namespace RailwaySystem.Entities
         public string SeatNumbers { get; set; }
         public string SeatType { get; set; }
         public string QRCode { get; set; }
+        public int PaymentMethod { get; set; }
     }
 }

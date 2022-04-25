@@ -11,7 +11,7 @@ namespace RailwaySystem.ViewModels.Track
     {
         [DisplayName("Description")]
         public string Description { get; set; }
-        [DisplayName("Station")]
+        [DisplayName("Way Stations")]
         public List<int> WayStations { get; set; }
     }
 }

@@ -11,26 +11,13 @@
                 @Html.HiddenFor(m => m.Id)
                 <div class="row">
                     <div class="col-1">
-                        @Html.LabelFor(m => m.StartStationId)
-                    </div>
-                    <div class="col-2">
-                        @Html.DropDownListFor(m => m.StartStationId,
-                   new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--")
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.StartStationId)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.EndStationId)
+                        @Html.LabelFor(m => m.Description, new { @class = "form-control" })
                     </div>
                     <div class="col-1">
-                        @Html.DropDownListFor(m => m.EndStationId,
-                   new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--")
+                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
                     </div>
                     <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.EndStationId)
+                        @Html.ValidationMessageFor(m => m.Description)
                     </div>
                 </div>
 

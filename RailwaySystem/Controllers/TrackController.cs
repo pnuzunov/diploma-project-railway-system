@@ -29,7 +29,7 @@ namespace RailwaySystem.Controllers
 
         protected override void CheckIsModelValid(EditVM model)
         {
-
+            
         }
 
         protected override void GenerateEntity(Track entity, CreateVM model)

@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
 namespace RailwaySystem.ViewModels.Schedule
 {
-    public class EditVM : BaseEditVM
+    public class EditVM
     {
-        [DisplayName("Train")]
-        [Required(ErrorMessage = "This field is required!")]
+        public enum EditOptions
+        {
+            ONLY_THIS_ENTRY = 0,
+            BY_DEFINED_PERIOD = 1,
+            ALL_MATCHING_ENTRIES = 2
+        }
+
+        public int Id { get; set; }
+
         public int TrainId { get; set; }
-        [DisplayName("Route")]
-        [Required(ErrorMessage = "This field is required!")]
-        public int TrackId { get; set; }
-        [DataType(DataType.Date)]
-        [DisplayName("Departs"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        [Required(ErrorMessage = "This field is required!")]
-        public DateTime Departure { get; set; }
-        [DataType(DataType.Date)]
-        [DisplayName("Arrives"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        [Required(ErrorMessage = "This field is required!")]
-        public DateTime Arrival { get; set; }
-        [DisplayName("Price per ticket")]
-        [Required(ErrorMessage = "This field is required!")]
-        public decimal PricePerTicket { get; set; }
+
+        public bool Cancelled { get; set; }
+
+        public DateTime DepartDate { get; set; }
+
+        public EditOptions EditOption { get; set; }
+
+        public DateTime LastDateToApply { get; set; }
     }
 }
