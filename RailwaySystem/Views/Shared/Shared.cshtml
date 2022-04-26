@@ -36,27 +36,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/Home/Index">Home</a>
+                        <a class="nav-link" href="/Home/Index">Home</a>
                     </li>
-                    @if (isEmployee)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Station/Index">Stations</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Train/Index">Trains</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Track/Index">Tracks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/User/Index">Accounts</a>
-                        </li>
-                    }
                     @if (loggedUser == null)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Home/Login">Login</a>
+                            <a class="nav-link" href="/Home/Login">Log in</a>
                         </li>
                     }
                     else

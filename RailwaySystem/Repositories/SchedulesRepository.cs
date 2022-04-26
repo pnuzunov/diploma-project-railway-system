@@ -97,18 +97,6 @@ namespace RailwaySystem.Repositories
             Context.SaveChanges();
         }
 
-        public void CascadeDelete(int scheduleId)
-        {
-            DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
-            List<ScheduledWayStation> swsToDelete = scheduledsDbSet.Where(sws => sws.ScheduleId == scheduleId).ToList();
-            foreach (var sws in swsToDelete)
-            {
-                scheduledsDbSet.Remove(sws);
-            }
-            Context.SaveChanges();
-            this.Delete(scheduleId);
-        }
-
         public List<ScheduledWayStation> GetScheduledWayStations(int scheduleId)
         {
             DbSet<ScheduledWayStation> scheduledsDbSet = Context.Set<ScheduledWayStation>();
@@ -127,24 +115,6 @@ namespace RailwaySystem.Repositories
 
             IQueryable<ScheduledWayStation> query = scheduledsDbSet;
             return query.Where(q => q.ScheduleId == schedule.Id && q.WayStationId == wayStation.Id).FirstOrDefault();
-        }
-
-        public Track GetTrack(int scheduleId)
-        {
-            Schedule schedule = this.GetById(scheduleId);
-            if (schedule == null) return null;
-            TracksRepository tracksRepository = new TracksRepository();
-            Track track = tracksRepository.GetFirstOrDefault(tr => tr.Id == schedule.TrackId);
-            return track;
-        }
-
-        public Train GetTrain(int scheduleId)
-        {
-            Schedule schedule = this.GetById(scheduleId);
-            if (schedule == null) return null;
-            TrainsRepository trainsRepository = new TrainsRepository();
-            Train train = trainsRepository.GetFirstOrDefault(t => t.Id == schedule.TrainId);
-            return train;
         }
 
         public List<SeatReservation> GetSeatReservations(int scheduleId, int trainId)

@@ -6,43 +6,48 @@
 }
 
 <fieldset>
-    <form action="/Schedule/SetWayStations" method="post">
-        <div class="row">
-            <div class="col-2">
-                Station name
+    <div class="wrapper container bg-light shadow rounded mt-3 p-3">
+        <form action="/Schedule/SetWayStations" method="post">
+            <div class="row">
+                <div class="col-3">
+                    <h3>Station name</h3>
+                </div>
+                <div class="col-3">
+                    <h3>Arrives at</h3>
+                </div>
+                <div class="col-3">
+                    <h3>Departs at</h3>
+                </div>
             </div>
-            <div class="col-2">
-                Arrives at
+            <div class="row modal-header"></div>
+            <div class="row m-2"></div>
+            @for (int i = 0; i < Model.WayStations.Count; i++)
+            {
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <h5>@Model.WayStations[i].Station.Name</h5>
+                    </div>
+                    <div class="col-3">
+                        @if (i != 0)
+                        {
+                            @Html.TextBoxFor(m => m.Arrivals, new { id = "arrival", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
+                        }
+                    </div>
+                    <div class="col-3">
+                        @if (i != Model.WayStations.Count - 1)
+                        {
+                            @Html.TextBoxFor(m => m.Departures, new { id = "departure", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
+                        }
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-3">
+                    <input class="right" type="submit" value="Create" />
+                </div>
             </div>
-            <div class="col-2">
-                Departs at
-            </div>
-        </div>
-        @for (int i = 0; i < Model.WayStations.Count; i++)
-        {
-        <div class="row">
-            <div class="col-2">
-                @Model.WayStations[i].Station.Name
-            </div>
-            <div class="col-2">
-                @if (i != 0)
-                {
-                        @Html.TextBoxFor(m => m.Arrivals, new { id = "arrival", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
-                }
-            </div>
-            <div class="col-2">
-                @if (i != Model.WayStations.Count - 1)
-                {
-                        @Html.TextBoxFor(m => m.Departures, new { id = "departure", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
-                }
-            </div>
-        </div>
-        }
-        <div class="row">
-            <div class="col-3">
-                <input class="right" type="submit" value="Create" />
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
+    
 </fieldset>
 

@@ -31,19 +31,15 @@ namespace RailwaySystem.Controllers
             TracksRepository tracksRepository = new TracksRepository();
 
             Schedule schedule = schedulesRepository.GetById(scheduleId);
-            Train train = schedulesRepository.GetTrain(scheduleId);
 
-            if (schedule == null || train == null)
+            if (schedule == null)
             {
                 return false;
             }
+
+            Train train = trainsRepository.GetById(schedule.TrainId);
 
             TrainType trainType = trainsRepository.GetTrainType(train.Id);
-            if (trainType == null)
-            {
-                return false;
-            }
-
             WayStation start = tracksRepository.GetWayStation(schedule.TrackId, model.StartStation.Id);
             WayStation end = tracksRepository.GetWayStation(schedule.TrackId, model.EndStation.Id);
 
@@ -226,14 +222,6 @@ namespace RailwaySystem.Controllers
             BuildEntity(ticket, model);
 
             return ReserveTicket(ticket, model);
-
-            //if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT))
-            //{
-            //    Session["BuyVMModelState"] = "Ticket reservation failed.";
-            //    return RedirectToAction("TicketOverview", "Ticket", new { id = model.Schedule.Id, dt = model.DepartureDate.Date.ToString("dd-MM-yyyy-HH-mm")});
-            //}
-            //Session["ticketBuyVM"] = null;
-            //Session["BuyVMModelState"] = "";
         }
 
         public ActionResult PayWithPayPal(string Cancel = null)

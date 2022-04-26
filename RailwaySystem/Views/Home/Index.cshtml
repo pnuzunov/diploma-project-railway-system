@@ -1,12 +1,25 @@
 ﻿@{ 
     Layout = "~/Views/Shared/Shared.cshtml";
+
+    User loggedUser = (User)Session["loggedUser"];
+    RailwaySystem.Repositories.UsersRepository usersRepository = new RailwaySystem.Repositories.UsersRepository();
+    bool hasFullAccess, hasEmployeeAccess;
+    if (loggedUser == null)
+    {
+        hasFullAccess = hasEmployeeAccess = false;
+    }
+    else
+    {
+        hasFullAccess = usersRepository.CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
+        hasEmployeeAccess = usersRepository.CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.EMPLOYEE_ACCESS);
+    }
 }
 
 <title>Index Page</title>
 
 @helper GetStartedCard(string title, string img_src, string content_upper, string content_lower, string href, string href_text )
 {
-<div class="col-md-3 mt-2">
+<div class="col-lg-3 mt-2">
     <div class="card">
         <div class="card-header text-center">
             @title
@@ -25,77 +38,80 @@
 </div>
 }
 
-<script type="text/javascript">
-
-    window.onload = function () {
-        var parent = document.getElementById("template-area");
-        var template = document.getElementById("test-template");
-        var element = document.createElement("div");
-        element.innerHTML = template.innerHTML;
-        parent.appendChild(element);
-    }
-</script>
-
 <fieldset>
-    <div id="template-area">
-    </div>
-    <div class="border border-3 shadow bg-white p-3 m-3" style="min-height:100vh">
+    <div class="border border-3 card shadow bg-white p-3 m-3" style="min-height:75vh">
         <div class="grid">
             <div class="modal-header d-flex justify-content-center">
                 <h3>GET STARTED</h3>
             </div>
-            <div class="row d-flex justify-content-center">
-                @*<div class="col-sm-3">
-            <div class="card">
-                <div class="card-header text-center">
-                    FIND INFORMATION
+            <div class="row">
+
+                @if(hasEmployeeAccess)
+            {
+                <div class="col-lg-2 border border-1 ml-3" style="min-height:60vh">
+                    <div class="p-1">
+                        <div class="modal-header">
+                            Search for
+                        </div>
+                        <div class="">
+                            <div>
+                                <a href="/Schedule/Index">Schedules</a>
+                            </div>
+                            @if (hasFullAccess)
+                            {
+                                <div>
+                                    <a href="/Track/Index">Tracks</a>
+                                </div>
+                                <div>
+                                    <a href="/Station/Index">Stations</a>
+                                </div>
+                                <div>
+                                    <a href="/Train/Index">Trains</a>
+                                </div>
+                                <div>
+                                    <a href="/Train/Index">Accounts</a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="p-1">
+                        <div class="modal-header">
+                            Register a new
+                        </div>
+                        <div class="">
+                            <div>
+                                <a href="/Schedule/Create">Schedule</a>
+                            </div>
+                            @if (hasFullAccess)
+                            {
+                                <div>
+                                    <a href="/Track/Create">Track</a>
+                                </div>
+                                <div>
+                                    <a href="/Station/Create">Station</a>
+                                </div>
+                                <div>
+                                    <a href="/Train/Create">Train</a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
                 </div>
-                <div class="card-img text-center m-1">
-                    <img src="~/Content/icons/calendar-64.png" />
+            }
+            else
+            {
+                <div class="col-lg-2 border border-1 ml-3">
+
                 </div>
-                <div class="card-body">
-                    <p>Planning to travel by train? Need to know when your train will depart?</p>
-                    <p>Make a quick query and find out!</p>
-                </div>
-                <div class="card-footer text-center">
-                    <a class="btn" href="/Schedule/Index">Search</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header text-center">
-                    BUY E-TICKETS
-                </div>
-                <div class="card-img text-center m-1">
-                    <img src="~/Content/icons/form-64.png" />
-                </div>
-                <div class="card-body">
-                    <p>Don't want to wait at the ticket office?</p>
-                    <p>Register now, so you can buy e-tickets with ease!</p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="/Home/Register">Register</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header text-center">
-                    LOG IN
-                </div>
-                <div class="card-img text-center m-1">
-                    <img src="~/Content/icons/login-64.png" />
-                </div>
-                <div class="card-body">
-                    <p>Already registered?</p>
-                    <p>By logging in, you can see more of what we offer.</p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="/Home/Login">Log in</a>
-                </div>
-            </div>
-        </div>*@
+            }
+                
+
                 @GetStartedCard("FIND INFORMATION",
                                 "/Content/icons/calendar-64.png",
                                 "Planning to travel by train? Need to know when your train will depart?",
@@ -120,11 +136,11 @@
                 }
                 else
                 {
-                    @GetStartedCard("SEE YOUR TICKETS",
+                    @GetStartedCard("YOUR ACCOUNT",
                                     "/Content/icons/form-64.png",
-                                    "Our e-tickets can be downloaded as a PDF file or seen directly from our website.",
-                                    "Either way, present them to an employee when you board the train for a pass.",
-                                    "/Ticket/Index",
+                                    "You can check your account information any time.",
+                                    "You can also see all your bought tickets.",
+                                    "/User/Details?id=" + loggedUser.Id,
                                     "Check tickets")
                 }
 

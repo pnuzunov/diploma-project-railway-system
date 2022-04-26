@@ -19,6 +19,7 @@ namespace RailwaySystem.ViewModels.Schedule
 
         //[DisplayName("Departs"), DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
         //[Required(ErrorMessage = "This field is required!")]
+        [DisplayName("Departure date")]
         public DateTime DepartDate { get; set; }
 
         //[DisplayName("Arrives"), DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]

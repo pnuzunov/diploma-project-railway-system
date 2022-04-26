@@ -21,12 +21,9 @@
                     @(item.Value)
                 </div>
 
-                @if (ViewData["cannotEdit" + item.Key] == null)
-                {
-                    <div class="col-1">
-                        <a href="/Track/Edit?id=@(item.Key)">Edit...</a>
-                    </div>
-                }
+                <div class="col-1">
+                    <a class="btn btn-danger" href="/Track/Delete?id=@(item.Key)">Delete</a>
+                </div>
             </div>
                     }
                     <div>

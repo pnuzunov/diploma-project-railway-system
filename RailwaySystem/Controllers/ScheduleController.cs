@@ -11,6 +11,16 @@ namespace RailwaySystem.Controllers
 {
     public class ScheduleController : Controller
     {
+        private bool CanAccessPage(UsersRepository.Levels level)
+        {
+            //UsersRepository usersRepository = new UsersRepository();
+            //User loggedUser = (User)Session["loggedUser"];
+            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
+            //{
+            //    return false;
+            //}
+            return true;
+        }
         protected void CheckIsModelValid(ListVM model)
         {
 
@@ -50,6 +60,7 @@ namespace RailwaySystem.Controllers
             var trains = (List<Train>)ViewData["trains"];
             var trainTypes = (List<TrainType>)ViewData["trainTypes"];
             var items = new List<ListItemVM>();
+            ViewData["items"] = items;
 
             List<Track> trackList = tracksRepository.FindTracks(model.StartStationId, model.EndStationId);
             if (trackList.Count == 0)
@@ -144,14 +155,22 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Create()
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            CreateVM model = new CreateVM();
+            model.PricePerTicket = 1.00m;
+
             LoadExtraViewData();
-            return View();
+            return View(model);
         }
 
         [HttpPost]
         public ActionResult Create(CreateVM model)
         {
-            if (Session["loggedUser"] == null)
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -173,6 +192,11 @@ namespace RailwaySystem.Controllers
 
         public ActionResult SetWayStations()
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             CreateVM model = (CreateVM)Session["scheduleCreateVM"];
             TracksRepository tracksRepository = new TracksRepository();
             StationsRepository stationsRepository = new StationsRepository();
@@ -189,6 +213,11 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult SetWayStations(CreateVM model)
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             CreateVM savedModel = (CreateVM)Session["scheduleCreateVM"];
             model.LastDateToCreate = savedModel.LastDateToCreate;
             model.PricePerTicket = savedModel.PricePerTicket;
@@ -241,6 +270,11 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Edit(int id)
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TracksRepository tracksRepository = new TracksRepository();
             TrainsRepository trainsRepository = new TrainsRepository();
@@ -262,6 +296,11 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Edit(EditVM model)
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             List<Schedule> schedules = new List<Schedule>();
 

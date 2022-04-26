@@ -12,6 +12,17 @@ namespace RailwaySystem.Controllers
         where TCreateVM : ViewModels.BaseCreateVM, new()
         where TEditVM : ViewModels.BaseEditVM, new()
     {
+        protected bool CanAccessPage(Repositories.UsersRepository.Levels level)
+        {
+            Repositories.UsersRepository usersRepository = new Repositories.UsersRepository();
+            Entities.User loggedUser = (Entities.User)Session["loggedUser"];
+            if (loggedUser != null && usersRepository.CanAccess(loggedUser.Id, level))
+            {
+                return true;
+            }
+            return false;
+        }
+
         protected abstract void CheckIsModelValid(TCreateVM model);
         protected abstract void CheckIsModelValid(TEditVM model);
         protected abstract void GenerateEntity(E entity, TCreateVM model);
@@ -20,15 +31,11 @@ namespace RailwaySystem.Controllers
         protected virtual void LoadExtraViewData() { }
         public virtual ActionResult Index()
         {
-            if (Session["loggedUser"] == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
 
             R repo = new R();
 
-            ViewData["items"] = repo.GetAll();
             LoadExtraViewData();
+            ViewData["items"] = repo.GetAll();
             return View();
         }
 

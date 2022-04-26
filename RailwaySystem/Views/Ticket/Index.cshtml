@@ -5,11 +5,11 @@
 }
 
 <div class="wrapper container bg-light mt-3">
-    <div class="grid">
+    <div class="grid p-3">
         <div class="row modal-header">
-            <h3 class="m-auto">Your tickets</h3>
+            <h3 class="m-auto">Your e-tickets</h3>
         </div>
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex justify-content-center m-3">
             @foreach (var ticket in (List<Ticket>)ViewData["items"])
             {
                 <div class="col-lg-4 p-2 card bg-light">
@@ -28,5 +28,17 @@
             }
             @Html.ValidationMessage("NoTickets")
         </div>
+        
+        <div class="row border rounded m-5" style="background-color: rgb(230 230 230 / 0.60)">
+            <div class="col-lg-6 p-3">
+                <div class="modal-header">
+                    <h5>What are e-tickets?</h5>
+                </div>
+                <div>
+                    E-tickets can be bought from the Railway System website and offer a pass to board any train in the country. All tickets that you buy can be downloaded as a PDF file which can be presented to an employee when boarding.
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>

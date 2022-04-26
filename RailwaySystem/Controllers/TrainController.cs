@@ -11,6 +11,17 @@ namespace RailwaySystem.Controllers
 {
     public class TrainController : Controller
     {
+        private bool CanAccessPage(UsersRepository.Levels level)
+        {
+            //UsersRepository usersRepository = new UsersRepository();
+            //User loggedUser = (User)Session["loggedUser"];
+            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
+            //{
+            //    return false;
+            //}
+            return true;
+        }
+
         protected void CheckIsModelValid(CreateVM model)
         {
             TrainsRepository repo = new TrainsRepository();
@@ -75,6 +86,11 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Index()
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             TrainsRepository trainsRepository = new TrainsRepository();
             ViewData["items"] = trainsRepository.GetAll();
 
@@ -84,6 +100,11 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Create()
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             CreateVM model = new CreateVM();
             LoadExtraViewData();
             return View(model);
@@ -92,6 +113,11 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Create(CreateVM model)
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             if (ModelState.IsValid)
             {
                 CheckIsModelValid(model);
@@ -115,6 +141,11 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Delete(int id)
         {
+
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             TrainsRepository trainsRepository = new TrainsRepository();
 

@@ -4,65 +4,73 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/Shared.cshtml";
 }
-    <fieldset>
+<fieldset>
+    <div class="container wrapper shadow bg-light mt-3 p-3">
+        <h3 class="text-center">Register new train</h3>
+    </div>
+    <div class="container wrapper card shadow bg-light p-3">
         <form action="/Train/Create" method="post">
-            <div class="grid">
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.Name)
+                <div class="grid m-3">
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <h5>@Html.LabelFor(m => m.Name)</h5>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.ValidationMessageFor(m => m.Name)
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.Name)
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <h5>@Html.LabelFor(m => m.TypeId)</h5>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(m => m.TypeId,
+                         new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --", new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.ValidationMessageFor(m => m.TypeId)
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.Name)
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <h5>@Html.LabelFor(m => m.SeatsFirstClass)</h5>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.SeatsFirstClass, new { @type = "number", @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.ValidationMessageFor(m => m.SeatsFirstClass)
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.TypeId)
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <h5>@Html.LabelFor(m => m.RegularSeats)</h5>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.RegularSeats, new { @type = "number", @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.ValidationMessageFor(m => m.RegularSeats)
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.DropDownListFor(m => m.TypeId,
-                     new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --")
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            @Html.ValidationMessage("AuthError")
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.TypeId)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.SeatsFirstClass)
-                    </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.SeatsFirstClass, new { @type = "number" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.SeatsFirstClass)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.RegularSeats)
-                    </div>
-                    <div class="col-2">
-                        @Html.TextBoxFor(m => m.RegularSeats, new { @type = "number" })
-                    </div>
-                    <div class="col-2">
-                        @Html.ValidationMessageFor(m => m.RegularSeats)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        @Html.ValidationMessage("AuthError")
-                    </div>
-                </div>
                     <div class="row">
-                        <div class="col-3">
-                            <input class="right" type="submit" value="Create" />
+                        <div class="col-md-1">
+                            <input class="btn btn-success" type="submit" value="Create" />
                         </div>
                     </div>
                 </div>
-</form>
-    </fieldset>
+            
+        </form>
+
+    </div>
+
+</fieldset>
 

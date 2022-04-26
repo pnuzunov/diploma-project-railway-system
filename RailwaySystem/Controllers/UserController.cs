@@ -11,21 +11,14 @@ namespace RailwaySystem.Controllers
 {
     public class UserController : Controller
     {
-
         private bool CanAccessPage(UsersRepository.Levels level)
         {
-            User loggedUser = (User)Session["loggedUser"];
-            if (loggedUser == null)
-            {
-                return false;
-            }
-            UsersRepository usersRepository = new UsersRepository();
-            bool canAccess = usersRepository.CanAccess(loggedUser.Id, level);
-
-            if (!canAccess)
-            {
-                return false;
-            }
+            //UsersRepository usersRepository = new UsersRepository();
+            //User loggedUser = (User)Session["loggedUser"];
+            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
+            //{
+            //    return false;
+            //}
             return true;
         }
 
@@ -72,7 +65,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(RailwaySystem.ViewModels.BaseEditVM model)
+        public ActionResult Index(ViewModels.BaseEditVM model)
         {
             UsersRepository usersRepository = new UsersRepository();
             User loggedUser = (User)Session["loggedUser"];
@@ -94,18 +87,14 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Details(int id)
         {
-            if (Session["loggedUser"] == null)
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Index", "Home");
             }
+
             UsersRepository usersRepository = new UsersRepository();
             User loggedUser = (User)Session["loggedUser"];
-            
-            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS) && loggedUser.Id != id)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            
+                        
             User selectedUser = usersRepository.GetFirstOrDefault(u => u.Id == id);
             if (selectedUser == null)
             {
@@ -156,11 +145,13 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Delete(int id)
         {
-            UsersRepository repo = new UsersRepository();
-            if (Session["loggedUser"] == null)
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            UsersRepository repo = new UsersRepository();
+
             User loggedUser = (User)Session["loggedUser"];
             if (loggedUser.Id == id) Session["loggedUser"] = null;
             repo.Delete(id);

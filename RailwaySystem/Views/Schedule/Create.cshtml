@@ -6,105 +6,107 @@
 }
 
 <fieldset>
-    <form action="/Schedule/Create" method="post">
-        <div class="grid">
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.TrainId)
+
+    <div class="container wrapper shadow bg-light mt-3 p-3">
+        <h3 class="text-center">Register new schedule</h3>
+    </div>
+
+    <div class="wrapper container card shadow bg-light p-3">
+        <form action="/Schedule/Create" method="post">
+
+            <div class="grid m-auto">
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.TrainId)</h5>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(m => m.TrainId,
+                            new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ValidationMessageFor(m => m.TrainId)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.DropDownListFor(m => m.TrainId,
-                        new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--")
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.TrackId)</h5>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(m => m.TrackId,
+                            new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ValidationMessageFor(m => m.TrackId)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.TrainId)
+
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.DepartDate)</h5>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.DepartDate, new { id = "departDate", @type = "date", @class = "form-control date-picker" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ValidationMessageFor(m => m.DepartDate)
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.TrackId)
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.LastDateToCreate)</h5>
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.LastDateToCreate, new { id = "lastDate", @type = "date", @class = "form-control date-picker" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ValidationMessageFor(m => m.LastDateToCreate)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.DropDownListFor(m => m.TrackId,
-                        new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--")
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.ScheduleMode)</h5>
+                    </div>
+                    <div class="col-md-2">
+                        @("Every day") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.EVERY_DAY, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        @("Only on weekdays") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.ONLY_WEEKDAYS, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        @("Only on weekends") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.ONLY_WEEKENDS, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2">
+                        @Html.ValidationMessageFor(m => m.ScheduleMode)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.TrackId)
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <h5>@Html.LabelFor(m => m.PricePerTicket)</h5>
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @step = ".01", @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ValidationMessageFor(m => m.PricePerTicket)
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        @Html.ValidationMessage("AuthError")
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-2">
+                        <input class="btn btn-info" type="submit" value="Continue" />
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/Schedule/Index" class="btn btn-light">Cancel</a>
+                    </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.DepartDate)
-                </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.DepartDate, new { id = "departDate", @type = "date", @class = "form-control date-picker" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.DepartDate)
-                </div>
-            </div>
-            @*<div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.Arrival)
-                </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.Arrival, new { id = "arrival", @type = "datetime-local", @class = "form-control date-picker" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Arrival)
-                </div>
-            </div>*@
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.LastDateToCreate)
-                </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.LastDateToCreate, new { id = "lastDate", @type = "date", @class = "form-control date-picker" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.LastDateToCreate)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.ScheduleMode)
-                </div>
-                <div class="col-2">
-                    @("Every day") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.EVERY_DAY, new { @class = "form-control" })
-                </div>
-                <div class="col-2">
-                    @("Only on weekdays") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.ONLY_WEEKDAYS, new { @class = "form-control" })
-                </div>
-                <div class="col-2">
-                    @("Only on weekends") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.ONLY_WEEKENDS, new { @class = "form-control" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.ScheduleMode)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.PricePerTicket)
-                </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @step = ".01", @class = "form-control" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.PricePerTicket)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-2">
-                    @Html.ValidationMessage("AuthError")
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <input class="btn" type="submit" value="Continue" />
-                </div>
-            </div>
-        </div>
-    </form>
+        </form>
+
+    </div>
 </fieldset>
 
