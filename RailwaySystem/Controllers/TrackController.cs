@@ -63,6 +63,7 @@ namespace RailwaySystem.Controllers
 
         protected void GenerateEntity(Track entity, CreateVM model)
         {
+            entity.Description = model.Description;
             List<WayStation> wayStations = new List<WayStation>();
 
             for (int i = 0; i < model.WayStations.Count; i++)

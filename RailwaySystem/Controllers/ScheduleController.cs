@@ -53,6 +53,7 @@ namespace RailwaySystem.Controllers
             LoadExtraViewData();
 
             TracksRepository tracksRepository = new TracksRepository();
+            TrainsRepository trainsRepository = new TrainsRepository();
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             StationsRepository stationsRepository = new StationsRepository();
 
@@ -106,6 +107,12 @@ namespace RailwaySystem.Controllers
                     });
                 }
                 listItem.ScheduledWayStations = listItem.ScheduledWayStations.OrderBy(sws => sws.Arrival).ToList();
+                var arrivalDate = schedulesRepository.GetArrivalDate(listItem.Schedule.Id, model.EndStationId);
+                var freeSeats = trainsRepository.GetNonReservedSeats(listItem.Schedule,
+                                                                     model.DepartureDate,
+                                                                     arrivalDate,
+                                                                     getAll: true);
+                ViewData["freeSeats" + listItem.Schedule.Id] = (freeSeats.Count > 0 ? freeSeats.Count : 0);
                 items.Add(listItem);
             }
 

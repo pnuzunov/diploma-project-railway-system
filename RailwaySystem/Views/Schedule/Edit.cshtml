@@ -6,56 +6,85 @@
 
 @model RailwaySystem.ViewModels.Schedule.EditVM
 
+<script type="text/javascript">
+    function ToggleDatePicker(enable) {
+        var datePicker = document.getElementById('model-date-field');
+        if (enable) {
+            datePicker.removeAttribute("disabled");
+        }
+        else {
+            datePicker.setAttribute("disabled", "disabled");
+        }
+    }
+</script>
+
 <fieldset>
-    <div class="wrapper container bg-light">
-        <form action="/Schedule/Edit" method="post">
+    <div class="wrapper container bg-light p-3">
+        <form action="/Schedule/Edit" method="post" onsubmit="return confirm('Submit changes to this entry?');">
             @Html.HiddenFor(m => m.Id)
             <div class="grid">
 
-                <div class="row">
-                    @Html.DropDownListFor(m => m.TrainId, new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--")
-                </div>
-
-                <div class="row">
-                    <div class="col-1">
-                        @Html.LabelFor(m => m.EditOption)
+                <div class="row mb-2">
+                    <div class="col-lg-2">
+                        @Html.LabelFor(m => m.TrainId)
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        <div class="row">
-
-                            Option 0 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ONLY_THIS_ENTRY, new { @class = "form-control" })
-
-
-                            Option 1 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.BY_DEFINED_PERIOD, new { @class = "form-control" })
-
-                            Last Date to delete @Html.TextBoxFor(m => m.LastDateToApply, new { id = "arrival", @type = "date", @class = "form-control date-picker" })
-
-                            Option 2 @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ALL_MATCHING_ENTRIES, new { @class = "form-control" })
-
-                        </div>
-                        <div class="col-2">
-                            @Html.ValidationMessageFor(m => m.EditOption)
-                        </div>
+                    <div class="col-lg-2">
+                        @Html.DropDownListFor(m => m.TrainId, new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
                     </div>
+                    
                 </div>
-                <div class="row">
+
+                <div class="row mb-2">
                     <div class="col-2">
                         @Html.LabelFor(m => m.Cancelled)
                     </div>
                     <div class="col-2">
-                        @Html.CheckBoxFor(m => m.Cancelled)
+                        @Html.CheckBoxFor(m => m.Cancelled, new { @class = "form-control" })
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-2">
                         @Html.ValidationMessage("AuthError")
                     </div>
                 </div>
-                <div class="row">
+
+                <div class="border border-1 p-2 mb-2">
+                    <div class="row mb-2">
+                        <div class="col-lg-2">
+                            @Html.LabelFor(m => m.EditOption)
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 text-center">
+                        <div class="col-lg-3">
+                            Only this entry
+                        </div>
+                        <div class="col-lg-3 text-center">
+                            Every entry until defined period
+                        </div>
+                        <div class="col-lg-3 text-center">
+                            All matching entries
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-lg-3">
+                            @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ONLY_THIS_ENTRY, new { @class = "form-control", @onclick = "ToggleDatePicker(false);" })
+                        </div>
+                        <div class="col-lg-3">
+                            @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.BY_DEFINED_PERIOD, new { @class = "form-control", @onclick = "ToggleDatePicker(true);" })
+                            @Html.TextBoxFor(m => m.LastDateToApply, new { id = "model-date-field", @type = "date", @class = "form-control date-picker", @disabled = "true" })
+                        </div>
+                        <div class="col-lg-3">
+                            @Html.RadioButtonFor(m => m.EditOption, RailwaySystem.ViewModels.Schedule.EditVM.EditOptions.ALL_MATCHING_ENTRIES, new { @class = "form-control", @onclick = "ToggleDatePicker(false);" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row  mb-2">
                     <div class="col-3">
-                        <input class="btn btn-danger" type="submit" value="Confirm" />
+                        <input class="btn btn-success" type="submit" value="Confirm" />
                         <a href="/Schedule/Edit" class="btn">Clear</a>
                     </div>
                 </div>

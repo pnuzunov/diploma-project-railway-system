@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace RailwaySystem.ViewModels.Schedule
 {
@@ -15,13 +17,14 @@ namespace RailwaySystem.ViewModels.Schedule
         }
 
         public int Id { get; set; }
-
+        [DisplayName("Train")]
         public int TrainId { get; set; }
 
+        [DisplayName("Cancel this entry")]
         public bool Cancelled { get; set; }
 
         public DateTime DepartDate { get; set; }
-
+        [DisplayName("Apply changes to")]
         public EditOptions EditOption { get; set; }
 
         public DateTime LastDateToApply { get; set; }

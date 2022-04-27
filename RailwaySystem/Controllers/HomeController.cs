@@ -115,13 +115,6 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult GetToken()
-        {
-            APIContext apiContext = PaypalConfiguration.GetAPIContext();
-
-            return Json(new { data = apiContext.AccessToken }, JsonRequestBehavior.AllowGet);
-        }
-
     }
 
 }

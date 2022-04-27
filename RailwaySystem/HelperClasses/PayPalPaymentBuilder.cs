@@ -112,5 +112,16 @@ namespace RailwaySystem.HelperClasses
             return payment.Execute(apiContext, paymentExecution);
         }
 
+        public void Refund(string paymentId)
+        {
+            Payment payment = Payment.Get(apiContext, paymentId);
+            Sale sale = payment.transactions[0].related_resources[0].sale;
+
+            RefundRequest refundRequest = new RefundRequest();
+            Amount amount = new Amount();
+            amount.total = sale.amount.total;
+            amount.currency = sale.amount.currency;
+            Sale.Refund(apiContext, sale.id, refundRequest);
+        }
     }
 }

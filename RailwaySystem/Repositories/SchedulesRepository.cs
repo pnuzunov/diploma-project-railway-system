@@ -202,6 +202,17 @@ namespace RailwaySystem.Repositories
         {
             foreach (var item in schedules)
             {
+                TicketsRepository ticketsRepository = new TicketsRepository();
+                if(item.Cancelled)
+                {
+                    List<Ticket> tickets = ticketsRepository.GetAll(t => t.ScheduleId == item.Id).ToList();
+                    foreach(var ticket in tickets)
+                    {
+                        ticketsRepository.DeleteCascade(ticket.Id,
+                                (TicketsRepository.PaymentMethod)ticket.PaymentMethod);
+                    }
+                }
+
                 DbEntityEntry<Schedule> entry = Context.Entry(item);
                 entry.State = EntityState.Modified;
             }

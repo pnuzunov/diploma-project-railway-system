@@ -69,7 +69,7 @@ namespace RailwaySystem.Controllers
 
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Name == model.TrainName);
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, seatClass: model.SeatType, quantity: model.Quantity);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, model.ArrivalDate, seatClass: model.SeatType, quantity: model.Quantity);
             //seats = seats.Where(s => s.SeatType == model.SeatType).ToList();
 
             if(model.Quantity > seats.Count)
@@ -94,7 +94,7 @@ namespace RailwaySystem.Controllers
             ticket.ScheduleId = model.Schedule.Id;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, seatClass: model.SeatType, quantity: model.Quantity);
+            List<Seat> seats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, model.ArrivalDate, seatClass: model.SeatType, quantity: model.Quantity);
             model.Seats = seats;
 
             foreach (var seat in model.Seats)
@@ -102,12 +102,21 @@ namespace RailwaySystem.Controllers
                 ticket.SeatNumbers += "|" + seat.SeatNumber;
             }
             ticket.SeatNumbers += "|";
+
+            QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
+            ticket.QRCode = qRCodeBuilder.GenerateCodeContent(ticket.BeginStation + "|" + ticket.EndStation + "|" + ticket.Departure.ToString());
         }
 
-        private RedirectToRouteResult ReserveTicket(Ticket ticket, BuyVM model)
+        private RedirectToRouteResult ReserveTicket(Ticket ticket, BuyVM model, string paymentId)
         {
             TicketsRepository ticketsRepository = new TicketsRepository();
-            if (!ticketsRepository.ReserveTicket(ticket, model.Schedule, model.Seats, model.DepartureDate, model.ArrivalDate, (TicketsRepository.PaymentMethod)ticket.PaymentMethod))
+            if (!ticketsRepository.ReserveTicket(ticket, 
+                                                 model.Schedule, 
+                                                 model.Seats, 
+                                                 model.DepartureDate, 
+                                                 model.ArrivalDate, 
+                                                 (TicketsRepository.PaymentMethod)ticket.PaymentMethod, 
+                                                 paymentId))
             {
                 Session["BuyVMModelState"] = "Ticket reservation failed.";
                 return RedirectToAction("TicketOverview", "Ticket");
@@ -152,7 +161,7 @@ namespace RailwaySystem.Controllers
             ViewData["route"] = startStationName + " - " + endStationName;
 
             TrainsRepository trainsRepository = new TrainsRepository();
-            var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, getAll: true);
+            var freeSeats = trainsRepository.GetNonReservedSeats(model.Schedule, model.DepartureDate, model.ArrivalDate, getAll: true);
             if(freeSeats.Count == 0)
             {
                 return RedirectToAction("Index", "Schedule");
@@ -201,10 +210,7 @@ namespace RailwaySystem.Controllers
 
         public ActionResult DeleteTicket(int ticketId)
         {
-            TicketsRepository ticketsRepository = new TicketsRepository();
-            ticketsRepository.DeleteCascade(ticketId);
-
-            return RedirectToAction("Index", "Ticket");
+            return View();
         }
 
         public ActionResult PayBySystemAccount()
@@ -221,7 +227,7 @@ namespace RailwaySystem.Controllers
             ticket.PaymentMethod = (int)TicketsRepository.PaymentMethod.BY_SYSTEM_ACCOUNT;
             BuildEntity(ticket, model);
 
-            return ReserveTicket(ticket, model);
+            return ReserveTicket(ticket, model, null);
         }
 
         public ActionResult PayWithPayPal(string Cancel = null)
@@ -234,6 +240,7 @@ namespace RailwaySystem.Controllers
 
             Ticket ticket = new Ticket();
             BuildEntity(ticket, model);
+            string guid = "";
 
             APIContext apiContext = PaypalConfiguration.GetAPIContext();
             try
@@ -243,7 +250,7 @@ namespace RailwaySystem.Controllers
                 {
 
                     string baseURI = Request.Url.Scheme + "://" + Request.Url.Authority + "/Ticket/PayWithPayPal?";
-                    var guid = Convert.ToString((new Random()).Next(100000));
+                    /*var*/ guid = Convert.ToString((new Random()).Next(100000));
                     string redirectUrl = baseURI + "guid=" + guid;
 
                     PayPalPaymentBuilder paymentBuilder = new PayPalPaymentBuilder(apiContext, redirectUrl)
@@ -265,7 +272,7 @@ namespace RailwaySystem.Controllers
                 }
                 else
                 {
-                    var guid = Request.Params["guid"];
+                    /*var*/ guid = Request.Params["guid"];
                     var executedPayment = PayPalPaymentBuilder.ExecutePayment(apiContext, payerId, Session[guid] as string);
                     if (executedPayment.state.ToLower() != "approved")
                     {
@@ -280,7 +287,7 @@ namespace RailwaySystem.Controllers
             }
 
             ticket.PaymentMethod = (int)TicketsRepository.PaymentMethod.BY_PAY_PAL;
-            return ReserveTicket(ticket, model);
+            return ReserveTicket(ticket, model, Session[guid] as string);
         }
 
         public ActionResult CancelPayment()

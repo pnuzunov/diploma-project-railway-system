@@ -8,6 +8,7 @@ using iText.Layout;
 using iText.Layout.Properties;
 using iText.Layout.Element;
 using RailwaySystem.Entities;
+using iText.IO.Source;
 
 namespace RailwaySystem.HelperClasses
 {
@@ -42,6 +43,11 @@ namespace RailwaySystem.HelperClasses
                 //Paragraph departureParagraph = new Paragraph("Departs at: " + ticket.Departure.ToString("dd-MM-yyyy HH:mm"));
                 //Paragraph buyDateParagraph = new Paragraph(ticket.BuyDate.ToString());
 
+                QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
+                System.Drawing.Bitmap bitmap = qRCodeBuilder.GenerateQRCode(ticket.QRCode);
+                iText.IO.Image.ImageData imageData = iText.IO.Image.ImageDataFactory.Create(bitmap, System.Drawing.Color.Black);
+                Image image = new Image(imageData);
+
                 document.Add(header);
 
                 foreach (var item in paragraphs)
@@ -50,6 +56,11 @@ namespace RailwaySystem.HelperClasses
                         .SetFontSize(14);
                     document.Add(item);
                 }
+
+                image.SetRelativePosition(0, 20, 0, 0);
+                image.SetWidth(100);
+                image.SetHeight(100);
+                document.Add(image);
 
                 document.Close();
                 bytes = stream.ToArray();

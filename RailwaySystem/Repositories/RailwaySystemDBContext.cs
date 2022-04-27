@@ -23,7 +23,7 @@ namespace RailwaySystem.Repositories
         public DbSet<TrainType> TrainTypes { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<CreditRecord> CreditRecords { get; set; }
-
+        public DbSet<PayPalPayment> PayPalPayments { get; set; }
         public RailwaySystemDBContext()
             : base(@"Server=DESKTOP-H5B78FN\TEW_SQLEXPRESS;Database=RailwaySystemDB;User Id=sa;Password=mypass;")
         {
@@ -41,6 +41,7 @@ namespace RailwaySystem.Repositories
             TrainTypes = this.Set<TrainType>();
             UserRoles = this.Set<UserRole>();
             CreditRecords = this.Set<CreditRecord>();
+            PayPalPayments = this.Set<PayPalPayment>();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace RailwaySystem.Repositories
             BY_SYSTEM_ACCOUNT = 0,
             BY_PAY_PAL = 1
         }
+
         public Ticket GetTicket(Ticket ticket)
         {
             DbSet<Ticket> tickets = Context.Set<Ticket>();
@@ -61,7 +62,19 @@ namespace RailwaySystem.Repositories
             return seatReservationsList;
         }
 
-        public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats, DateTime departure, DateTime arrival, PaymentMethod paymentMethod)
+        private PayPalPayment AddPayPalPaymentId(int ticketId, string paymentId)
+        {
+            DbSet<PayPalPayment> payPalPayments = this.Context.Set<PayPalPayment>();
+            PayPalPayment entry = payPalPayments.Add(new PayPalPayment()
+            {
+                TicketId = ticketId,
+                PaymentId = paymentId
+            });
+            this.Context.SaveChanges();
+            return entry;
+        }
+
+        public bool ReserveTicket(Ticket ticket, Schedule schedule, List<Seat> seats, DateTime departure, DateTime arrival, PaymentMethod paymentMethod, string paymentId)
         {
             UsersRepository usersRepository = new UsersRepository();
             CreditRecord creditRecord = new CreditRecord();
@@ -81,32 +94,43 @@ namespace RailwaySystem.Repositories
                 usersRepository.AddCreditRecord(creditRecord);
 
             }
+            else if(paymentMethod == PaymentMethod.BY_PAY_PAL)
+            {
+                this.AddPayPalPaymentId(ticket.Id, paymentId);
+            }
+
 
             DbSet<SeatReservation> seatReservations = Context.Set<SeatReservation>();
             List<SeatReservation> newReservations = BuildSeatReservations(ticket, schedule, seats, departure, arrival);
-            if(newReservations == null)
-            {
-                if (paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT && !creditRecord.Equals(new CreditRecord()))
-                {
-                    creditRecord = usersRepository.GetCreditRecord(cr => cr.Date.Equals(creditRecord.Date)
-                                                  && cr.CustomerId == creditRecord.CustomerId);
-                    usersRepository.Delete(creditRecord.Id);
-                }
-                this.Delete(ticket.Id);
-                return false;
-            }
             seatReservations.AddRange(newReservations);
 
             Context.SaveChanges();
             return true;
         }
 
-        public void DeleteCascade(int ticketId)
+        public void DeleteCascade(int ticketId, PaymentMethod paymentMethod)
         {
-            DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
-            CreditRecord creditRecord = creditRecords.Where(cr => cr.TicketId == ticketId).FirstOrDefault();
-            if (creditRecord != null)
-                creditRecords.Remove(creditRecord);
+            if(paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT)
+            {
+                DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
+                CreditRecord creditRecord = creditRecords.Where(cr => cr.TicketId == ticketId).FirstOrDefault();
+                if (creditRecord != null)
+                    creditRecords.Remove(creditRecord);
+            }
+            else if(paymentMethod == PaymentMethod.BY_PAY_PAL)
+            {
+                DbSet<PayPalPayment> payments = Context.Set<PayPalPayment>();
+                PayPalPayment pppayment = payments.Where(p => p.TicketId == ticketId).FirstOrDefault();
+                if (pppayment != null)
+                {
+                    var apiContext = HelperClasses.PaypalConfiguration.GetAPIContext();
+                    HelperClasses.PayPalPaymentBuilder payPalPaymentBuilder = new HelperClasses.PayPalPaymentBuilder(apiContext, null);
+                    payPalPaymentBuilder.Refund(pppayment.PaymentId);
+                    payments.Remove(pppayment);
+                }
+                    
+            }
+
             this.Delete(ticketId);
             Context.SaveChanges();
         }
