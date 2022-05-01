@@ -9,19 +9,8 @@ using System.Web.Mvc;
 
 namespace RailwaySystem.Controllers
 {
-    public class StationController : Controller
+    public class StationController : BaseController
     {
-        private bool CanAccessPage(UsersRepository.Levels level)
-        {
-            //UsersRepository usersRepository = new UsersRepository();
-            //User loggedUser = (User)Session["loggedUser"];
-            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
-            //{
-            //    return false;
-            //}
-            return true;
-        }
-
         protected void CheckIsModelValid(CreateVM model)
         {
             StationsRepository repo = new StationsRepository();
@@ -77,7 +66,7 @@ namespace RailwaySystem.Controllers
 
         public virtual ActionResult Index()
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -89,7 +78,26 @@ namespace RailwaySystem.Controllers
             return View();
         }
 
-        public virtual ActionResult Create()
+        [HttpPost]
+        public ActionResult Index(ListVM model)
+        {
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (model.Name == null) model.Name = "";
+            StationsRepository repo = new StationsRepository();
+            List<Station> stations = repo.GetAll(s => s.Name.Contains(model.Name) || s.Name.Equals(model.Name));
+            ViewData["items"] = stations;
+            if (stations.Count == 0)
+            {
+                ModelState.AddModelError("NoRecordsFound", "No results matches your criteria.");
+            }           
+
+            return View(model);
+        }
+
+        public ActionResult Create()
         {
 
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))

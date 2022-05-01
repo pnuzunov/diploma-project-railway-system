@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RailwaySystem.ViewModels.Schedule
 {
-    public class ListVM
+    public class SearchVM
     {
         [Required(ErrorMessage = "Please select a station.")]
         public int StartStationId { get; set; }

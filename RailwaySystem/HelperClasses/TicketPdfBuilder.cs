@@ -36,13 +36,6 @@ namespace RailwaySystem.HelperClasses
                 paragraphs.Add(new Paragraph("Departs at: " + ticket.Departure.ToString("dd-MM-yyyy HH:mm")));
                 paragraphs.Add(new Paragraph(ticket.BuyDate.ToString()));
 
-                //Paragraph beginStationParagraph = new Paragraph("Departs from: " + ticket.BeginStation);
-                //Paragraph endStationParagraph = new Paragraph("Arrives at: " + ticket.EndStation);
-                //Paragraph priceParagraph = new Paragraph("Price: " + ticket.Price);
-                //Paragraph seatsParagraph = new Paragraph("Seats: " + ticket.SeatNumbers);
-                //Paragraph departureParagraph = new Paragraph("Departs at: " + ticket.Departure.ToString("dd-MM-yyyy HH:mm"));
-                //Paragraph buyDateParagraph = new Paragraph(ticket.BuyDate.ToString());
-
                 QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
                 System.Drawing.Bitmap bitmap = qRCodeBuilder.GenerateQRCode(ticket.QRCode);
                 iText.IO.Image.ImageData imageData = iText.IO.Image.ImageDataFactory.Create(bitmap, System.Drawing.Color.Black);

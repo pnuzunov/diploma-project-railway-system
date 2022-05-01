@@ -7,5 +7,6 @@ namespace RailwaySystem.ViewModels
 {
     public class BaseFilterVM
     {
+        public string Query { get; set; }
     }
 }

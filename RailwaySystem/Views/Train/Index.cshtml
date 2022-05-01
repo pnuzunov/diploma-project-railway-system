@@ -3,44 +3,46 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-    <fieldset>
-        <div class="grid bold">
-            <div class="row">
-                <div class="col-3">
-                    Name
-                </div>
-                <div class="col-3">
-                    Type
-                </div>
+@model RailwaySystem.ViewModels.Train.ListVM
+
+<fieldset>
+    <div class="wrapper container mt-3 p-3 bg-light">
+        <div class="row modal-title m-3">
+            <div class="col-lg-6">
+                <h3>Trains</h3>
+            </div>
+            <div class="col-lg-6">
+                <form action="/Train/Index" method="post" class="input-group rounded">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Search by train name" })
+                    <input type="submit" value="Search" class="btn btn-info" />
+                    <a href="/Train/Index" class="btn btn-light">Clear</a>
+                </form>
             </div>
         </div>
         <hr />
-        @foreach (var item in (List<Train>)ViewData["items"])
-        {
-            <div class="grid">
+        <div class="grid m-3">
+            @foreach (var item in (List<Train>)ViewData["items"])
+            {
                 <div class="row">
                     <div class="col-3">
                         @(item.Name)
                     </div>
-                    <div class="col-3">
-                        @foreach (var trainType in (List<TrainType>)ViewData["trainTypes"]) { 
-                            if(item.TypeId == trainType.Id)
-                            {
-                                <div class="col-3">
-                                    @(trainType.Name)
-                                </div>
-                                break;
-                            }
-                        }
-                        </div>
                     <div class="col-1">
-                        <a href="/Train/Delete?id=@(item.Id)">Delete</a>
+                        <a href="/Train/Edit?id=@(item.Id)">Edit...</a>
                     </div>
                 </div>
-            </div>
-        }
+            }
+            @if (((List<Train>)ViewData["items"]).Count == 0)
+            {
+                <div class="row">
+                    @Html.ValidationMessage("NoRecordsFound")
+                </div>
+            }
+        </div>
         <div>
             <a href="/Train/Create">Create New...</a>
         </div>
-    </fieldset>
+    </div>
+
+</fieldset>
 

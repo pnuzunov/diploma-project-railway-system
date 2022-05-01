@@ -161,19 +161,24 @@ namespace RailwaySystem.Repositories
             result.AddRange(schedules);
             foreach (var schedule in result)
             {
-                DateTime scheduleDeparture = this.GetDepartureDate(schedule.Id, startStationId);
+                DateTime scheduleDeparture = this.GetDepartureDate(schedule.Id, startStationId).Date;
 
-                if (dateCompareMode == DateCompareMode.SAME_DATE)
+                switch (dateCompareMode)
                 {
-                    if (DateTime.Compare(scheduleDeparture.Date, departure.Date) != 0)
-                        schedules.Remove(schedule);
-                }
-
-                else {
-                    int cmpResult = DateTime.Compare(scheduleDeparture.Date, departure.Date);
-                    cmpResult /= cmpResult;
-                    if(cmpResult != (int)dateCompareMode)
-                        schedules.Remove(schedule);
+                    case DateCompareMode.BEFORE:
+                        if (DateTime.Compare(scheduleDeparture, departure) >= 0)
+                            schedules.Remove(schedule);
+                        break;
+                    case DateCompareMode.SAME_DATE:
+                        if (DateTime.Compare(scheduleDeparture, departure) != 0)
+                            schedules.Remove(schedule);
+                        break;
+                    case DateCompareMode.AFTER:
+                        if (DateTime.Compare(scheduleDeparture, departure) <= 0)
+                            schedules.Remove(schedule);
+                        break;
+                    default:
+                        break;
                 }
             }
             return schedules;

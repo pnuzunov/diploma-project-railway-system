@@ -9,21 +9,12 @@ using RailwaySystem.ViewModels.User;
 
 namespace RailwaySystem.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
-        private bool CanAccessPage(UsersRepository.Levels level)
-        {
-            //UsersRepository usersRepository = new UsersRepository();
-            //User loggedUser = (User)Session["loggedUser"];
-            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
-            //{
-            //    return false;
-            //}
-            return true;
-        }
-
         private void GenerateModel(DetailsVM model, User user, decimal credit)
         {
+            if (user == null) return;
+
             model.Id = user.Id;
             model.Username = user.Username;
             model.FirstName = user.FirstName;
@@ -49,6 +40,10 @@ namespace RailwaySystem.Controllers
             UsersRepository usersRepository = new UsersRepository();
             if (!usersRepository.IsCreditValid(model.Credit, model.Id))
                 ModelState.AddModelError("Error", "Insufficient credit amount.");
+            else if(model.Credit <= 0.0m)
+            {
+                ModelState.AddModelError("Error", "Invalid credit amount.");
+            }
         }
 
         public ActionResult Index()
@@ -67,43 +62,53 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult Index(ViewModels.BaseEditVM model)
         {
-            UsersRepository usersRepository = new UsersRepository();
-            User loggedUser = (User)Session["loggedUser"];
-
             if(!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Index", "Home");
             }
 
+            UsersRepository usersRepository = new UsersRepository();
+            User loggedUser = (User)Session["loggedUser"];
+
             User query = usersRepository.GetById(model.Id);
-            if(query == null || query.RoleId < loggedUser.Id)
+            if(query == null || query.RoleId < loggedUser.RoleId)
             {
-                model = null;
                 ModelState.AddModelError("UserNotFoundError", "No user found.");
                 return View();
             }
             return RedirectToAction("Details", "User", new { id = model.Id });
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
             UsersRepository usersRepository = new UsersRepository();
-            User loggedUser = (User)Session["loggedUser"];
-                        
-            User selectedUser = usersRepository.GetFirstOrDefault(u => u.Id == id);
-            if (selectedUser == null)
+            User selectedUser = null;
+
+            if (id == null)
             {
-                return RedirectToAction("Index", "Home");
+                if(Session["loggedUser"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                selectedUser = (User)Session["loggedUser"];
+            }
+            else
+            {
+                if(!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                selectedUser = usersRepository.GetById((int)id);
+                if(selectedUser == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
 
             DetailsVM model = new DetailsVM();
             GenerateModel(model, selectedUser, usersRepository.GetTotalCredit(selectedUser.Id));
             return View(model);
+
         }
 
         public ActionResult AddCredit(int id)
@@ -117,6 +122,7 @@ namespace RailwaySystem.Controllers
             User selectedUser = usersRepository.GetFirstOrDefault(u => u.Id == id);
             DetailsVM model = new DetailsVM();
             GenerateModel(model, selectedUser, usersRepository.GetTotalCredit(selectedUser.Id));
+            model.Credit = 0.0m;
             return View(model);
         }
 

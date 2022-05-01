@@ -4,31 +4,30 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-    <fieldset>
-        <div class="grid bold">
-            <div class="row">
-                <div class="col-3">
-                    Track
-                </div>
-            </div>
+<fieldset>
+    <div class="wrapper container mt-3 p-3 bg-light">
+        <div class="row modal-title m-3">
+            <h3>Tracks</h3>
         </div>
         <hr />
-        <div class="grid">
+        <div class="grid m-3">
             @foreach (var item in (Dictionary<int, string>)ViewData["routes"])
             {
-            <div class="row">
-                <div class="col-3">
-                    @(item.Value)
-                </div>
-
-                <div class="col-1">
-                    <a class="btn btn-danger" href="/Track/Delete?id=@(item.Key)">Delete</a>
-                </div>
-            </div>
-                    }
-                    <div>
-                        <a href="/Track/Create">Create New...</a>
+                <div class="row">
+                    <div class="col-3">
+                        @(item.Value)
+                    </div>
+                    <div class="col-1">
+                        <a href="/Track/Edit?id=@(item.Key)">Edit...</a>
                     </div>
                 </div>
-    </fieldset>
+            }
+
+        </div>
+        <div>
+            <a href="/Track/Create">Create New...</a>
+        </div>
+    </div>
+
+</fieldset>
 

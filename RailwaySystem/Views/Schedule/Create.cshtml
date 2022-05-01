@@ -17,7 +17,7 @@
             <div class="grid m-auto">
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.TrainId)</h5>
+                        <p>@Html.LabelFor(m => m.TrainId)</p>
                     </div>
                     <div class="col-md-6">
                         @Html.DropDownListFor(m => m.TrainId,
@@ -29,7 +29,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.TrackId)</h5>
+                        <p>@Html.LabelFor(m => m.TrackId)</p>
                     </div>
                     <div class="col-md-6">
                         @Html.DropDownListFor(m => m.TrackId,
@@ -42,7 +42,7 @@
 
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.DepartDate)</h5>
+                        <p>@Html.LabelFor(m => m.DepartDate)</p>
                     </div>
                     <div class="col-md-6">
                         @Html.TextBoxFor(m => m.DepartDate, new { id = "departDate", @type = "date", @class = "form-control date-picker" })
@@ -53,7 +53,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.LastDateToCreate)</h5>
+                        <p>@Html.LabelFor(m => m.LastDateToCreate)</p>
                     </div>
                     <div class="col-md-6">
                         @Html.TextBoxFor(m => m.LastDateToCreate, new { id = "lastDate", @type = "date", @class = "form-control date-picker" })
@@ -64,7 +64,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.ScheduleMode)</h5>
+                        <p>@Html.LabelFor(m => m.ScheduleMode)</p>
                     </div>
                     <div class="col-md-2">
                         @("Every day") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.EVERY_DAY, new { @class = "form-control" })
@@ -81,7 +81,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-3">
-                        <h5>@Html.LabelFor(m => m.PricePerTicket)</h5>
+                        <p>@Html.LabelFor(m => m.PricePerTicket)</p>
                     </div>
                     <div class="col-md-3">
                         @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @step = ".01", @class = "form-control" })

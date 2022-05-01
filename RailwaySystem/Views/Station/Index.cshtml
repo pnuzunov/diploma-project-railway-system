@@ -4,13 +4,24 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
+@model RailwaySystem.ViewModels.Station.ListVM
+
     <fieldset>
         <div class="wrapper container mt-3 p-3 bg-light">
             <div class="row modal-title m-3">
-                <h3>Stations</h3>
+                <div class="col-lg-6">
+                    <h3>Stations</h3>
+                </div>
+                <div class="col-lg-6">
+                    <form action="/Station/Index" method="post" class="input-group rounded">
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Search by station name" })
+                        <input type="submit" value="Search" class="btn btn-info" />
+                        <a href="/Station/Index" class="btn btn-light">Clear</a>
+                    </form>
+                </div>
             </div>
             <hr />
-            <div class="grid">
+            <div class="grid m-3">
                 @foreach (var item in (List<Station>)ViewData["items"])
                 {
                     <div class="row">
@@ -22,12 +33,17 @@
                         </div>
                     </div>
                 }
-
+                @if (((List<Station>)ViewData["items"]).Count == 0)
+                {
+                    <div class="row">
+                        @Html.ValidationMessage("NoRecordsFound")
+                    </div>
+                }
             </div>
-            <div>
-                <a href="/Station/Create">Create New...</a>
-            </div>
-        </div>
+                    <div>
+                        <a href="/Station/Create">Create New...</a>
+                    </div>
+                </div>
 
     </fieldset>
 

@@ -33,9 +33,11 @@ namespace RailwaySystem.ViewModels.Schedule
         public List<DateTime> Arrivals { get; set; }
 
         [DisplayName("Create entries until")]
+        [Required(ErrorMessage = "This field is required!")]
         public DateTime LastDateToCreate { get; set; }
 
         [DisplayName("Schedule Type")]
+        [Required(ErrorMessage = "This field is required!")]
         public int ScheduleMode { get; set; }
 
         [DisplayName("Price per ticket")]

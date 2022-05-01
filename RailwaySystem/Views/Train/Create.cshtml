@@ -13,7 +13,7 @@
                 <div class="grid m-3">
                     <div class="row mb-2">
                         <div class="col-md-4">
-                            <h5>@Html.LabelFor(m => m.Name)</h5>
+                            <p>@Html.LabelFor(m => m.Name)</p>
                         </div>
                         <div class="col-md-4">
                             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
@@ -24,7 +24,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4">
-                            <h5>@Html.LabelFor(m => m.TypeId)</h5>
+                            <p>@Html.LabelFor(m => m.TypeId)</p>
                         </div>
                         <div class="col-md-4">
                             @Html.DropDownListFor(m => m.TypeId,
@@ -36,7 +36,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4">
-                            <h5>@Html.LabelFor(m => m.SeatsFirstClass)</h5>
+                            <p>@Html.LabelFor(m => m.SeatsFirstClass)</p>
                         </div>
                         <div class="col-md-4">
                             @Html.TextBoxFor(m => m.SeatsFirstClass, new { @type = "number", @class = "form-control" })
@@ -47,7 +47,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4">
-                            <h5>@Html.LabelFor(m => m.RegularSeats)</h5>
+                            <p>@Html.LabelFor(m => m.RegularSeats)</p>
                         </div>
                         <div class="col-md-4">
                             @Html.TextBoxFor(m => m.RegularSeats, new { @type = "number", @class = "form-control" })

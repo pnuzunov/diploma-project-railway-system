@@ -9,19 +9,8 @@ using System.Web.Mvc;
 
 namespace RailwaySystem.Controllers
 {
-    public class TrainController : Controller
+    public class TrainController : BaseController
     {
-        private bool CanAccessPage(UsersRepository.Levels level)
-        {
-            //UsersRepository usersRepository = new UsersRepository();
-            //User loggedUser = (User)Session["loggedUser"];
-            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
-            //{
-            //    return false;
-            //}
-            return true;
-        }
-
         protected void CheckIsModelValid(CreateVM model)
         {
             TrainsRepository repo = new TrainsRepository();
@@ -96,6 +85,25 @@ namespace RailwaySystem.Controllers
 
             LoadExtraViewData();
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(ListVM model)
+        {
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if (model.Name == null) model.Name = "";
+            TrainsRepository repo = new TrainsRepository();
+            List<Train> trains = repo.GetAll(s => s.Name.Contains(model.Name) || s.Name.Equals(model.Name));
+            ViewData["items"] = trains;
+            if (trains.Count == 0)
+            {
+                ModelState.AddModelError("NoRecordsFound", "No results matches your criteria.");
+            }
+
+            return View(model);
         }
 
         public ActionResult Create()

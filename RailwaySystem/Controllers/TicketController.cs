@@ -11,8 +11,9 @@ using PayPal.Api;
 
 namespace RailwaySystem.Controllers
 {
-    public class TicketController : Controller
+    public class TicketController : BaseController
     {
+
         private bool CanAccessPage(BuyVM model)
         {
             User loggedUser = (User)Session["loggedUser"];
@@ -32,7 +33,7 @@ namespace RailwaySystem.Controllers
 
             Schedule schedule = schedulesRepository.GetById(scheduleId);
 
-            if (schedule == null)
+            if (schedule == null || schedule.Cancelled)
             {
                 return false;
             }
@@ -280,7 +281,7 @@ namespace RailwaySystem.Controllers
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Session["BuyVMModelState"] = "There was an error in processing your request. Please try again.";
                 return RedirectToAction("TicketOverview", "Ticket");

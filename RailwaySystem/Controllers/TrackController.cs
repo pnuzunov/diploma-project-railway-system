@@ -9,19 +9,8 @@ using System.Web.Mvc;
 
 namespace RailwaySystem.Controllers
 {
-    public class TrackController : Controller
+    public class TrackController : BaseController
     {
-        private bool CanAccessPage(UsersRepository.Levels level)
-        {
-            //UsersRepository usersRepository = new UsersRepository();
-            //User loggedUser = (User)Session["loggedUser"];
-            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
-            //{
-            //    return false;
-            //}
-            return true;
-        }
-
         protected void CheckIsModelValid(CreateVM model)
         {
             if (model.WayStations == null || model.WayStations.Count < 2)
@@ -112,7 +101,7 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Index()
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }

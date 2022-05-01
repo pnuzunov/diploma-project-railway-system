@@ -391,7 +391,7 @@
     <Compile Include="Repositories\UsersRepository.cs" />
     <Compile Include="ViewModels\Schedule\EditVM.cs" />
     <Compile Include="ViewModels\Schedule\ListItemVM.cs" />
-    <Compile Include="ViewModels\Schedule\ListVM.cs" />
+    <Compile Include="ViewModels\Schedule\SearchVM.cs" />
     <Compile Include="ViewModels\Schedule\SwsVM.cs" />
     <Compile Include="ViewModels\Shared\BaseCreateVM.cs" />
     <Compile Include="ViewModels\Shared\BaseEditVM.cs" />
@@ -402,12 +402,14 @@
     <Compile Include="ViewModels\Station\EditVM.cs" />
     <Compile Include="ViewModels\Shared\BaseIndexVM.cs" />
     <Compile Include="ViewModels\Shared\BaseFilterVM.cs" />
+    <Compile Include="ViewModels\Station\ListVM.cs" />
     <Compile Include="ViewModels\Ticket\BuyVM.cs" />
     <Compile Include="ViewModels\Track\CreateVM.cs" />
     <Compile Include="ViewModels\Track\EditVM.cs" />
-    <Compile Include="ViewModels\Track\IndexVM.cs" />
+    <Compile Include="ViewModels\Track\ListVM.cs" />
     <Compile Include="ViewModels\Train\CreateVM.cs" />
     <Compile Include="ViewModels\Train\EditVM.cs" />
+    <Compile Include="ViewModels\Train\ListVM.cs" />
     <Compile Include="ViewModels\User\DetailsVM.cs" />
     <Compile Include="ViewModels\User\EditVM.cs" />
     <Compile Include="ViewModels\User\ListVM.cs" />

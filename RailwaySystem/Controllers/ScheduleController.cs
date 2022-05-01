@@ -13,21 +13,51 @@ namespace RailwaySystem.Controllers
     {
         private bool CanAccessPage(UsersRepository.Levels level)
         {
-            //UsersRepository usersRepository = new UsersRepository();
-            //User loggedUser = (User)Session["loggedUser"];
-            //if (loggedUser == null || usersRepository.CanAccess(loggedUser.Id, level))
-            //{
-            //    return false;
-            //}
+            UsersRepository usersRepository = new UsersRepository();
+            User loggedUser = (User)Session["loggedUser"];
+            if (loggedUser == null || !usersRepository.CanAccess(loggedUser.Id, level))
+            {
+                return false;
+            }
             return true;
         }
-        protected void CheckIsModelValid(ListVM model)
+        protected void CheckIsModelValid(SearchVM model)
         {
-
+            if(model.StartStationId == model.EndStationId)
+            {
+                ModelState.AddModelError("SearchValidationError", "Please select two different stations.");
+            }
         }
         protected void CheckIsModelValid(CreateVM model)
         {
+            if(DateTime.Compare(model.DepartDate, model.LastDateToCreate) >= 0)
+            {
+                ModelState.AddModelError("CreateValidationError", "The last date of creation must be after the departure date.");
+            }
+            if(model.PricePerTicket >= 0.0m)
+            {
+                ModelState.AddModelError("CreateValidationError", "Ticket price must be greater than 0.");
+            }
+        }
 
+        private void CheckTimesValid(CreateVM model)
+        {
+            foreach (var arrival in model.Arrivals)
+            {
+                if(arrival.Equals(new DateTime()))
+                {
+                    ModelState.AddModelError("CreateValidationError", "Please enter a valid time for all arrivals/departures.");
+                    break;
+                }
+            }
+            foreach (var departure in model.Departures)
+            {
+                if (departure.Equals(new DateTime()))
+                {
+                    ModelState.AddModelError("CreateValidationError", "Please enter a valid time for all arrivals/departures.");
+                    break;
+                }
+            }
         }
 
         protected void GenerateEntity(Schedule entity, CreateVM model)
@@ -38,7 +68,7 @@ namespace RailwaySystem.Controllers
             entity.PricePerTicket = model.PricePerTicket;
         }
 
-        void GenerateEntities(List<Schedule> schedules, EditVM model)
+        private void GenerateEntities(List<Schedule> schedules, EditVM model)
         {
             foreach (var item in schedules)
             {
@@ -47,7 +77,7 @@ namespace RailwaySystem.Controllers
             }
         }
 
-        protected void LoadFilteredData(ListVM model)
+        protected void LoadFilteredData(SearchVM model)
         {
 
             LoadExtraViewData();
@@ -148,7 +178,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(ListVM model)
+        public ActionResult Index(SearchVM model)
         {
             CheckIsModelValid(model);
             if (!ModelState.IsValid)
@@ -205,6 +235,12 @@ namespace RailwaySystem.Controllers
             }
 
             CreateVM model = (CreateVM)Session["scheduleCreateVM"];
+
+            if(model == null)
+            {
+                return RedirectToAction("Index", "Schedule");
+            }
+
             TracksRepository tracksRepository = new TracksRepository();
             StationsRepository stationsRepository = new StationsRepository();
             List<WayStation> wayStations = tracksRepository.GetWayStations(model.TrackId);
@@ -223,6 +259,12 @@ namespace RailwaySystem.Controllers
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
+            }
+
+            CheckTimesValid(model);
+            if(!ModelState.IsValid)
+            {
+                return View(model);
             }
 
             CreateVM savedModel = (CreateVM)Session["scheduleCreateVM"];
@@ -316,18 +358,21 @@ namespace RailwaySystem.Controllers
                 case (EditVM.EditOptions.ONLY_THIS_ENTRY):
                     schedules.Add(schedulesRepository.GetById(model.Id));
                     break;
+
                 case (EditVM.EditOptions.BY_DEFINED_PERIOD):
                     schedules.AddRange(schedulesRepository
                                             .GetFilteredSchedules(model.Id,
                                                                   model.LastDateToApply,
                                                                   SchedulesRepository.DateCompareMode.BEFORE));
                     break;
+
                 case (EditVM.EditOptions.ALL_MATCHING_ENTRIES):
                     schedules.AddRange(schedulesRepository
                         .GetFilteredSchedules(model.Id,
                                               new DateTime(9999, 12, 31),
                                               SchedulesRepository.DateCompareMode.BEFORE));
                     break;
+
                 default: break;
             }
 
