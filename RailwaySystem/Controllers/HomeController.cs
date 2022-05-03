@@ -6,14 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.IO;
-
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.Layout.Properties;
-using PayPal.Api;
-using RailwaySystem.HelperClasses;
 
 namespace RailwaySystem.Controllers
 {
@@ -23,10 +15,6 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Index()
         {
-            //testing purpose
-            //User usr = repo.GetFirstOrDefault(u => u.Username == "admin" && u.Password == "admin");
-            //Session["loggedUser"] = usr;
-
             return View();
         }
 
@@ -77,35 +65,54 @@ namespace RailwaySystem.Controllers
             {
                 return View(model);
             }
-
-            User u;
-            u = repo.GetFirstOrDefault(i => i.Username == model.Username || i.Email == model.Email || i.Phone == model.Phone);
-
-            if (u == null)
+            CheckModelIsValid(model);
+            if (!ModelState.IsValid)
             {
-                u = new User();
-                u.Username = model.Username;
-                u.Password = model.Password;
-                u.FirstName = model.FirstName;
-                u.LastName = model.LastName;
-                u.Email = model.Email;
-                u.Phone = model.Phone;
-                u.RoleId = (int)UsersRepository.Levels.CUSTOMER_ACCESS;
-                repo.Add(u);
-            }
-
-            else
-            {
-                if(u.Username == model.Username)
-                    ModelState.AddModelError("UserExistsError", "Username is taken!");
-                else if(u.Email == model.Email)
-                    ModelState.AddModelError("EmailExistsError", "Email address is taken!");
-                else if(u.Phone == model.Phone)
-                    ModelState.AddModelError("PhoneExistsError", "Phone number is taken!");
                 return View(model);
             }
 
+            User u = new User();
+                
+            u.Username = model.Username;
+            u.Password = model.Password;
+            u.FirstName = model.FirstName;
+            u.LastName = model.LastName;
+            u.Email = model.Email;
+            u.Phone = model.Phone;
+            u.RoleId = (int)UsersRepository.Levels.CUSTOMER_ACCESS;
+            User match;
+            do
+            {
+                u.ClientNumber = new Random().Next(100000, 1000000).ToString();
+                match = repo.GetFirstOrDefault(i => u.ClientNumber.Equals(u.ClientNumber));
+            } while (match != null);
+
+            repo.Add(u);
             return RedirectToAction("Index", "Home");
+        }
+
+        private void CheckModelIsValid(RegisterVM model)
+        {
+            UsersRepository usersRepository = new UsersRepository();
+            User u;
+            u = usersRepository.GetFirstOrDefault(i => i.Username == model.Username);
+            if(u != null)
+            {
+                ModelState.AddModelError("UsernameTakenError", "Username is taken.");
+                return;
+            }
+            u = usersRepository.GetFirstOrDefault(i => i.Email == model.Email);
+            if (u != null)
+            {
+                ModelState.AddModelError("UsernameTakenError", "Email address is taken.");
+                return;
+            }
+            u = usersRepository.GetFirstOrDefault(i => i.Phone == model.Phone);
+            if (u != null)
+            {
+                ModelState.AddModelError("UsernameTakenError", "Phone is taken.");
+                return;
+            }
         }
 
         public ActionResult Logout()

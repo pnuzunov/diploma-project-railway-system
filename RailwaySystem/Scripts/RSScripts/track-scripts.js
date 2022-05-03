@@ -27,3 +27,8 @@ function RemoveWayStation(id) {
 function GetRemoveButtonHtml(id) {
     return `<button id=\"ws-remove-${id}\" class=\"btn btn-danger ws-remove-btn\" type=\"button\" onClick=\"RemoveWayStation(\'${id}\')\"> Remove</button></div>`;
 }
+
+function ToggleRouteTable(id) {
+    var routeTable = document.getElementById(id);
+    routeTable.hidden = !routeTable.hidden;
+}

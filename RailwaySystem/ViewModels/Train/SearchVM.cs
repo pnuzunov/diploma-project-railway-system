@@ -5,7 +5,7 @@ using System.Web;
 
 namespace RailwaySystem.ViewModels.Train
 {
-    public class ListVM
+    public class SearchVM
     {
         public string Name { get; set; }
     }

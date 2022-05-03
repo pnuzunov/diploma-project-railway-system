@@ -6,42 +6,48 @@
 }
 
 <fieldset>
-    <form action="/Train/Edit" method="post">
-        <div class="grid">
-            @Html.HiddenFor(m => m.Id)
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.Name)
+    <div class="container wrapper shadow bg-light mt-3 p-3">
+        <h3 class="text-center">Edit train</h3>
+    </div>
+    <div class="wrapper container m-3 p-3 bg-light">
+        <form action="/Train/Edit" method="post" onsubmit="return confirm('Submit changes to this entry?');">
+            <div class="grid">
+                @Html.HiddenFor(m => m.Id)
+                <div class="row">
+                    <div class="col-1">
+                        @Html.LabelFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.TextBoxFor(m => m.Name)
+                    </div>
+                    <div class="col-2">
+                        @Html.ValidationMessageFor(m => m.Name)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.Name)
+                <div class="row">
+                    <div class="col-1">
+                        @Html.LabelFor(m => m.TypeId)
+                    </div>
+                    <div class="col-2">
+                        @Html.DropDownListFor(m => m.TypeId,
+                     new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --")
+                    </div>
+                    <div class="col-2">
+                        @Html.ValidationMessageFor(m => m.TypeId)
+                    </div>
                 </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Name)
+                <div class="row">
+                    <div class="col-3">
+                        @Html.ValidationMessage("AuthError")
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input class="right" type="submit" value="Save" />
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.TypeId)
-                </div>
-                <div class="col-2">
-                    @Html.DropDownListFor(m => m.TypeId,
-                 new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --")
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.TypeId)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    @Html.ValidationMessage("AuthError")
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <input class="right" type="submit" value="Save" />
-                </div>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
+    
 </fieldset>

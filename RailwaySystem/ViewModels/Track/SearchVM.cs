@@ -5,9 +5,9 @@ using System.Web;
 
 namespace RailwaySystem.ViewModels.Track
 {
-    public class ListVM
+    public class SearchVM
     {
-        public string StartStation { get; set; }
-        public string EndStation { get; set; }
+        public int StartStationId { get; set; }
+        public int EndStationId { get; set; }
     }
 }

@@ -2,31 +2,94 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
+
+    User loggedUser = (User)Session["loggedUser"];
+    bool canCreate;
+    if (loggedUser == null)
+    {
+        canCreate = false;
+    }
+    else
+    {
+        canCreate = new RailwaySystem.Repositories.UsersRepository()
+                          .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
+    }
 }
+@model RailwaySystem.ViewModels.Track.SearchVM
+
+<script type="text/javascript" src="~/Scripts/RSScripts/track-scripts.js"> 
+
+</script>
 
 <fieldset>
     <div class="wrapper container mt-3 p-3 bg-light">
-        <div class="row modal-title m-3">
-            <h3>Tracks</h3>
+        <div class="row m-3">
+            <div class="col-lg-6 modal-title">
+                <h3>Tracks</h3>
+            </div>
+            <div>
+                <form action="/Track/Index" method="post">
+                    <div class="row bg-dark d-flex justify-content-center">
+                        <div class="col-md-4 p-3">
+                            <p class="text-white">Departs from</p>
+                            @Html.DropDownListFor(m => m.StartStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-4 p-3">
+                            <p class="text-white">Arrives at</p>
+                            @Html.DropDownListFor(m => m.EndStationId, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "-- Select --", new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-1 p-2">
+                            <input class="btn btn-info p-2 m-1" type="submit" value="Search" />
+                            <a href="/Track/Index" class="btn btn-light m-1">Clear</a>
+                        </div>
+                    </div>
+                    <p style="color:red">@Html.ValidationMessage("InvalidStations")</p>
+                </form>
+            </div>
         </div>
         <hr />
         <div class="grid m-3">
-            @foreach (var item in (Dictionary<int, string>)ViewData["routes"])
+            @foreach (var item in (List<RailwaySystem.ViewModels.Track.ListItemVM>)ViewData["routes"])
             {
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-lg-3">
                         @(item.Value)
                     </div>
-                    <div class="col-1">
-                        <a href="/Track/Edit?id=@(item.Key)">Edit...</a>
+                    <div class="col-lg-4">
+                        <button class="btn btn-clear bg-light ml-1" onclick="ToggleRouteTable('@("route-table-" + item.Id)');">Full route</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 m-1" id=@("route-table-" + item.Id) hidden>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Station Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < item.WayStations.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@((i + 1))</td>
+                                        <td>@(item.WayStations[i].StationName)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             }
 
         </div>
-        <div>
-            <a href="/Track/Create">Create New...</a>
-        </div>
+        @if (canCreate)
+        {
+            <div>
+                <a href="/Track/Create">Create New...</a>
+            </div>
+        }
+
     </div>
 
 </fieldset>

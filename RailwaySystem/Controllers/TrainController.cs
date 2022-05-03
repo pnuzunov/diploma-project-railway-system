@@ -75,7 +75,7 @@ namespace RailwaySystem.Controllers
 
         public ActionResult Index()
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -88,7 +88,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(ListVM model)
+        public ActionResult Index(SearchVM model)
         {
             if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {

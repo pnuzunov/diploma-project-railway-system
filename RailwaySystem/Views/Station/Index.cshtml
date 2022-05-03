@@ -2,9 +2,20 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Shared.cshtml";
+    User loggedUser = (User)Session["loggedUser"];
+    bool canCreateEditDelete;
+    if (loggedUser == null)
+    {
+        canCreateEditDelete = false;
+    }
+    else
+    {
+        canCreateEditDelete = new RailwaySystem.Repositories.UsersRepository()
+                                  .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
+    }
 }
 
-@model RailwaySystem.ViewModels.Station.ListVM
+@model RailwaySystem.ViewModels.Station.SearchVM
 
     <fieldset>
         <div class="wrapper container mt-3 p-3 bg-light">
@@ -28,9 +39,13 @@
                         <div class="col-3">
                             @(item.Name)
                         </div>
-                        <div class="col-1">
-                            <a href="/Station/Edit?id=@(item.Id)">Edit...</a>
-                        </div>
+                        @if (canCreateEditDelete)
+                        {
+                            <div class="col-1">
+                                <a href="/Station/Edit?id=@(item.Id)">Edit...</a>
+                            </div>
+                        }
+
                     </div>
                 }
                 @if (((List<Station>)ViewData["items"]).Count == 0)
@@ -40,10 +55,14 @@
                     </div>
                 }
             </div>
-                    <div>
-                        <a href="/Station/Create">Create New...</a>
-                    </div>
+            @if (canCreateEditDelete)
+            {
+                <div>
+                    <a href="/Station/Create">Create New...</a>
                 </div>
+            }
+
+        </div>
 
     </fieldset>
 

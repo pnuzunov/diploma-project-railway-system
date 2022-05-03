@@ -19,7 +19,10 @@
 </script>
 
 <fieldset>
-    <div class="wrapper container bg-light p-3">
+    <div class="container wrapper shadow bg-light mt-3 p-3">
+        <h3 class="text-center">Edit schedule</h3>
+    </div>
+    <div class="wrapper container card bg-light m-3 p-3">
         <form action="/Schedule/Edit" method="post" onsubmit="return confirm('Submit changes to this entry?');">
             @Html.HiddenFor(m => m.Id)
             <div class="grid">
@@ -31,7 +34,7 @@
                     <div class="col-lg-2">
                         @Html.DropDownListFor(m => m.TrainId, new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
                     </div>
-                    
+
                 </div>
 
                 <div class="row mb-2">
@@ -91,6 +94,6 @@
             </div>
         </form>
     </div>
-    
+
 </fieldset>
 

@@ -99,6 +99,48 @@ namespace RailwaySystem.Controllers
             ViewData["stations"] = stations.GetAll();
         }
 
+        private List<ListItemVM> GetListItems(SearchVM model = null)
+        {
+            TracksRepository tracksRepository = new TracksRepository();
+            StationsRepository stationsRepository = new StationsRepository();
+            var routes = new List<ListItemVM>();
+            List<Track> filteredTracks;
+            if (model == null)
+                filteredTracks = tracksRepository.GetAll();
+            else
+                filteredTracks = tracksRepository.FindTracks(model.StartStationId, model.EndStationId);
+
+            foreach (var track in filteredTracks)
+            {
+                var match = tracksRepository.GetAsKeyValuePairs(t => t.Id == track.Id);
+                if (match != null)
+                {
+                    var listItem = new ListItemVM()
+                    {
+                        Id = track.Id,
+                        Value = match[track.Id],
+                        WayStations = new List<WayStationVM>()
+                    };
+
+                    var wayStations = tracksRepository.GetWayStations(track.Id)
+                                                      .OrderBy(ws => ws.ConsecutiveNumber)
+                                                      .ToList();
+                    foreach (var ws in wayStations)
+                    {
+                        listItem.WayStations.Add(new WayStationVM()
+                        {
+                            StationName = stationsRepository.GetFirstOrDefault(s => s.Id == ws.StationId).Name,
+                            TrackId = track.Id
+                        });
+                    }
+
+                    routes.Add(listItem);
+                }
+
+            }
+            return routes;
+        }
+
         public ActionResult Index()
         {
             if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
@@ -107,11 +149,25 @@ namespace RailwaySystem.Controllers
             }
 
             LoadExtraViewData();
-            TracksRepository tracksRepository = new TracksRepository();
-            var routes = tracksRepository.GetAsKeyValuePairs();
-            ViewData["routes"] = routes;
+            ViewData["routes"] = GetListItems(null);
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(SearchVM model)
+        {
+            LoadExtraViewData();
+            var routes = new List<ListItemVM>();
+            if (model.StartStationId > 0 && model.EndStationId > 0)
+            {
+                ViewData["routes"] = GetListItems(model);
+            }
+            else
+            {
+                ModelState.AddModelError("InvalidStations", "Please select both stations of departure and arrival.");
+            }
+            return View(model);
         }
 
         public ActionResult Create()

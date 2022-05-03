@@ -79,7 +79,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(ListVM model)
+        public ActionResult Index(SearchVM model)
         {
             if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
