@@ -9,11 +9,11 @@
     <div class="container wrapper shadow bg-light mt-3 p-3">
         <h3 class="text-center">Edit station</h3>
     </div>
-    <div class="wrapper container m-3 p-3 bg-light">
+    <div class="container wrapper p-3 bg-light">
         <form action="/Station/Edit" method="post" onsubmit="return confirm('Submit changes to this entry?');">
             <div class="grid">
                 @Html.HiddenFor(m => m.Id)
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-1">
                         @Html.LabelFor(m => m.Name)
                     </div>
@@ -24,7 +24,7 @@
                         @Html.ValidationMessageFor(m => m.Name)
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-1">
                         @Html.LabelFor(m => m.CityId)
                     </div>
@@ -36,7 +36,7 @@
                         @Html.ValidationMessageFor(m => m.CityId)
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-1">
                         @Html.LabelFor(m => m.Latitude)
                     </div>
@@ -47,7 +47,7 @@
                         @Html.ValidationMessageFor(m => m.Latitude)
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-1">
                         @Html.LabelFor(m => m.Longitude)
                     </div>
@@ -58,12 +58,7 @@
                         @Html.ValidationMessageFor(m => m.Longitude)
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-1 m-3">
-                        <a href="/Station/Delete?id=@(Model.Id)" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-3 ml-3">
                         <input class="btn btn-success" type="submit" value="Save" />
                         <button type="button" class="btn">Cancel</button>
@@ -71,6 +66,14 @@
                 </div>
             </div>
         </form>
-
+        <div class="mb-2">
+            <form action="/Station/Delete/@(Model.Id)" onsubmit="return confirm('Delete this entry?');">
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        <div>
+            @Html.ValidationMessage("EditError")
+            @Html.ValidationMessage("DeleteError")
+        </div>
     </div>
 </fieldset>

@@ -9,7 +9,7 @@
     <div class="container wrapper shadow bg-light mt-3 p-3">
         <h3 class="text-center">Edit train</h3>
     </div>
-    <div class="wrapper container m-3 p-3 bg-light">
+    <div class="wrapper container p-3 bg-light">
         <form action="/Train/Edit" method="post" onsubmit="return confirm('Submit changes to this entry?');">
             <div class="grid">
                 @Html.HiddenFor(m => m.Id)
@@ -18,7 +18,7 @@
                         @Html.LabelFor(m => m.Name)
                     </div>
                     <div class="col-2">
-                        @Html.TextBoxFor(m => m.Name)
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.Name)
@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-2">
                         @Html.DropDownListFor(m => m.TypeId,
-                     new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --")
+                     new SelectList((List<TrainType>)ViewData["trainTypes"], "Id", "Name"), "-- Select type --", new { @class = "form-control"})
                     </div>
                     <div class="col-2">
                         @Html.ValidationMessageFor(m => m.TypeId)
@@ -38,16 +38,20 @@
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        @Html.ValidationMessage("AuthError")
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-3">
-                        <input class="right" type="submit" value="Save" />
+                        <input class="btn btn-success" type="submit" value="Save" />
                     </div>
                 </div>
             </div>
         </form>
+        <div class="mb-2">
+            <form action="/Train/Delete/@(Model.Id)" onsubmit="return confirm('Delete this entry?');">
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        <div>
+            @Html.ValidationMessage("EditError")
+            @Html.ValidationMessage("DeleteError")
+        </div>
     </div>
     
 </fieldset>

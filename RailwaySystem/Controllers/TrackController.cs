@@ -27,28 +27,10 @@ namespace RailwaySystem.Controllers
             }
         }
 
-        //protected void CheckIsModelValid(EditVM model)
-        //{
-        //    TracksRepository tracksRepository = new TracksRepository();
-        //    SchedulesRepository schedulesRepository = new SchedulesRepository();
-        //    Track originalTrack = tracksRepository.GetById(model.Id);
-        //    Schedule schedule = schedulesRepository.GetFirstOrDefault(s => s.TrackId == originalTrack.Id);
-        //    List<WayStation> wayStations = tracksRepository.GetWayStations(originalTrack.Id);
-        //    wayStations = wayStations.OrderBy(ws => ws.ConsecutiveNumber).ToList();
+        private void CheckIsModelValid(EditVM model)
+        {
 
-        //    if(schedule != null)
-        //    {
-        //        for(int i = 0; i < model.WayStations.Count; i++)
-        //        {
-        //            var ws = tracksRepository.GetWayStationByConsecNumber(originalTrack.Id, i);
-        //            if(ws == null || ws.StationId != model.WayStations[i])
-        //            {
-        //                ModelState.AddModelError("CannotModifyWS", "This track is already in use and the way stations cannot be modified.");
-        //            }
-        //        }
-        //    }
-
-        //}
+        }
 
         protected void GenerateEntity(Track entity, CreateVM model)
         {
@@ -70,33 +52,37 @@ namespace RailwaySystem.Controllers
             tracksRepository.Add(entity, wayStations);
         }
 
-        //protected void GenerateEntity(Track entity, EditVM model)
-        //{
-        //    entity.Id = model.Id;
-        //    entity.Description = model.Description;
+        protected void GenerateEntity(Track entity, EditVM model)
+        {
+            entity.Id = model.Id;
+            entity.Description = model.Description;
+        }
 
-        //    TracksRepository repo = new TracksRepository();
-        //    repo.Update(entity);
-        //}
-
-        //protected void GenerateModel(EditVM model, Track entity)
-        //{
-        //    TracksRepository tracksRepository = new TracksRepository();
-        //    List<WayStation> wayStations = new List<WayStation>();
-        //    wayStations = tracksRepository.GetWayStations(entity.Id).OrderBy(ws => ws.ConsecutiveNumber).ToList();
-        //    model.WayStations = new List<int>();
-        //    for(int i = 0; i < wayStations.Count; i++)
-        //    {
-        //        model.WayStations.Add(wayStations[i].StationId);
-        //    }
-        //    model.Id = entity.Id;
-        //    model.Description = entity.Description;
-        //}
+        protected void GenerateModel(EditVM model, Track entity)
+        {
+            model.Id = entity.Id;
+            model.Description = entity.Description;
+        }
 
         protected void LoadExtraViewData()
         {
             StationsRepository stations = new StationsRepository();
             ViewData["stations"] = stations.GetAll();
+        }
+
+        private void LoadExtraViewData(int id)
+        {
+            LoadExtraViewData();
+            TracksRepository tracksRepository = new TracksRepository();
+            StationsRepository stationsRepository = new StationsRepository();
+            Dictionary<int, string> wayStations = new Dictionary<int, string>();
+            var wsList = tracksRepository.GetWayStations(id);
+            foreach (var item in wsList)
+            {
+                string stationName = stationsRepository.GetById(item.StationId).Name;
+                wayStations.Add(item.ConsecutiveNumber + 1, stationName);
+            }
+            ViewData["wayStations"] = wayStations;
         }
 
         private List<ListItemVM> GetListItems(SearchVM model = null)
@@ -166,6 +152,7 @@ namespace RailwaySystem.Controllers
             else
             {
                 ModelState.AddModelError("InvalidStations", "Please select both stations of departure and arrival.");
+                ViewData["routes"] = GetListItems(null);
             }
             return View(model);
         }
@@ -208,53 +195,45 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Track");
         }
 
-        //public ActionResult Edit(int id)
-        //{
-        //    if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
-        //    {
-        //        return RedirectToAction("Login", "Home");
-        //    }
+        public ActionResult Edit(int id)
+        {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
-        //    //SchedulesRepository schedulesRepository = new SchedulesRepository();
-        //    //if(schedulesRepository.GetFirstOrDefault(s => s.TrackId == id) != null)
-        //    //{
-        //    //    return RedirectToAction("Index", "Track");
-        //    //}
+            LoadExtraViewData(id);
+            TracksRepository tracksRepository = new TracksRepository();
 
-        //    StationsRepository stations = new StationsRepository();
-        //    TracksRepository tracksRepository = new TracksRepository();
-            
-        //    ViewData["stations"] = stations.GetAll();
-        //    ViewData["wayStations"] = tracksRepository.GetWayStations(id);
-        //    EditVM model = new EditVM();
-        //    GenerateModel(model, tracksRepository.GetById(id));
+            EditVM model = new EditVM();
+            GenerateModel(model, tracksRepository.GetById(id));
 
-        //    return View(model);
-        //}
+            return View(model);
+        }
 
-        //[HttpPost]
-        //public ActionResult Edit(EditVM model)
-        //{
-        //    if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
-        //    {
-        //        return RedirectToAction("Login", "Home");
-        //    }
+        [HttpPost]
+        public ActionResult Edit(EditVM model)
+        {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        CheckIsModelValid(model);
-        //    }
-        //    if (!ModelState.IsValid)
-        //    {
-        //        LoadExtraViewData();
-        //        return View(model);
-        //    }
+            if (ModelState.IsValid)
+            {
+                CheckIsModelValid(model);
+            }
+            if (!ModelState.IsValid)
+            {
+                LoadExtraViewData(model.Id);
+                return View(model);
+            }
 
-        //    Track entity = new Track();
-        //    GenerateEntity(entity, model);
+            Track entity = new Track();
+            GenerateEntity(entity, model);
 
-        //    return RedirectToAction("Index");
-        //}
+            return RedirectToAction("Index");
+        }
 
         public ActionResult Delete(int id)
         {
@@ -264,6 +243,18 @@ namespace RailwaySystem.Controllers
             }
 
             TracksRepository repo = new TracksRepository();
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            var schedule = schedulesRepository.GetFirstOrDefault(s => s.TrackId == id);
+            if(schedule != null)
+            {
+                LoadExtraViewData(id);
+                
+                EditVM model = new EditVM();
+                Track track = repo.GetFirstOrDefault(t => t.Id == id);
+                GenerateModel(model, track);
+                ModelState.AddModelError("DeleteError", "Cannot delete: Track is in use.");
+                return View("Edit", model);
+            }
 
             repo.Delete(id);
             return RedirectToAction("Index");

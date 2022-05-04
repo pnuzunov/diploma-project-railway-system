@@ -16,11 +16,11 @@ namespace RailwaySystem.Controllers
             TrainsRepository repo = new TrainsRepository();
             if (repo.GetFirstOrDefault(i => i.Name == model.Name) != null)
             {
-                ModelState.AddModelError("AuthError", "Train already exists!");
+                ModelState.AddModelError("CreateError", "Train already exists!");
             }
             if(model.SeatsFirstClass < 0 || model.RegularSeats <= 0)
             {
-                ModelState.AddModelError("AuthError", "Insufficient seat count.");
+                ModelState.AddModelError("CreateError", "Insufficient seat count.");
             }
         }
 
@@ -30,7 +30,7 @@ namespace RailwaySystem.Controllers
             Train check = repo.GetFirstOrDefault(i => i.Name == model.Name && i.Id != model.Id);
             if (check != null)
             {
-                ModelState.AddModelError("AuthError", "Train already exists!");
+                ModelState.AddModelError("EditError", "Train already exists!");
             }
         }
 
@@ -69,6 +69,7 @@ namespace RailwaySystem.Controllers
 
         protected void GenerateModel(EditVM model, Train entity)
         {
+            model.Id = entity.Id;
             model.Name = entity.Name;
             model.TypeId = entity.TypeId;
         }
@@ -147,21 +148,77 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Train");
         }
 
-        public ActionResult Delete(int id)
+        public ActionResult Edit(int id)
         {
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Index", "Train");
+            }
 
+            LoadExtraViewData();
+            TrainsRepository trainsRepository = new TrainsRepository();
+            Train train = trainsRepository.GetById(id);
+            EditVM model = new EditVM();
+            GenerateModel(model, train);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(EditVM model)
+        {
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
 
+            if (ModelState.IsValid)
+            {
+                CheckIsModelValid(model);
+            }
+            if (!ModelState.IsValid)
+            {
+                LoadExtraViewData();
+                return View(model);
+            }
+
             TrainsRepository trainsRepository = new TrainsRepository();
+            Train train = new Train();
+            GenerateEntity(train, model);
+            trainsRepository.Update(train);
+            return RedirectToAction("Index", "Train");
+        }
+
+        public ActionResult Delete(int id)
+        {
+
+            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            {
+                return RedirectToAction("Index", "Train");
+            }
+
+            TrainsRepository trainsRepository = new TrainsRepository();
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            Train train = trainsRepository.GetById(id);
+            if(train == null)
+            {
+                return RedirectToAction("Index", "Train");
+            }    
+            Schedule schedule = schedulesRepository.GetFirstOrDefault(s => s.TrainId == id);
+            if(schedule != null)
+            {
+                LoadExtraViewData();
+                ModelState.AddModelError("DeleteError", "Cannot delete: This train is in use.");
+                EditVM model = new EditVM();
+                GenerateModel(model, train);
+                return View("Edit", model);
+            }
 
             trainsRepository.DeleteCascade(id);
             return RedirectToAction("Index", "Train");
         }
 
-        protected void LoadExtraViewData()
+        private void LoadExtraViewData()
         {
             TrainsRepository trainsRepo = new TrainsRepository();
             ViewData["trainTypes"] = trainsRepo.GetTrainTypes();

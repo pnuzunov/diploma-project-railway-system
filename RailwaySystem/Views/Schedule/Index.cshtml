@@ -25,6 +25,7 @@
     <div class="grid">
         <div class="row border border-3 pl-3 pt-3 pb-3 bg-white d-flex justify-content-center">
             <div>
+                <p style="color:red">@Html.ValidationMessage("SearchValidationError")</p>
             </div>
         </div>
         <form action="/Schedule/Index" method="post">
@@ -43,7 +44,6 @@
                     <p class="text-white">Date</p>
                     @Html.TextBoxFor(m => m.DepartureDate, new { @type = "date", @class = "form-control date-picker" })
                     <p style="color:red">@Html.ValidationMessageFor(m => m.DepartureDate)</p>
-                    <p style="color:red">@Html.ValidationMessage("InvalidDateError")</p>
                 </div>
                 <div class="col-md-1 p-2">
                     <input class="btn btn-info p-2 m-1" type="submit" value="Search" />

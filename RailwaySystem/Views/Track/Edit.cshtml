@@ -5,69 +5,65 @@
     Layout = "~/Views/Shared/Shared.cshtml";
 }
 
-<script id="ws-template" type="text/template">
-    <div class="row m-3">
-        <div class="col-3">
-            Station name @Html.DropDownListFor(m => m.WayStations, new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--", new { @class = "form-control" })
-        </div>
-</script>
-
-<script type="text/javascript" src="~/Scripts/RSScripts/track-scripts.js">
-
-</script>
-
 <fieldset>
     <div class="container wrapper shadow bg-light mt-3 p-3">
         <h3 class="text-center">Edit track</h3>
     </div>
-    <div class="wrapper container m-3 p-3 bg-light">
-
-    </div>
-    <form action="/Track/Edit" method="post">
-        <div class="grid">
-            @Html.HiddenFor(m => m.Id)
-            <div class="row">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.Description)
-                </div>
-                <div class="col-1">
-                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Description)
-                </div>
-            </div>
-
-            <div class="grid" id="ws-area">
-
-                @for (int i = 0; i < Model.WayStations.Count; i++)
-                {
-                    <div class="row">
-                        <div class="col-3">
-                            Station name @Html.DropDownListFor(m => m.WayStations[i], new SelectList((List<Station>)ViewData["stations"], "Id", "Name"), "--Select station--", new { @class = "form-control" })
-                        </div>
+    <div class="wrapper container p-3 bg-light">
+        <form action="/Track/Edit" method="post">
+            <div class="grid">
+                @Html.HiddenFor(m => m.Id)
+                <div class="row mb-2">
+                    <div class="col-lg-1">
+                        @Html.LabelFor(m => m.Description)
                     </div>
-                }
-
-                <div class="row">
-                    <div class="col-3">
-                        <button class="btn" type="button" onclick="AddWayStation();">Add station</button>
+                    <div class="col-lg-1">
+                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-2">
+                        @Html.ValidationMessageFor(m => m.Description)
                     </div>
                 </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-3">
-                    @Html.ValidationMessage("AuthError")
+                <div class="row mb-2">
+                    <div class="col-lg-6 m-1">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Station Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ((Dictionary<int, string>)ViewData["wayStations"]).OrderBy(i => i.Key))
+                                {
+                                    <tr>
+                                        <td>@(item.Key)</td>
+                                        <td>@(item.Value)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-lg-3">
+                        @Html.ValidationMessage("EditError")
+                        @Html.ValidationMessage("DeleteError")
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-lg-3">
+                        <input class="btn btn-success" type="submit" value="Save" />
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-3">
-                    <input class="right" type="submit" value="Save" />
-                </div>
-            </div>
+        </form>
+        <div class="mb-2">
+            <form action="/Track/Delete/@(Model.Id)" onsubmit="return confirm('Delete this entry?');">
+                <button class="btn btn-danger">Delete</button>
+            </form>
         </div>
-    </form>
+    </div>
+    
 </fieldset>
 

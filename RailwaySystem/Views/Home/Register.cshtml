@@ -22,20 +22,20 @@
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.Username)
                                 @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.Username)
-                                @Html.ValidationMessage("UserExistsError")
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.Username)</p>
+                                <p style="color:red">@Html.ValidationMessage("UserExistsError")</p>
                             </div>
                         </div>
                         <div class="row m-3">
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.Password)
                                 @Html.TextBoxFor(m => m.Password, new { @type = "password", @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.Password)
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.Password)</p>
                             </div>
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.RepeatPassword)
                                 @Html.TextBoxFor(m => m.RepeatPassword, new { @type = "password", @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.RepeatPassword)
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.RepeatPassword)</p>
                             </div>
 
                         </div>
@@ -43,12 +43,12 @@
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.FirstName)
                                 @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.FirstName)
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.FirstName)</p>
                             </div>
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.LastName)
                                 @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.LastName)
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.LastName)</p>
                             </div>
                         </div>
 
@@ -56,14 +56,14 @@
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.Email)
                                 @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.Email)
-                                @Html.ValidationMessage("EmailExistsError")
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.Email)</p>
+                                <p style="color:red">@Html.ValidationMessage("EmailExistsError")</p>
                             </div>
                             <div class="col-lg-6">
                                 @Html.DisplayNameFor(m => m.Phone)
                                 @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.Phone)
-                                @Html.ValidationMessage("PhoneExistsError")
+                                <p style="color:red">@Html.ValidationMessageFor(m => m.Phone)</p>
+                                <p style="color:red">@Html.ValidationMessage("PhoneExistsError")</p>
                             </div>
                         </div>
                         <div class="m-3">

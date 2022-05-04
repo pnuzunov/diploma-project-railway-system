@@ -16,12 +16,19 @@ namespace RailwaySystem.Repositories
             Dictionary<int, string> result = new Dictionary<int, string>();
             foreach (var item in tracks)
             {
-                string value = GetStartStation(item.Id).Name 
-                               + " - " + GetEndStation(item.Id).Name 
-                               + (item.Description == null ? "" : " (" + item.Description + ")");
+                string value = GetDetails(item.Id);
                 result.Add(item.Id, value);
             }
             return result;
+        }
+
+        public string GetDetails(int trackId)
+        {
+            Track track = GetById(trackId);
+            string value = GetStartStation(track.Id).Name
+                               + " - " + GetEndStation(track.Id).Name
+                               + (track.Description == null ? "" : " (" + track.Description + ")");
+            return value;
         }
 
         public void Add(Track track, List<WayStation> wayStations)

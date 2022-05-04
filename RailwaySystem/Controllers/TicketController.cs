@@ -66,7 +66,7 @@ namespace RailwaySystem.Controllers
                 ModelState.AddModelError("ModelError", "Please select a seat type.");
             
             if (model.Quantity <= 0)
-                ModelState.AddModelError("ModelError", "Invalid number of seats.");
+                ModelState.AddModelError("ModelError", "Invalid number of tickets.");
 
             TrainsRepository trainsRepository = new TrainsRepository();
             Train train = trainsRepository.GetFirstOrDefault(t => t.Name == model.TrainName);
@@ -127,17 +127,22 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Ticket");
         }
 
+        public void LoadExtraViewData()
+        {
+            User loggedUser = (User)Session["loggedUser"];
+            TicketsRepository ticketsRepository = new TicketsRepository();
+            ViewData["items"] = ticketsRepository.GetAll(ticket => ticket.UserId == loggedUser.Id);
+            if (((List<Ticket>)ViewData["items"]).Count == 0)
+                ModelState.AddModelError("NoTickets", "You currently have no bought tickets.");
+        }
+
         public ActionResult Index()
         {
             if (Session["loggedUser"] == null)
             {
                 return RedirectToAction("Login", "Home");
             }
-            User loggedUser = (User)Session["loggedUser"];
-            TicketsRepository ticketsRepository = new TicketsRepository();
-            ViewData["items"] = ticketsRepository.GetAll(ticket => ticket.UserId == loggedUser.Id);
-            if (((List<Ticket>)ViewData["items"]).Count == 0)
-                ModelState.AddModelError("NoTickets", "You currently have no bought tickets.");
+            LoadExtraViewData();
             return View();
         }
 
@@ -209,9 +214,25 @@ namespace RailwaySystem.Controllers
             return View(model);
         }
 
-        public ActionResult DeleteTicket(int ticketId)
+        public ActionResult Delete(int id)
         {
-            return View();
+            if (Session["loggedUser"] == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            TicketsRepository ticketsRepository = new TicketsRepository();
+            TracksRepository tracksRepository = new TracksRepository();
+            SchedulesRepository schedulesRepository = new SchedulesRepository();
+            Ticket ticket = ticketsRepository.GetById(id);
+            Schedule schedule = schedulesRepository.GetById(ticket.ScheduleId);
+
+            Session["ticketCancelled"] = "Ticket for route " + tracksRepository.GetDetails(schedule.TrackId) 
+                                         + " has been cancelled. Your payment has been refunded.";
+            ticketsRepository.DeleteCascade(id);
+
+            LoadExtraViewData();
+            return RedirectToAction("Index");
         }
 
         public ActionResult PayBySystemAccount()

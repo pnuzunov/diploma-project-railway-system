@@ -16,11 +16,11 @@ namespace RailwaySystem.Controllers
             StationsRepository repo = new StationsRepository();
             if (repo.GetFirstOrDefault(i => i.Name == model.Name) != null)
             {
-                ModelState.AddModelError("AuthError", "Station already exists!");
+                ModelState.AddModelError("CreateError", "Station already exists!");
             }
             if (repo.GetFirstOrDefault(i => i.Latitude == model.Latitude && i.Longitude == model.Longitude) != null)
             {
-                ModelState.AddModelError("AuthError", "There is already a station with these coordinates!");
+                ModelState.AddModelError("CreateError", "There is already a station with these coordinates!");
             }
         }
 
@@ -29,7 +29,7 @@ namespace RailwaySystem.Controllers
             StationsRepository repo = new StationsRepository();
             if (repo.GetFirstOrDefault(i => i.Name == model.Name && i.Id != model.Id) != null)
             {
-                ModelState.AddModelError("AuthError", "Station already exists!");
+                ModelState.AddModelError("EditError", "Station already exists!");
             }
         }
 
@@ -52,6 +52,7 @@ namespace RailwaySystem.Controllers
 
         protected void GenerateModel(EditVM model, Station entity)
         {
+            model.Id = entity.Id;
             model.Name = entity.Name;
             model.CityId = entity.CityId;
             model.Longitude = entity.Longitude;
@@ -150,7 +151,6 @@ namespace RailwaySystem.Controllers
             Station entity = repo.GetById(id);
             EditVM model = new EditVM();
 
-            model.Id = id;
             GenerateModel(model, entity);
 
             LoadExtraViewData();
@@ -191,7 +191,18 @@ namespace RailwaySystem.Controllers
             }
 
             StationsRepository repo = new StationsRepository();
+            TracksRepository tracksRepository = new TracksRepository();
+            var wayStations = tracksRepository.GetWayStations(ws => ws.StationId == id);
+            if (wayStations != null &&  wayStations.Count > 0)
+            {
+                ModelState.AddModelError("DeleteError", "Cannot delete: This station is in use.");
 
+                LoadExtraViewData();
+                Station entity = repo.GetById(id);
+                EditVM model = new EditVM();
+                GenerateModel(model, entity);
+                return View("Edit", model);
+            }
             repo.Delete(id);
             return RedirectToAction("Index");
         }

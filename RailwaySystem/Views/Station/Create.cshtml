@@ -11,12 +11,12 @@
         <h3 class="text-center">Register new station</h3>
     </div>
 
-    <div class="container wrapper card shadow bg-light m-3 p-3">
+    <div class="container wrapper card bg-light p-3">
         <form action="/Station/Create" method="post">
             <div class="grid">
                 <div class="row mb-2">
                     <div class="col-md-2">
-                        <h5>@Html.LabelFor(m => m.Name)</h5>
+                        <p>@Html.LabelFor(m => m.Name)</p>
                     </div>
                     <div class="col-md-4">
                         @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
@@ -27,7 +27,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-2">
-                        <h5>@Html.LabelFor(m => m.CityId)</h5>
+                        <p>@Html.LabelFor(m => m.CityId)</p>
                     </div>
                     <div class="col-md-4">
                         @Html.DropDownListFor(m => m.CityId,
@@ -39,7 +39,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-2">
-                        <h5>@Html.LabelFor(m => m.Latitude)</h5>
+                        <p>@Html.LabelFor(m => m.Latitude)</p>
                     </div>
                     <div class="col-md-4">
                         @Html.TextBoxFor(m => m.Latitude, new { @type = "number", @step = ".01", @class = "form-control" })
@@ -50,7 +50,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-2">
-                        <h5>@Html.LabelFor(m => m.Longitude)</h5>
+                        <p>@Html.LabelFor(m => m.Longitude)</p>
                     </div>
                     <div class="col-md-4">
                         @Html.TextBoxFor(m => m.Longitude, new { @type = "number", @step = ".01", @class = "form-control" })

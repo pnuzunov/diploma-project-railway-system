@@ -11,7 +11,7 @@
         <h3 class="text-center">Register new schedule</h3>
     </div>
 
-    <div class="wrapper container card shadow bg-light m-3 p-3">
+    <div class="container wrapper card shadow bg-light p-3">
         <form action="/Schedule/Create" method="post">
 
             <div class="grid m-auto">
@@ -24,7 +24,7 @@
                             new SelectList((List<Train>)ViewData["trains"], "Id", "Name"), "--Select train--", new { @class = "form-control" })
                     </div>
                     <div class="col-md-6">
-                        @Html.ValidationMessageFor(m => m.TrainId)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.TrainId)</p>
                     </div>
                 </div>
                 <div class="row mb-2">
@@ -36,7 +36,7 @@
                             new SelectList((Dictionary<int, string>)ViewData["routes"], "Key", "Value"), "--Select route--", new { @class = "form-control" })
                     </div>
                     <div class="col-md-6">
-                        @Html.ValidationMessageFor(m => m.TrackId)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.TrackId)</p>
                     </div>
                 </div>
 
@@ -48,7 +48,7 @@
                         @Html.TextBoxFor(m => m.DepartDate, new { id = "departDate", @type = "date", @class = "form-control date-picker" })
                     </div>
                     <div class="col-md-6">
-                        @Html.ValidationMessageFor(m => m.DepartDate)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.DepartDate)</p>
                     </div>
                 </div>
                 <div class="row mb-2">
@@ -59,7 +59,7 @@
                         @Html.TextBoxFor(m => m.LastDateToCreate, new { id = "lastDate", @type = "date", @class = "form-control date-picker" })
                     </div>
                     <div class="col-md-6">
-                        @Html.ValidationMessageFor(m => m.LastDateToCreate)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.LastDateToCreate)</p>
                     </div>
                 </div>
                 <div class="row mb-2">
@@ -76,7 +76,7 @@
                         @("Only on weekends") @Html.RadioButtonFor(m => m.ScheduleMode, (int)RailwaySystem.Repositories.SchedulesRepository.ScheduleMode.ONLY_WEEKENDS, new { @class = "form-control" })
                     </div>
                     <div class="col-md-2">
-                        @Html.ValidationMessageFor(m => m.ScheduleMode)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.ScheduleMode)</p>
                     </div>
                 </div>
                 <div class="row mb-2">
@@ -87,12 +87,12 @@
                         @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @step = ".01", @class = "form-control" })
                     </div>
                     <div class="col-md-6">
-                        @Html.ValidationMessageFor(m => m.PricePerTicket)
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.PricePerTicket)</p>
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-6">
-                        @Html.ValidationMessage("AuthError")
+                        <p style="color:red">@Html.ValidationMessage("CreateValidationError")</p>
                     </div>
                 </div>
                 <div class="row mb-2">

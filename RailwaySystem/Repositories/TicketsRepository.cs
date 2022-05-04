@@ -108,9 +108,12 @@ namespace RailwaySystem.Repositories
             return true;
         }
 
-        public void DeleteCascade(int ticketId, PaymentMethod paymentMethod)
+        public void DeleteCascade(int ticketId)
         {
-            if(paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT)
+            Ticket ticket = this.GetById(ticketId);
+            var paymentMethod = (PaymentMethod)ticket.PaymentMethod;
+
+            if (paymentMethod == PaymentMethod.BY_SYSTEM_ACCOUNT)
             {
                 DbSet<CreditRecord> creditRecords = Context.Set<CreditRecord>();
                 CreditRecord creditRecord = creditRecords.Where(cr => cr.TicketId == ticketId).FirstOrDefault();
