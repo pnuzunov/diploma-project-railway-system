@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace RailwaySystem.Controllers
 {
-    public class TrainController : BaseController
+    public class TrainController : BaseController<Train, SearchVM, CreateVM, EditVM>
     {
         protected void CheckIsModelValid(CreateVM model)
         {
@@ -74,7 +74,7 @@ namespace RailwaySystem.Controllers
             model.TypeId = entity.TypeId;
         }
 
-        public ActionResult Index()
+        public override ActionResult Index()
         {
             if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
@@ -89,7 +89,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(SearchVM model)
+        public override ActionResult Index(SearchVM model)
         {
             if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
@@ -107,7 +107,7 @@ namespace RailwaySystem.Controllers
             return View(model);
         }
 
-        public ActionResult Create()
+        public override ActionResult Create()
         {
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
@@ -120,7 +120,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateVM model)
+        public override ActionResult Create(CreateVM model)
         {
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
@@ -148,7 +148,7 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Train");
         }
 
-        public ActionResult Edit(int id)
+        public override ActionResult Edit(int id)
         {
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {
@@ -165,7 +165,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(EditVM model)
+        public override ActionResult Edit(EditVM model)
         {
             if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
             {

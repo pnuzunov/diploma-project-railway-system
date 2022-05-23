@@ -7,6 +7,5 @@ namespace RailwaySystem.ViewModels
 {
     public class BaseIndexVM
     {
-        public int UserId { get; set; }
     }
 }

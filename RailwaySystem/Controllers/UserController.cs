@@ -9,8 +9,19 @@ using RailwaySystem.ViewModels.User;
 
 namespace RailwaySystem.Controllers
 {
-    public class UserController : BaseController
+    public class UserController : Controller
     {
+        private bool CanAccessPage(UsersRepository.Levels level)
+        {
+            UsersRepository usersRepository = new UsersRepository();
+            User loggedUser = (User)Session["loggedUser"];
+            if (loggedUser == null || !usersRepository.CanAccess(loggedUser.Id, level))
+            {
+                return false;
+            }
+            return true;
+        }
+
         private void GenerateModel(DetailsVM model, User user, decimal credit)
         {
             if (user == null) return;

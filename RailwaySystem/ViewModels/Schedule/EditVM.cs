@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RailwaySystem.ViewModels.Schedule
 {
-    public class EditVM
+    public class EditVM : BaseEditVM
     {
         public enum EditOptions
         {
@@ -16,7 +16,6 @@ namespace RailwaySystem.ViewModels.Schedule
             ALL_MATCHING_ENTRIES = 2
         }
 
-        public int Id { get; set; }
         [DisplayName("Train")]
         public int TrainId { get; set; }
 
@@ -26,6 +25,12 @@ namespace RailwaySystem.ViewModels.Schedule
         public DateTime DepartDate { get; set; }
         [DisplayName("Apply changes to")]
         public EditOptions EditOption { get; set; }
+
+        public decimal PricePerTicket { get; set; }
+
+        public List<string> WayStationNames { get; set; }
+
+        public List<Entities.ScheduledWayStation> ScheduledWayStations { get; set; }
 
         public DateTime LastDateToApply { get; set; }
     }

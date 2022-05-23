@@ -9,18 +9,8 @@ using RailwaySystem.ViewModels.Schedule;
 
 namespace RailwaySystem.Controllers
 {
-    public class ScheduleController : Controller
+    public class ScheduleController : BaseController<Schedule, SearchVM, CreateVM, EditVM>
     {
-        private bool CanAccessPage(UsersRepository.Levels level)
-        {
-            UsersRepository usersRepository = new UsersRepository();
-            User loggedUser = (User)Session["loggedUser"];
-            if (loggedUser == null || !usersRepository.CanAccess(loggedUser.Id, level))
-            {
-                return false;
-            }
-            return true;
-        }
         protected void CheckIsModelValid(SearchVM model)
         {
             if(model.StartStationId == model.EndStationId)
@@ -34,7 +24,7 @@ namespace RailwaySystem.Controllers
             {
                 ModelState.AddModelError("CreateValidationError", "The last date of creation must be after the departure date.");
             }
-            if(model.PricePerTicket >= 0.0m)
+            if(model.PricePerTicket <= 0.0m)
             {
                 ModelState.AddModelError("CreateValidationError", "Ticket price must be greater than 0.");
             }
@@ -72,9 +62,25 @@ namespace RailwaySystem.Controllers
         {
             foreach (var item in schedules)
             {
+                item.PricePerTicket = model.PricePerTicket;
                 item.TrainId = model.TrainId;
                 item.Cancelled = model.Cancelled;
             }
+        }
+
+        private EditVM GenerateModel(Schedule schedule, DateTime departDate, List<String> wayStationNames, List<ScheduledWayStation> scheduledWayStations)
+        {          
+
+            return new EditVM()
+            {
+                Id = schedule.Id,
+                Cancelled = schedule.Cancelled,
+                DepartDate = departDate,
+                PricePerTicket = schedule.PricePerTicket,
+                TrainId = schedule.TrainId,
+                WayStationNames = wayStationNames,
+                ScheduledWayStations = scheduledWayStations
+            };
         }
 
         protected void LoadFilteredData(SearchVM model)
@@ -170,7 +176,7 @@ namespace RailwaySystem.Controllers
             ViewData["trainTypes"] = trainsRepository.GetTrainTypes();
         }
 
-        public ActionResult Index()
+        public override ActionResult Index()
         {
             LoadExtraViewData();
 
@@ -178,7 +184,7 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(SearchVM model)
+        public override ActionResult Index(SearchVM model)
         {
             CheckIsModelValid(model);
             if (!ModelState.IsValid)
@@ -190,9 +196,9 @@ namespace RailwaySystem.Controllers
             return View(model);
         }
 
-        public ActionResult Create()
+        public override ActionResult Create()
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -205,9 +211,9 @@ namespace RailwaySystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateVM model)
+        public override ActionResult Create(CreateVM model)
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -229,7 +235,7 @@ namespace RailwaySystem.Controllers
 
         public ActionResult SetWayStations()
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -256,7 +262,7 @@ namespace RailwaySystem.Controllers
         [HttpPost]
         public ActionResult SetWayStations(CreateVM model)
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -317,35 +323,41 @@ namespace RailwaySystem.Controllers
             return RedirectToAction("Index", "Schedule");
         }
 
-        public ActionResult Edit(int id)
+        public override ActionResult Edit(int id)
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
 
             SchedulesRepository schedulesRepository = new SchedulesRepository();
             TracksRepository tracksRepository = new TracksRepository();
-            TrainsRepository trainsRepository = new TrainsRepository();
+            
             Schedule schedule = schedulesRepository.GetById(id);
-            Track track = tracksRepository.GetById(schedule.TrackId);
-            Station start = tracksRepository.GetStartStation(track.Id);
-            EditVM model = new EditVM();
+            Station start = tracksRepository.GetStartStation(schedule.TrackId);
+            List<ScheduledWayStation> scheduledWayStations = schedulesRepository.GetScheduledWayStations(schedule.Id);
+            DateTime departDate = schedulesRepository.GetDepartureDate(schedule.Id, start.Id);
 
-            model.Id = schedule.Id;
-            model.TrainId = schedule.TrainId;
-            model.DepartDate = schedulesRepository.GetDepartureDate(id, start.Id);
-            model.Cancelled = schedule.Cancelled;
+            StationsRepository stationsRepository = new StationsRepository();
+            List<WayStation> wayStations = tracksRepository.GetWayStations(schedule.TrackId);
+            List<string> stations = new List<string>();
+            foreach (var ws in wayStations)
+            {
+                stations.Add(stationsRepository.GetById(ws.StationId).Name);
+            }
 
+            EditVM model = GenerateModel(schedule, departDate, stations, scheduledWayStations);
+
+            TrainsRepository trainsRepository = new TrainsRepository();
             ViewData["trains"] = trainsRepository.GetAll();
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(EditVM model)
+        public override ActionResult Edit(EditVM model)
         {
-            if (!CanAccessPage(UsersRepository.Levels.FULL_ACCESS))
+            if (!CanAccessPage(UsersRepository.Levels.EMPLOYEE_ACCESS))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -355,29 +367,29 @@ namespace RailwaySystem.Controllers
 
             switch (model.EditOption)
             {
-                case (EditVM.EditOptions.ONLY_THIS_ENTRY):
+                case EditVM.EditOptions.ONLY_THIS_ENTRY:
                     schedules.Add(schedulesRepository.GetById(model.Id));
                     break;
 
-                case (EditVM.EditOptions.BY_DEFINED_PERIOD):
+                case EditVM.EditOptions.BY_DEFINED_PERIOD:
                     schedules.AddRange(schedulesRepository
                                             .GetFilteredSchedules(model.Id,
-                                                                  model.LastDateToApply,
-                                                                  SchedulesRepository.DateCompareMode.BEFORE));
+                                                                  model.DepartDate,
+                                                                  model.LastDateToApply));
                     break;
 
-                case (EditVM.EditOptions.ALL_MATCHING_ENTRIES):
+                case EditVM.EditOptions.ALL_MATCHING_ENTRIES:
                     schedules.AddRange(schedulesRepository
                         .GetFilteredSchedules(model.Id,
-                                              new DateTime(9999, 12, 31),
-                                              SchedulesRepository.DateCompareMode.BEFORE));
+                                              model.DepartDate,
+                                              new DateTime(9999, 12, 31)));
                     break;
 
                 default: break;
             }
 
             GenerateEntities(schedules, model);
-            schedulesRepository.Update(schedules);
+            schedulesRepository.Update(schedules, model.ScheduledWayStations);
 
             return RedirectToAction("Index", "Schedule");
         }

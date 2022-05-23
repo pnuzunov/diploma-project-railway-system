@@ -8,7 +8,11 @@ using System.Web.Mvc;
 
 namespace RailwaySystem.Controllers
 {
-    public abstract class BaseController : Controller
+    public abstract class BaseController<T, TSearchVM, TCreateVM, TEditVM> : Controller
+        where T : BaseEntity, new()
+        where TSearchVM : ViewModels.BaseIndexVM, new()
+        where TCreateVM : ViewModels.BaseCreateVM, new()
+        where TEditVM : ViewModels.BaseEditVM, new()
     {
         protected bool CanAccessPage(UsersRepository.Levels level)
         {
@@ -20,5 +24,20 @@ namespace RailwaySystem.Controllers
             }
             return true;
         }
+
+        public abstract ActionResult Index();
+
+        [HttpPost]
+        public abstract ActionResult Index(TSearchVM model);
+
+        public abstract ActionResult Create();
+
+        [HttpPost]
+        public abstract ActionResult Create(TCreateVM model);
+
+        public abstract ActionResult Edit(int id);
+
+        [HttpPost]
+        public abstract ActionResult Edit(TEditVM model);
     }
 }

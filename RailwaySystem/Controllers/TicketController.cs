@@ -11,7 +11,7 @@ using PayPal.Api;
 
 namespace RailwaySystem.Controllers
 {
-    public class TicketController : BaseController
+    public class TicketController : Controller
     {
 
         private bool CanAccessPage(BuyVM model)

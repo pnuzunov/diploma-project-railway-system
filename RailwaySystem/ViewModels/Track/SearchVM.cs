@@ -5,7 +5,7 @@ using System.Web;
 
 namespace RailwaySystem.ViewModels.Track
 {
-    public class SearchVM
+    public class SearchVM : BaseIndexVM
     {
         public int StartStationId { get; set; }
         public int EndStationId { get; set; }
