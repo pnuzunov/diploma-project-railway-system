@@ -64,6 +64,18 @@
                 }
 
                 <div class="row mb-2">
+                    <div class="col-md-3">
+                        <p>@Html.LabelFor(m => m.PricePerTicket)</p>
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(m => m.PricePerTicket, new { @type = "number", @step = ".01", @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        <p style="color:red">@Html.ValidationMessageFor(m => m.PricePerTicket)</p>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
                     <div class="col-2">
                         @Html.LabelFor(m => m.Cancelled)
                     </div>

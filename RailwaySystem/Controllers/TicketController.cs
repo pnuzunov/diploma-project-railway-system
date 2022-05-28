@@ -302,7 +302,7 @@ namespace RailwaySystem.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Session["BuyVMModelState"] = "There was an error in processing your request. Please try again.";
                 return RedirectToAction("TicketOverview", "Ticket");

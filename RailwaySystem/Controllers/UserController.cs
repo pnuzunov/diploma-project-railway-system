@@ -81,13 +81,13 @@ namespace RailwaySystem.Controllers
             UsersRepository usersRepository = new UsersRepository();
             User loggedUser = (User)Session["loggedUser"];
 
-            User query = usersRepository.GetById(model.Id);
+            User query = usersRepository.GetFirstOrDefault(i => i.ClientNumber == model.Id.ToString());
             if(query == null || query.RoleId < loggedUser.RoleId)
             {
                 ModelState.AddModelError("UserNotFoundError", "No user found.");
                 return View();
             }
-            return RedirectToAction("Details", "User", new { id = model.Id });
+            return RedirectToAction("Details", "User", new { id = query.Id });
         }
 
         public ActionResult Details(int? id)

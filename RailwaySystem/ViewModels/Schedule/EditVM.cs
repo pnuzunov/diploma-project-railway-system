@@ -26,6 +26,8 @@ namespace RailwaySystem.ViewModels.Schedule
         [DisplayName("Apply changes to")]
         public EditOptions EditOption { get; set; }
 
+        [DisplayName("Price Per Ticket")]
+        [Required]
         public decimal PricePerTicket { get; set; }
 
         public List<string> WayStationNames { get; set; }

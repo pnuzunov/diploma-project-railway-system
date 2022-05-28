@@ -10,7 +10,7 @@
     else
     {
         canCreateEditDelete = new RailwaySystem.Repositories.UsersRepository()
-                                  .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.FULL_ACCESS);
+                                  .CanAccess(loggedUser.Id, RailwaySystem.Repositories.UsersRepository.Levels.EMPLOYEE_ACCESS);
     }
 
 }
@@ -106,10 +106,15 @@
                             @if (!item.Schedule.Cancelled)
                             {
                                 <div class="col-lg-4 m-1">
+                                <p>Price: @(item.Schedule.PricePerTicket)</p>
+                                @if (loggedUser != null)
+                                {
                                     <a class="btn btn-success" href="/Ticket/Buy?id=@(item.Schedule.Id)&ssid=@(Model.StartStationId)&esid=@(Model.EndStationId)">
                                         Buy E-Ticket
                                     </a>
-                                </div>
+                                }
+
+                        </div>
                             }
                             else
                             {

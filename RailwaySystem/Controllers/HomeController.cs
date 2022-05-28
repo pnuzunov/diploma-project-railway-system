@@ -84,7 +84,7 @@ namespace RailwaySystem.Controllers
             do
             {
                 u.ClientNumber = new Random().Next(100000, 1000000).ToString();
-                match = repo.GetFirstOrDefault(i => u.ClientNumber.Equals(u.ClientNumber));
+                match = repo.GetFirstOrDefault(i => u.ClientNumber.Equals(i.ClientNumber));
             } while (match != null);
 
             repo.Add(u);

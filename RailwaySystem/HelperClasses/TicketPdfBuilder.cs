@@ -23,7 +23,7 @@ namespace RailwaySystem.HelperClasses
                 PdfDocument pdf = new PdfDocument(writer);
                 Document document = new Document(pdf);
 
-                Paragraph header = new Paragraph("Railway System Title")
+                Paragraph header = new Paragraph("Railway System")
                    .SetTextAlignment(TextAlignment.CENTER)
                    .SetFontSize(20);
 
