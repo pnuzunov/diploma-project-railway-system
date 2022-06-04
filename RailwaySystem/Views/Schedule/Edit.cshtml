@@ -38,30 +38,43 @@
                     </div>
 
                 </div>
-
-                @for (int i = 0; i < Model.ScheduledWayStations.Count; i++)
-                {
-                    @Html.HiddenFor(m => m.ScheduledWayStations[i].Id)
-                    @Html.HiddenFor(m => m.ScheduledWayStations[i].ScheduleId)
-                    @Html.HiddenFor(m => m.ScheduledWayStations[i].WayStationId)
-                    <div class="row mb-2">
+                <div class="mb-2 border border-1 rounded">
+                    <div class="row m-2">
                         <div class="col-3">
-                            <p>@Model.WayStationNames[i]</p>
+                            <p>Station</p>
                         </div>
                         <div class="col-3">
-                            @if (i != 0)
-                            {
-                                @Html.TextBoxFor(m => m.ScheduledWayStations[i].Arrival, new { id = "arrival", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
-                            }
+                            <p>Arrives at</p>
                         </div>
                         <div class="col-3">
-                            @if (i != Model.ScheduledWayStations.Count - 1)
-                            {
-                                @Html.TextBoxFor(m => m.ScheduledWayStations[i].Departure, new { id = "departure", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
-                            }
+                            <p>Departs at</p>
                         </div>
                     </div>
-                }
+                    @for (int i = 0; i < Model.ScheduledWayStations.Count; i++)
+                    {
+                        @Html.HiddenFor(m => m.ScheduledWayStations[i].Id)
+                        @Html.HiddenFor(m => m.ScheduledWayStations[i].ScheduleId)
+                        @Html.HiddenFor(m => m.ScheduledWayStations[i].WayStationId)
+                        <div class="row m-2">
+                            <div class="col-3">
+                                <p>@Model.WayStationNames[i]</p>
+                            </div>
+                            <div class="col-3">
+                                @if (i != 0)
+                                {
+                                    @Html.TextBoxFor(m => m.ScheduledWayStations[i].Arrival, new { id = "arrival", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
+                                }
+                            </div>
+                            <div class="col-3">
+                                @if (i != Model.ScheduledWayStations.Count - 1)
+                                {
+                                    @Html.TextBoxFor(m => m.ScheduledWayStations[i].Departure, new { id = "departure", @type = "time", @class = "form-control time-picker", @format = "HH:mm" })
+                                }
+                            </div>
+                        </div>
+                    }
+
+                </div>
 
                 <div class="row mb-2">
                     <div class="col-md-3">
